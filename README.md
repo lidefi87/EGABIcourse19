@@ -2,7 +2,15 @@
 
 <img src="/images/EGABI_logo.svg" alt="EG-ABI Logo" title="EG-ABI Logo" width="150"  align="right"/>
 
-## Course Scope
+## Autores
+  
+TBA
+
+## Traducción al español
+  
+[Denisse Fierro Arcos](https://github.com/lidefi87/), Camila Cataldo Méndez
+  
+## Acerca del curso
 
 El Comité Científico de Investigación Antárctica ([SCAR](www.scar.org) por sus siglas en inglés) en conjunto con el proyecto [rOpenSci](https://ropensci.org/) y el [Portal de Biodiversidad Antártica](www.biodiversity.aq) desarrollaron este curso corto que presenta herramientas para llevar a cabo análisis especiales y modelado utilizando el lenguaje de programación `R` con enfoque en el Océano del Sur.  
 
