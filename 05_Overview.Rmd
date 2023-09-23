@@ -1,10 +1,11 @@
-# Overview
+# Descripción general
 
-An example analysis that very briefly demonstrates some of the tasks that we'll tackle during the workshop.
+Ejemplo de análisis que demuestra brevemente algunas de las tareas que abordaremos durante el taller.
 
-## Preparation
 
-Make sure we have the packages we need from CRAN:
+## Preparación
+
+Asegúrese de que tenemos los paquetes que necesitamos de CRAN:
 
 ```{r pkgs1, message = FALSE}
 pkgs <- c("dplyr", "ncdf4", "raster", "remotes", "robis", "worrms")
@@ -14,10 +15,10 @@ if (length(pkgs) > 0) install.packages(pkgs)
 library(dplyr)
 ```
 
-And from GitHub:
+y de GitHub:
 
 ```{r pkgs2}
-## packages with required minimum version
+## paquetes necesarios
 pkgs <- c("SCAR/antanym" = NA, "AustralianAntarcticDivision/blueant" = NA,
           "AustralianAntarcticDivision/SOmap" =  "0.5.1")
 for (pkg in names(pkgs)) {
@@ -28,7 +29,7 @@ for (pkg in names(pkgs)) {
 }
 ```
 
-## Taxonomy
+## Taxonomía
 
 ```{r tax1, message = FALSE}
 library(worrms)
@@ -37,20 +38,20 @@ my_species <- "Euphausia crystallorophias"
 tax <- wm_records_names(name = my_species)
 tax
 
-## the Aphia ID (taxonomic ID) of our species
+## Aphia ID (identificación taxonómica) de nuestras especies
 my_aphia_id <- tax[[1]]$valid_AphiaID
 ```
 
-## Occurrences
+## Occurrencias
 
-Get all data from the [Antarctic Euphausiacea occurence data from "German Antarctic Marine Living Resources" (GAMLR) Expeditions](https://ipt.biodiversity.aq/resource?r=gamlr) data set:
+Obtenga todos los datos del conjunto de datos de la familia Euphausiacea antartica de las expediciones "recursos marinos antarticos alemanes": [Antarctic Euphausiacea occurence data from "German Antarctic Marine Living Resources" (GAMLR) Expeditions](https://ipt.biodiversity.aq/resource?r=gamlr) data set:
 
 ```{r occ1, message = FALSE}
 library(robis)
 x <- occurrence(datasetid = "cb16377b-56a8-4d95-802d-4eec02466773")
 ```
 
-Plot the complete distribution of samples in black, and *Euphausia crystallorophias* in green:
+Crea el gráfico de la distribución completa de las muestras en negro y de *Euphausia crystallorophias* en verde:
 
 ```{r map1, message = FALSE}
 library(SOmap)
@@ -59,7 +60,7 @@ with(x %>% dplyr::filter(aphiaID == my_aphia_id),
      SOplot(decimalLongitude, decimalLatitude, pch = 19, cex = 0.2, col = "green"))
 ```
 
-Or as a polar stereo map:
+O como un mapa polar estereográfico:
 
 ```{r map2, message = FALSE}
 basemap <- SOmap(trim = ceiling(max(x$decimalLatitude))+1, bathy_legend = FALSE)
@@ -69,7 +70,7 @@ with(x %>% dplyr::filter(aphiaID == my_aphia_id),
      SOplot(decimalLongitude, decimalLatitude, pch = 19, cex = 0.2, col = "green"))
 ```
 
-We're going to fit a species (presence/absence) distribution model, so first let's reorganise our data into presence/absence by sampling site:
+Vamos a ajustar un modelo de distribución de especies (presencia/ausencia), así que primero reorganicemos nuestros datos en presencia/ausencia por sitio de muestreo:
 
 ```{r dat1}
 xfit <- x %>% dplyr::rename(lon = "decimalLongitude", lat = "decimalLatitude") %>%
@@ -77,31 +78,31 @@ xfit <- x %>% dplyr::rename(lon = "decimalLongitude", lat = "decimalLatitude") %
     dplyr::summarize(present = any(my_aphia_id %in% aphiaID))
 ```
 
-## Environmental data
+## Datos ambientales
 
 ```{r envdat1, message = FALSE}
 library(blueant)
-## put the data into a temporary directory
+## añade los datos en un directorio temporal
 my_data_directory <- tempdir()
 
-## the data source we want
+## el origen de los datos que queremos
 data_source <- sources_sdm("Southern Ocean marine environmental data")
 
-## fetch the data
+## busca los datos
 status <- bb_get(data_source, local_file_root = my_data_directory, verbose = TRUE)
 ```
 
 ```{r envdat2, message = FALSE}
 nc_files <- Filter(function(z) grepl("\\.nc$", z), status$files[[1]]$file)
 
-## create a raster stack of all layers
+## crea una pila de raster de todas las capas
 env_stack <- stack(nc_files)
 
-## the first few layers
+## las primeras capas
 head(names(env_stack))
 ```
 
-Select just the `depth` and `ice_cover_mean` layers and extract their values at our sampling locations:
+Seleccione solo las capas de `depth` (Profundidad) y `ice_cover_mean` (cobertura de hielo promedio); y extraiga sus valores en nuestros sitios de muestreo:
 
 ```{r envdat3}
 env_stack <- subset(env_stack, c("depth", "ice_cover_mean"))
@@ -110,11 +111,12 @@ temp <- as.data.frame(raster::extract(env_stack, xfit[, c("lon", "lat")]))
 
 xfit <- bind_cols(xfit, temp)
 head(xfit)
-```
 
-## Fit model
+```
 
-We have presence/absence data, so we'll fit a simple binomial model. The probability of presence of *Euphausia crystallorophias* is fitted as a smooth function of depth and mean sea ice cover:
+## Ajustando el modelo
+
+Tenemos datos de presencia/ausencia, así que ajustaremos un modelo binomial simple. La probabilidad de presencia de *Euphausia crystallorophias* se ajusta como una función suave de la profundidad (smooth function; s()) y la cobertura media de hielo marino:
 
 ```{r mod1, message = FALSE}
 library(mgcv)
@@ -124,15 +126,15 @@ fit <- gam(present ~ s(depth) + s(ice_cover_mean), family = binomial, data = xfi
 summary(fit)
 ```
 
-The fits to depth and ice cover:
+Los ajustes para la profundidad y la cobertura de hielo:
 
 ```{r mod2, message = FALSE}
 plot(fit, pages = 1, shade = TRUE)
 ```
 
-This suggests that we are more likely to find *Euphausia crystallorophias* in shallow areas with high annual ice cover, which seems plausible given that this species is typically found in coastal/shelf waters.
+Esto sugiere que es más probable encontrar *Euphausia crystallorophias* en áreas poco profundas con alta cobertura anual de hielo, lo cual parece plausible dado que esta especie se encuentra típicamente en aguas costeras y de la plataforma continental.
 
-## Predict from model
+## Predicciones basadas en el modelo
 
 ```{r pred1}
 xpred <- expand.grid(lon = seq(from = floor(min(xfit$lon)), to = ceiling(max(xfit$lon)), by = 0.25),
@@ -149,7 +151,7 @@ projection(pr) <- "+proj=longlat +datum=WGS84"
 my_cmap <- if (getRversion() >= "3.6") hcl.colors(21, "Geyser") else c("#008585", "#359087", "#539B8A", "#6DA590", "#85AF97", "#9BBAA0", "#AEC4AA", "#BED0B0", "#D0DCB5", "#E5E7BC", "#FBF2C4", "#F3E3B2", "#EDD59F", "#E7C68C", "#E3B77A", "#DEA868", "#DA9857", "#D58847", "#D1773A", "#CC6530", "#C7522B")
 ```
 
-Plot it:
+Gráfica:
 
 ```{r predmap2}
 p <- SOmap_auto(x = pr, bathy = pr)
@@ -162,35 +164,35 @@ plot(basemap)
 SOplot(pr, col = my_cmap)
 ```
 
-## Other bits and pieces
+## Detalles extra
 
-### Place names
+### Nombres de lugares
 
 ```{r placenames1}
 library(antanym)
 
-## get full SCAR gazetteer data
+## obtener datos completos del diccionario geográficos de SCAR
 xn <- an_read(cache = "session", sp = TRUE)
 
-## reduce to one name per feature
+## reducir a un nombre por lugar
 xn <- an_preferred(xn, origin = "United Kingdom")
 
-## ask for suggestions in our region to show on our map
+## solicitando sugerencias en nuestra región de estudio para añadir a nuestro mapa
 xns <- an_suggest(xn, map_scale = 20e6, map_extent = extent(pr))
 
-## transform to our map projection, convert to data frame, take the top 10
+## transforma a nuestra proyección, convirtd datos a dataframe (marco de datos), mostrar los primeros 10
 xns <- as_tibble(SOproj(xns, target = basemap$projection)) %>% head(10)
 ```
 
-Add them to the map:
+Añadir nombres al mapa:
 
 ```{r predmap3}
 plot(basemap)
 SOplot(pr, col = my_cmap)
 
-## placename points
-with(xns, points(x = longitude, y = latitude, pch = 16, cex = 0.4))
-## and labels
-with(xns, text(x = longitude, y = latitude, labels = place_name, 
+## indicando la ubicación de los nombres
+with(xns, points(x = coords.x1, y = coords.x2, pch = 16, cex = 0.4))
+## añadir etiquetas
+with(xns, text(x = coords.x1, y = coords.x2, labels = place_name, 
                cex = 0.75, pos = 2 + 2*(seq_len(nrow(xns)) %% 2)))
 ```
