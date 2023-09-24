@@ -27,9 +27,18 @@ knitr::opts_chunk$set(echo = TRUE)
 | coc | | Denisse | | Camila |
 | Index | | Denisse | | Camila |
 
+#####################################
+#####################################
+# FUNDS/GRANTS
 
 
-
+#####################################
+#####################################
+# Budget
+Flights: $2500 pp (return) ~ $5000
+Road Expenses: ~$150 (from closes airport to Pucon)
+Accommodation: $600 - $900 (not needed)
+Daily Meals: ~ $400
 
 
 
