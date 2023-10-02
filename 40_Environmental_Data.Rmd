@@ -1,47 +1,48 @@
-# Environmental data
+# Datos ambientales
 
 ## Bowerbird/blueant
 
-Very commonly, we want to know about the environmental conditions at our points of interest. For the remote and vast Southern Ocean these data typically come from satellite or model sources. Some data centres provide extraction tools that will pull out a subset of data to suit your requirements, but often it makes more sense to cache entire data collections locally first and then work with them from there.
+Con frecuencia, deseamos conocer las condiciones ambientales en nuestros puntos de interés. Para el remoto y vasto Océano Austral, estos datos suelen provenir de fuentes satelitales o modelos. Algunos centros de datos proporcionan herramientas de extracción que seleccionarán un subconjunto de datos según tus necesidades, pero a menudo tiene más sentido almacenar primero colecciones de datos completas localmente y luego trabajar con ellas desde allí.
 
-[bowerbird](https://github.com/ropensci/bowerbird) provides a framework for downloading data files to a local collection, and keeping it up to date. The companion [blueant](https://github.com/AustralianAntarcticDivision/blueant) package provides a suite of definitions for Southern Ocean and Antarctic data sources that can be used with `bowerbird`. It encompasses data such as sea ice, bathymetry and land topography, oceanography, and atmospheric reanalysis and weather predictions, from providers such as NASA, NOAA, Copernicus, NSIDC, and Ifremer.
+[bowerbird](https://github.com/ropensci/bowerbird) proporciona un marco para descargar archivos de datos a una colección local y mantenerlos actualizados. El paquete complementario [blueant](https://github.com/AustralianAntarcticDivision/blueant) proporciona un conjunto de definiciones para fuentes de datos del Océano Austral y la Antártida que se pueden utilizar con bowerbird. Esto abarca datos como hielo marino, batimetría y topografía terrestre, oceanografía y reanálisis atmosféricos y pronósticos del clima, de proveedores como NASA, NOAA, Copernicus, NSIDC e Ifremer.
 
-Why might you want to maintain local copies of entire data sets, instead of just fetching subsets of data from providers as needed?
+¿Por qué podría ser útil mantener copias locales de conjuntos de datos completos en lugar de solo recuperar subconjuntos de datos según sea necesario?
 
-- many analyses make use of data from a variety of providers (in which case there may not be dynamic extraction tools for all of them),
-- analyses might need to crunch through a whole collection of data in order to calculate appropriate statistics (temperature anomalies with respect to a long-term mean, for example),
-- different parts of the same data set are used in different analyses, in which case making one copy of the whole thing may be easier to manage than having different subsets for different projects,
-- a common suite of data are routinely used by a local research community, in which case it makes more sense to keep a local copy for everyone to use, rather than multiple copies being downloaded by different individuals.
+- Muchos análisis utilizan datos de una variedad de proveedores (en cuyo caso puede que no haya herramientas de extracción dinámicas para todos ellos).
+- Los análisis pueden requerir procesar toda una colección de datos para calcular estadísticas apropiadas (por ejemplo, anomalías de temperatura con respecto a una media a largo plazo).
+- Diferentes partes del mismo conjunto de datos se utilizan en diferentes análisis, en cuyo caso hacer una copia de todo el conjunto puede ser más fácil de administrar que tener diferentes subconjuntos para diferentes proyectos.
+- Una comunidad de investigación local utiliza rutinariamente un conjunto común de datos, en cuyo caso tiene más sentido mantener una copia local para que todos la utilicen en lugar de que diferentes personas descarguen múltiples copias.
 
-In these cases, maintaining local copies of a range of data from third-party providers can be extremely beneficial, especially if that collection is hosted with a fast connection to local compute resources (virtual machines or high-performance computational facilities).
+En estos casos, mantener copias locales de una variedad de datos de proveedores externos puede ser extremadamente beneficioso, especialmente si esa colección se aloja con una conexión rápida a recursos informáticos locales (máquinas virtuales o instalaciones informáticas de alto rendimiento).
 
 
-Install from GitHub:
+Instala desde GitHub:
 
 ```{r ed_install_pkg, eval = FALSE}
 remotes::install_github("AustralianAntarcticDivision/blueant")
 ```
 
-And load the package before use.
+Y carga el paquete antes de usarlo.
 
 ```{r ed1, cache = FALSE}
 library(blueant)
 ```
-### Available data sets
 
-First, we can see the available data sets via the `sources` function.
+### Paquetes de datos disponibles
+
+Primero, podemos ver los conjuntos de datos disponibles a través de la función sources.
 
 ```{r ed2}
 srcs <- blueant::sources()
-## the names of the first few
+## nombres de las primeras filas
 head(srcs$name)
-## the full details of the first one
+## detalles de la primera fila
 srcs[1, ]
 ```
 
-### Usage
+### Uso
 
-Choose a directory into which to download the data. Usually this would be a persistent directory on your machine so that data sets downloaded in one session would remain available for use in later sessions, and not need re-downloading. A persistent directory could be something like `c:\data\` (on Windows), or you could use the `rappdirs` package (the `user_cache_dir` function) to suggest a suitable directory (cross-platform).
+Elige un directorio en el que descargar los datos. Normalmente, esto sería un directorio persistente en tu máquina para que los conjuntos de datos descargados en una sesión permanezcan disponibles para su uso en sesiones posteriores y no necesiten ser descargados nuevamente. Un directorio persistente podría ser algo como c:\data\ (en Windows), o podrías usar el paquete `rappdirs` (la función `user_cache_dir`) para sugerir un directorio adecuado (multiplataforma).
 
 ```{r ed0hidden, echo = FALSE, results = "asis", cache = FALSE}
 if (grepl("ben_ray", tempdir())) {
@@ -60,46 +61,47 @@ my_data_dir <-  "/data/cache"
 my_data_dir <-  tempdir()
 ```
 
-Select the data source that we want:
+Selecciona la fuente de datos que deseamos:
 
 ```{r ed4}
 data_source <- sources("Southern Ocean marine environmental data")
-```
 
-Note that it's a good idea to check the dataset size before downloading it, as some are quite large! (Though if you are running the download interactively, it will ask you before downloading a large data set).
-
-```{r ed5}
-data_source$collection_size ## size in GB
 ```
 
-And fetch the data:
+Tener en cuenta que es una buena idea verificar el tamaño del conjunto de datos antes de descargarlo, ¡ya que algunos son bastante grandes! (Aunque si estás ejecutando la descarga de manera interactiva, te preguntará antes de descargar un conjunto de datos grande).
+
+```{r ed5}
+data_source$collection_size ## tamaño en GB
+```
+
+y descargar los datos:
 ```{r ed6}
 result <- bb_get(data_source, local_file_root = my_data_dir, verbose = TRUE)
 ```
 
-Now we have a local copy of our data. The sync can be run daily so that the local collection is always up to date - it will only download new files, or files that have changed since the last download. For more information on `bowerbird`, see the [package vignette](https://ropensci.github.io/bowerbird/articles/bowerbird.html).
+Ahora tenemos una copia local de nuestros datos. La sincronización se puede ejecutar diariamente para que la colección local esté siempre actualizada; solo descargará archivos nuevos o archivos que hayan cambiado desde la última descarga. Para obtener más información sobre `bowerbird`, consulta el paquete [package vignette](https://ropensci.github.io/bowerbird/articles/bowerbird.html).
 
-The `result` object holds information about the data that we downloaded:
+El objeto `result` ontiene información sobre los datos que descargamos:
 
 ```{r ed7}
 result
 ```
 
-The `result$files` element tells us about the files:
+El elemento `result$files` nos proporciona información sobre los archivos:
 ```{r ed8}
 head(result$files[[1]])
 ```
 
-These particular files are netCDF, and so could be read using e.g. the `raster` or `ncdf4` packages. However, different data from different providers will be different in terms of grids, resolutions, projections, variable-naming conventions, and other facets, which tends to complicate these operations. In the next section we'll look at the `raadtools` package, which provides a set of tools for doing common operations on these types of data.
+Estos archivos en particular son netCDF, por lo que se pueden leer, por ejemplo, con los paquetes `raster` o `ncdf4`. Sin embargo, los datos diferentes de diferentes proveedores serán diferentes en términos de cuadrículas, resoluciones, proyecciones, convenciones de nomenclatura de variables y otros aspectos, lo que tiende a complicar estas operaciones. En la siguiente sección, veremos el paquete `raadtools`, que proporciona un conjunto de herramientas para realizar operaciones comunes en estos tipos de datos.
 
 
 ## RAADtools
 
-The [`raadtools`](https://github.com/AustralianAntarcticDivision/raadtools) package provides a consistent interface to a range of environmental and similar data, and tools for working with them. It is designed to work data with collections maintained by the `bowerbird`/`blueant` packages, and builds on R's existing ecosystem of packages for working with spatial, raster, and multidimensional data.
+El paquete [`raadtools`](https://github.com/AustralianAntarcticDivision/raadtools) proporciona una interfaz consistente para una variedad de datos ambientales y similares, y herramientas para trabajar con ellos. Está diseñado para trabajar con colecciones de datos mantenidas por los paquetes`bowerbird`/`blueant` y se basa en el ecosistema de paquetes de R existente para trabajar con datos espaciales, raster y multidimensionales.
 
-Here we'll use two different environmental data sets: sea ice and water depth. Water depth does not change with time but sea ice is provided at daily time resolution.
+Aquí utilizaremos dos conjuntos de datos ambientales diferentes: hielo marino y profundidad del agua. La profundidad del agua no cambia con el tiempo, pero el hielo marino se proporciona con una resolución temporal diaria.
 
-First download daily sea ice data (from 2013 only), and the ETOPO2 bathymetric data set. ETOPO2 is somewhat dated and low resolution compared to more recent data, but will do as a small dataset for demo purposes. This may take a few minutes, depending on your connection speed:
+Primero, descargamos datos diarios de hielo marino (solo desde 2013) y el conjunto de datos batimétricos ETOPO2. ETOPO2 está algo desactualizado y tiene una resolución baja en comparación con datos más recientes, pero servirá como un conjunto de datos pequeño para fines de demostración. Esto puede llevar algunos minutos, según la velocidad de tu conexión:
 
 ```{r raadt1, eval = FALSE}
 src <- bind_rows(
@@ -110,7 +112,7 @@ result <- bb_get(src, local_file_root = my_data_dir, clobber = 0, verbose = TRUE
 ```
 
 ```{r raadt2, echo = FALSE, message = FALSE}
-## code not shown in output: capture the output and trim it down a bit
+## El código no se muestra en la salida: capture la salida y recórtela un poco.
 src <- bind_rows(
     sources("NSIDC SMMR-SSM/I Nasateam sea ice concentration", hemisphere = "south", time_resolutions = "day", years = 2013),
     sources("ETOPO2 bathymetry"))
@@ -121,69 +123,69 @@ for (oo in op[1:5]) cat(oo, "\n")
 ```
 
 
-Now load the `raadtools` package and tell it where our data collection has been stored:
+Ahora carga el paquete  `raadtools` y dile dónde se ha almacenado nuestra colección de datos::
 
 ```{r raadt3, results = "hold", cache = FALSE}
 library(raadtools)
 set_data_roots(my_data_dir)
 ```
 
-Let's say that we have some points of interest in the Southern Ocean &mdash; perhaps a ship track, or some stations where we took marine samples, or as we'll use here, the [track of an elephant seal](http://www.meop.net/) as it moves from the Kerguelen Islands to Antarctica and back again (Data from IMOS 2018[^1], provided as part of the `SOmap` package).
+Digamos que tenemos algunos puntos de interés en el Océano Austral, como una ruta de barco o algunas estaciones donde tomamos muestras marinas, o como usaremos aquí, el rastro de una foca elefante[track of an elephant seal](http://www.meop.net/) mientras se mueve desde las Islas Kerguelen hacia la Antártida y viceversa (Datos de IMOS 2018[^1], proporcionados como parte del paquete `SOmap`).
 
 ```{r get_track_data, message = FALSE, warning = FALSE, cache = FALSE}
 data("SOmap_data", package = "SOmap")
 ele <- SOmap_data$mirounga_leonina %>% dplyr::filter(id == "ct96-05-13")
 ```
 
-Define our spatial region of interest and extract the bathymetry data from this region, using the ETOPO2 files we just downloaded:
+Define nuestra región espacial de interés y extrae los datos batimétricos de esta región, utilizando los archivos ETOPO2 que acabamos de descargar:
 
 ```{r raadt4}
 roi <- round(c(range(ele$lon), range(ele$lat)) + c(-2, 2, -2, 2))
 bx <- readtopo("etopo2", xylim = roi)
 ```
 
-And now we can make a simple plot of our our track superimposed on the bathymetry:
+Y ahora podemos hacer un gráfico simple de nuestra ruta superpuesta en la batimetría:
 
 ```{r raadt5}
 plot(bx)
 lines(ele$lon, ele$lat)
 ```
 
-The real power of `raadtools` comes from its extraction functions. We can extract the depth values along our track using the `raadtools::extract()` function. We pass it the data-reader function to use (`readtopo`), the data to apply it to (`ele[, c("lon", "lat")]`), and any other options to pass to the reader function (in this case, specifying the topographic data source `topo = "etopo2"`):
+El verdadero poder de `raadtools` proviene de sus funciones de extracción. Podemos extraer los valores de profundidad a lo largo de nuestra ruta utilizando la función `raadtools::extract()`. Le pasamos la función lectora de datos a utilizar (readtopo), los datos a los que aplicarla `(ele[, c("lon", "lat")])` y cualquier otra opción para pasar a la función lectora (en este caso, especificando la fuente de datos topográficos `topo = "etopo2"`):
 
 ```{r raadt6}
 ele$depth <- raadtools::extract(readtopo, ele[, c("lon", "lat")], topo = "etopo2")
 ```
 
-Plot the histogram of depth values, showing that most of the track points are located in relatively shallow waters:
+Grafica el histograma de los valores de profundidad, mostrando que la mayoría de los puntos de la ruta se encuentran en aguas relativamente poco profundas:
 
 ```{r raadt7}
 with(ele, hist(depth, breaks = 20))
 ```
 
-This type of extraction will also work with time-varying data &mdash; for example, we can extract the sea-ice conditions along our track, based on each track point's location and time:
+Este tipo de extracción también funcionará con datos que varían con el tiempo, por ejemplo, podemos extraer las condiciones de hielo marino a lo largo de nuestra ruta, según la ubicación y el tiempo de cada punto de la ruta:
 
 ```{r raadt8, results = "none", message = FALSE, warning = FALSE}
 ele$ice <- raadtools::extract(readice, ele[, c("lon", "lat", "date")])
 ```
 ```{r raadt9}
-## points outside the ice grid will have missing ice values, so fill them with zeros
+## A los puntos fuera de la cuadrícula de hielo les faltarán valores de hielo, así que rellénelos con ceros.
 ele$ice[is.na(ele$ice)] <- 0
 with(ele, plot(date, ice, type = "l"))
 ```
 
 ## Other useful packages
 
-- the [PolarWatch](https://polarwatch.noaa.gov/) project aims to enable data discovery and broader use of high-latitude ocean remote sensing data sets. The dedicated ERDDAP server (https://polarwatch.noaa.gov/erddap) is accessible to R users with [rerddap](https://cran.r-project.org/package=rerddap).
+- El proyecto [PolarWatch](https://polarwatch.noaa.gov/) tiene como objetivo facilitar el descubrimiento de datos y el uso más amplio de conjuntos de datos de teledetección del océano de altas latitudes. El servidor ERDDAP dedicado (https://polarwatch.noaa.gov/erddap) es accesible para usuarios de R con [rerddap](https://cran.r-project.org/package=rerddap).
 
-- [rsoi](https://cran.r-project.org/package=rsoi) downloads the most up to date Southern Oscillation Index, Oceanic Nino Index, and North Pacific Gyre Oscillation data.
+- [rsoi](https://cran.r-project.org/package=rsoi) descarga los datos más actualizados del Índice de Oscilación del Sur, el Índice de Niño Oceánico y la Oscilación del Giro del Pacífico Norte.
 
-- satellite reflectance data are a common basis for estimating chlorophyll-*a* and other phytoplankton parameters at ocean-basin scales. Global products are widely available; however, Southern-Ocean specific algorithms are likely to provide better estimates in these regions. [croc](https://github.com/sosoc/croc) implements the Johnson et al. (2013) Southern Ocean algorithm.
+- Los datos de reflectancia satelital son una base común para estimar clorofila-a y otros parámetros de fitoplancton a escala de cuencas oceánicas. Los productos globales están ampliamente disponibles; sin embargo, es probable que los algoritmos específicos del Océano Austral proporcionen mejores estimaciones en estas regiones. croc implementa el algoritmo del Océano Austral de Johnson et al. (2013).
 
-- more broadly, [oce](https://cran.r-project.org/package=oce) provides a wide range of tools for reading, processing, and displaying oceanographic data, including measurements from Argo floats and CTD casts, sectional data, sea-level time series, and coastline and topographic data.
+- Mas ampliamente, [oce](https://cran.r-project.org/package=oce) proporciona una amplia gama de herramientas para leer, procesar y mostrar datos oceanográficos, incluyendo mediciones de boyas Argo y CTD, datos seccionales, series temporales del nivel del mar y datos costeros y topográficos.
 
-- [fda.oce](https://github.com/EPauthenet/fda.oce) provides functional data analysis of oceanographic profiles for front detection, water mass identification, unsupervised or supervised classification, model comparison, data calibration, and more.
+- [fda.oce](https://github.com/EPauthenet/fda.oce) proporciona análisis de datos funcionales de perfiles oceanográficos para la detección de frentes, identificación de masas de agua, clasificación no supervisada o supervisada, comparación de modelos, calibración de datos y más.
 
-- [distancetocoast](https://github.com/mdsumner/distancetocoast) provides "distance to coastline" data for longitude and latitude coordinates.
+- [distancetocoast](https://github.com/mdsumner/distancetocoast) proporciona datos de "distancia a la costa" para coordenadas de longitud y latitud.
 
-- [geodist](https://github.com/hypertidy/geodist) for very fast calculation of geodesic distances.
+- [geodist](https://github.com/hypertidy/geodist) para el cálculo muy rápido de distancias geodésicas.
