@@ -246,6 +246,11 @@ map(X,mean)
 ### Esto muestra cómo puedes usar map para ejecutar funciones en listas y obtener 
 ### resultados de modelos interesantes para matrices de datos grandes. 
 ### Muy útil para resumir datos rápidamente
+
+library(dplyr)
+library(purrr)
+library(broom)
+
 nested.mass.height %>%
   mutate(
     model = map(
