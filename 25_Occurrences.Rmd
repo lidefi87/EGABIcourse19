@@ -1,23 +1,24 @@
-## Metadata for occurrence data
+## Metadatos para datos de ocurrencia
 
-In general, the more information you provide the more knowledge can be gained from your occurrence data.
-
-The first user of this data is future **yourself**. Taking the time to be as detailed in providing and describing your data is time you will gain in the future when you want to reanalyse your data or integrate it in a broader study.
-
-The best way is to save the data in some tabular format, something like a csv-file or tab-delimted txt. It is not recomended to use Excel, because it has the habit of giving you unwanted help, resulting in messed up data...
-
-Here we start with a description of the minimal metadata that you should provide in order to analyse your data, including developing a species distribution modelling.
-
-Each row in your dataset should corresponding to an observation. The names of the columns in the dataset should correspond to DwC terms.
-
-You can find a full description of the Darwin Core terms in the [Darwin Core quick reference guide](https://dwc.tdwg.org/terms/). But below we provide an overview of the most important terms. If you have information that doesn't ft the terms below just check the [Darwin Core quick reference guide](https://dwc.tdwg.org/terms/) or create an issue on the EG-ABI course github or the [TDWG Github](https://github.com/tdwg/dwc-qa).
-
-Your metadata should allow you or anybody else to determine What, Where, When, Who and How.
-
-The Darwin Core Standards has 8 absolutely required terms. **basisOfRecord, occurrenceID, scientificName, scientificNameID, occurrenceStatus, decimalLongitude, decimalLatitude, eventDate**
+En general, cuanto más información proporcione, más conocimiento se puede obtener de sus datos de ocurrencia.
 
 
-Besides those we recommend a number of other ones as well. In general it is better to provide as many as you can.
+El primer usuario de estos datos en su futuro es **usted mismo**. Tomarse el tiempo para ser detallado al proporcionar y describir sus datos es tiempo que ganará en el futuro cuando desee volver a analizar sus datos o integrarlos en un estudio más amplio.
+
+La mejor manera de guardar los datos es en algún formato tabular, algo así como un archivo CSV o un archivo de texto delimitado por tabuladores (tab-delimted txt). No se recomienda utilizar Excel, porque tiende a ofrecer ayuda no deseada que puede desordenar los datos...
+
+Aquí comenzamos con una descripción de los metadatos mínimos que debe proporcionar para analizar sus datos, incluyendo el desarrollo de un modelo de distribución de especies.
+
+Cada fila en su conjunto de datos debe corresponder a una observación. Los nombres de las columnas en el conjunto de datos deben corresponder a los términos DwC.
+
+Puede encontrar una descripción completa de los términos Darwin Core en la Guía de referencia rápida de Darwin Core [Darwin Core quick reference guide](https://dwc.tdwg.org/terms/). A continuación, proporcionamos una descripción general de los términos más importantes. Si tiene información que no encaja en los términos a continuación, simplemente consulte la Guía de referencia rápida de Darwin Core [Darwin Core quick reference guide](https://dwc.tdwg.org/terms/) o cree un problema en el curso EG-ABI Github o en el TDWG Github. [TDWG Github](https://github.com/tdwg/dwc-qa).
+
+Sus metadatos deben permitirle a usted o a cualquier otra persona determinar el Qué, Dónde, Cuándo, Quién y Cómo.
+
+El estándar Darwin Core tiene 8 términos absolutamente requeridos:  **basisOfRecord, occurrenceID, scientificName, scientificNameID, occurrenceStatus, decimalLongitude, decimalLatitude, eventDate**
+
+
+Además de estos, recomendamos varios otros términos. En general, es mejor proporcionar tantos como pueda.
 
 
 **basisOfRecord**
@@ -63,59 +64,58 @@ Besides those we recommend a number of other ones as well. In general it is bett
 - *samplingProtocol*
 
 
-### What
+### Qué
 
 #### basisOfRecord
 
-Additional term
+Término adicional
 
 *[type](https://dwc.tdwg.org/terms/#dwc:type)*, 
 *[associatedReferences](https://dwc.tdwg.org/terms/#dwc:associatedReferences)*
 
-[basisOfRecord](https://dwc.tdwg.org/terms/#dwc:basisOfRecord) describes the nature of record. It has a to follow a specific vocabulary. Some of these might overlap sometimes. That is why it is useful to use *[type](https://dwc.tdwg.org/terms/#dwc:type)* as well.
+[basisOfRecord](https://dwc.tdwg.org/terms/#dwc:basisOfRecord)  describe la naturaleza del registro. Debe seguir un vocabulario específico. Algunos de estos términos pueden superponerse a veces. Por eso es útil utilizar*[type](https://dwc.tdwg.org/terms/#dwc:type)* también.
 
 
-- **PreservedSpecimen** A specimen that has been preserved. This can be a museum specimen, a plant on an herbarium sheet, fish in a bag in a freezer.
-- **FossilSpecimen** A resource describing a fossilized specimen.
-- **LivingSpecimen** A resource describing a living specimen. For instance an animal in a zoo.
-- **MaterialSample** A resource describing a material sample. For instance a material sample from an organism in the wild and sample put into a collection (blood sample, biopsy).
-- **HumanObservation** A resource describing an observation made by one or more people. For instance an organism observed in the wild and written in field notes. Samples that were collected during an expedition but thrown back into the sea.
-- **MachineObservation** An output of a machine observation process. Any kind of automated sensor like camera traps.
-- **Occurrence** A resource describing an instance of the Occurrence class. NOTE: this value is ambiguous and hence should only be used when the resource type is unknown.
+- **PreservedSpecimen** Un espécimen que ha sido preservado. Puede ser un espécimen de museo, una planta en una hoja de herbario, un pez en una bolsa en un congelador.
+- **FossilSpecimen** Un recurso que describe un espécimen fosilizado.
+- **LivingSpecimen** Un recurso que describe un espécimen vivo. Por ejemplo, un animal en un zoológico.
+- **MaterialSample** Un recurso que describe una muestra de material. Por ejemplo, una muestra de material de un organismo en la naturaleza y una muestra colocada en una colección (muestra de sangre, biopsia).
+- **HumanObservation** Un recurso que describe una observación realizada por una o más personas. Por ejemplo, un organismo observado en la naturaleza y registrado en notas de campo. Muestras que se recopilaron durante una expedición pero se devolvieron al mar.
+- **MachineObservation** Un resultado de un proceso de observación automatizado. Cualquier tipo de sensor automatizado, como trampas con cámaras.
+- **Occurrence** Un recurso que describe una instancia de la clase Occurrence. NOTA: este valor es ambiguo y, por lo tanto, solo debe usarse cuando se desconoce el tipo de recurso.
 
 
 *[type](https://dwc.tdwg.org/terms/#dwc:type)* 
 
-The nature or genre of the resource. Must be populated with a value from the [DCMI type vocabulary](http://dublincore.org/documents/2010/10/11/dcmi-type-vocabulary/).
+La naturaleza o género del recurso. Debe completarse con un valor del [DCMI type vocabulary](http://dublincore.org/documents/2010/10/11/dcmi-type-vocabulary/).
 
 Options include: Image, StillImage, MovingImage, Interactive Resource, PhysicalObject, Sound, Text, PhysicalObject, Collection, Dataset, Event, Service, Software.
 
 *[associatedReferences](https://dwc.tdwg.org/terms/#dwc:associatedReferences)* 
-A list (concatenated and separated) of identifiers (publication, bibliographic reference, global unique identifier, URI) of literature associated with the occurrence.
+Una lista (concatenada y separada) de identificadores (publicación, referencia bibliográfica, identificador único global, URI) de literatura asociada con la ocurrencia.
 
 
-Example: If you want to add a record from literature you should use *basisOfRecord:*HumanObservation with *type:*Text in combination with *associatedReferences:*Bibliographic reference
+Ejemplo: Si desea agregar un registro de literatura, debe utilizar *basisOfRecord:*HumanObservation con *type:*Text en combinación con *associatedReferences:*Referencia bibliográfica.
 
 
 
 #### [occurrenceID](https://dwc.tdwg.org/terms/#dwc:occurrenceID)
 
-Additional Terms
+Términos adicionales
 
 *[institutionCode](https://dwc.tdwg.org/terms/#dwc:institutionCode)*, *[collectionCode](https://dwc.tdwg.org/terms/#dwc:collectionCode)*, *[catalogNumber](https://dwc.tdwg.org/terms/#dwc:catalogNumber)*
 
-**[occurrenceID](https://dwc.tdwg.org/terms/#dwc:occurrenceID)** is an identifier for the occurrence record and should be globally unique and persistent. 
-In the absence of a persistent global unique identifier, construct one from a combination of identifiers in the record that will most closely make the occurrenceID globally unique. Something like the combination of institutionCode, collectionCode, and catalogNumber is a generally used format.
+**[occurrenceID](https://dwc.tdwg.org/terms/#dwc:occurrenceID)** es un identificador para el registro de la ocurrencia y debe ser globalmente único y persistente. En ausencia de un identificador global único y persistente, construya uno a partir de una combinación de identificadores en el registro que haga que el occurrenceID sea globalmente único. Algo como la combinación de institutionCode, collectionCode y catalogNumber es un formato generalmente utilizado.
 
-There are a number of other terms that you could use as well like datasetName and datasetID.
+Hay varios otros términos que también podría usar, como datasetName y datasetID.
 
 **[institutionCode](https://dwc.tdwg.org/terms/#dwc:institutionCode)**
-The name (or acronym) in use by the institution having custody of the object(s) or information referred to in the record.
+El nombre (o acrónimo) utilizado por la institución que tiene la custodia del objeto o la información a la que se hace referencia en el registro.
 
 **[institutionID](https://dwc.tdwg.org/terms/#dwc:institutionID)**
-An identifier for the institution having custody of the object(s) or information referred to in the record.
+El nombre (o acrónimo) utilizado por la institución que tiene la custodia del objeto o la información a la que se hace referencia en el registro.
 
-For physical specimens, the recommended best practice is to use a code and identifier from a collections registry such as the Global Registry of Biodiversity Repositories [(http://grbio.org/)](http://grbio.org/).
+Para especímenes físicos, la mejor práctica recomendada es utilizar un código e identificador de un registro de colecciones, como el Registro Global de Repositorios de Biodiversidad  [(http://grbio.org/)](http://grbio.org/).
 
 ```{r echo = FALSE}
 showtbl(tribble(~"Institution code", ~"Institution name",
@@ -126,20 +126,19 @@ showtbl(tribble(~"Institution code", ~"Institution name",
 ```
 
 **[collectionCode](https://dwc.tdwg.org/terms/#dwc:collectionCode)**
-The name, acronym, coden, or initialism identifying the collection or data set from which the record was derived.
+El nombre o código utilizado por la institución para identificar la colección o el conjunto de datos del que procede el registro.
 
 **[datasetName](https://dwc.tdwg.org/terms/#dwc:datasetName)**
-The name identifying the data set from which the record was derived.
+El nombre que identifica el conjunto de datos del que se derivó el registro.
 
 **[datasetID](https://dwc.tdwg.org/terms/#dwc:datasetID)**
-An identifier for the set of data. May be a globally unique identifier or an identifier specific to a collection or institution.
-
+Un identificador para el conjunto de datos. Puede ser un identificador global único o un identificador específico de una colección o institución.
 
 **[catalogNumber](https://dwc.tdwg.org/terms/#dwc:catalogNumber)**
-An identifier (preferably unique) for the record within the data set or collection.
+Un identificador (código, número, clave, símbolo o número de catálogo) asignado al objeto o recurso en una colección o conjunto de datos.
 
 **[recordNumber](https://dwc.tdwg.org/terms/#dwc:recordNumber)**
-An identifier given to the occurrence at the time it was recorded. Often serves as a link between field notes and an occurrence record, such as a specimen collector's number.
+Un identificador dado a la ocurrencia en el momento en que se registró. A menudo sirve como un vínculo entre las notas de campo y un registro de ocurrencia, como el número de colector del espécimen.
 
 ```{r echo = FALSE}
 showtbl(tribble(~occurrenceID, ~institutionCode, ~collectionCode, ~catalogNumber,
@@ -147,46 +146,43 @@ showtbl(tribble(~occurrenceID, ~institutionCode, ~collectionCode, ~catalogNumber
 "PS89_FF_000023", "PS89", "FF", "000023")) %>% scroll_box(width = "100%")
 ```
 
-It is a good practice to keep your catalogue/record numbers of equal length throughout your dataset.
+Es una buena práctica mantener la longitud de sus números de catálogo/registro igual en todo su conjunto de datos. 
 
-To keep it persistent just don't change it. If you reference another source, keep the number.
+Para mantenerlo persistente, simplemente no lo cambie. Si hace referencia a otra fuente, conserve el número. 
 
-For example if you have samples that were collected during a marine expedition, usually all sampling events get ther own ID. Don't invent a new ID for the event. This will help you to find any information related to that event at a later stage.
-
-
+Por ejemplo, si tiene muestras que se recolectaron durante una expedición marina, por lo general, todos los eventos de muestreo obtienen su propio ID. No invente un nuevo ID para el evento. Esto le ayudará a encontrar cualquier información relacionada con ese evento en una etapa posterior.
 
 
 #### [scientificName](https://dwc.tdwg.org/terms/#taxon) and [scientificNameID](https://dwc.tdwg.org/terms/#taxon)
 
-Additional Terms
+Términos adicionales
 
 *[Kingdom](https://dwc.tdwg.org/terms/#dwc:Kingdom)*, *[taxonrank](https://dwc.tdwg.org/terms/#dwc:taxonrank)*, *[scientificNameAuthorship](https://dwc.tdwg.org/terms/#dwc:scientificNameAuthorship)*, *[IdentificationQualifier](https://dwc.tdwg.org/terms/#dwc:IdentificationQualifier)*
 
-Additional Additional Terms (See Who)
+Términos adicionales adicionales (ver Quién)
 
 *[identifiedBy](https://dwc.tdwg.org/terms/#dwc:identifiedBy)*, *[dateIdentified](https://dwc.tdwg.org/terms/#dwc:dateIdentified)*, *[typeStatus](https://dwc.tdwg.org/terms/#dwc:typeStatus)*
 
-[scientificName](https://dwc.tdwg.org/terms/#taxon) In the spirit of keeping things persistent this should always contain the originally recorded scientific name, even if the name is currently a synonym (if the sample has been reidentified this is of course a different case). The scientific name should always be to the lowest possible taxonomic rank of which you are certain. In case of uncertain identifications, and the scientific name contains qualifiers such as cf., ? or aff., then this name should go in *[identificationQualifier](https://dwc.tdwg.org/terms/#identificationQualifier)*.
+[scientificName](https://dwc.tdwg.org/terms/#taxon) en el espíritu de mantener las cosas persistentes, esto siempre debe contener el nombre científico originalmente registrado, incluso si el nombre es actualmente un sinónimo (si la muestra ha sido reidentificada, este es, por supuesto, un caso diferente). El nombre científico siempre debe ser el rango taxonómico más bajo del cual está seguro. En caso de identificaciones inciertas, y si el nombre científico contiene calificadores como cf., ? o aff., entonces este nombre debe ir en *[identificationQualifier](https://dwc.tdwg.org/terms/#identificationQualifier)*.
 
-*[scientificNameAuthorship](https://dwc.tdwg.org/terms/#dwc:scientificNameAuthorship)* OBIS recommends to not include authorship in scientificName, and only use scientificNameAuthorship for that purpose.
+*[scientificNameAuthorship](https://dwc.tdwg.org/terms/#dwc:scientificNameAuthorship)* OBIS recomienda no incluir la autoría en scientificName, y solo utilizar scientificNameAuthorship con ese propósito.
 
 [scientificNameID](https://dwc.tdwg.org/terms/#scientificNameID)
-Following the OBIS guidelines a WoRMS LSID should be added in scientificNameID. LSIDs are persistent, location-independent, resource identifiers for uniquely naming biologically significant resources. More information on LSIDs can be found at http://www.lsid.info.
+Siguiendo las pautas de OBIS, se debe agregar un LSID de WoRMS en scientificNameID. Los LSID son identificadores persistentes, independientes de la ubicación, para nombrar de manera única recursos biológicamente significativos. Puede encontrar más información sobre LSID en http://www.lsid.info.
 
-*[taxonrank](https://dwc.tdwg.org/terms/#dwc:taxonrank)*, Determines the level of identification. This can be for [kingdom](https://dwc.tdwg.org/terms/#dwc:kingdom), [phylum](https://dwc.tdwg.org/terms/#dwc:phylum), [class](https://dwc.tdwg.org/terms/#dwc:class), [order](https://dwc.tdwg.org/terms/#dwc:order), [family](https://dwc.tdwg.org/terms/#dwc:family), [genus](https://dwc.tdwg.org/terms/#dwc:genus), [subgenus](https://dwc.tdwg.org/terms/#dwc:subgenus), [specificEpithet](https://dwc.tdwg.org/terms/#dwc:specificEpithet), [infraspecificEpithet](https://dwc.tdwg.org/terms/#dwc:infraspecificEpithet). It is good practice to always provide at least the kingdom. In case you can provide a WoRMS LSID the others are not really required. Otherwise it would be good to add them if possible.
+*[taxonrank](https://dwc.tdwg.org/terms/#dwc:taxonrank)*, Determina el nivel de identificación. Esto puede ser para [kingdom](https://dwc.tdwg.org/terms/#dwc:kingdom), [phylum](https://dwc.tdwg.org/terms/#dwc:phylum), [class](https://dwc.tdwg.org/terms/#dwc:class), [order](https://dwc.tdwg.org/terms/#dwc:order), [family](https://dwc.tdwg.org/terms/#dwc:family), [genus](https://dwc.tdwg.org/terms/#dwc:genus), [subgenus](https://dwc.tdwg.org/terms/#dwc:subgenus), [specificEpithet](https://dwc.tdwg.org/terms/#dwc:specificEpithet), [infraspecificEpithet](https://dwc.tdwg.org/terms/#dwc:infraspecificEpithet). De lo contrario, sería bueno agregarlos si es posible.
 
 
 [identificationQualifier](https://dwc.tdwg.org/terms/#identificationQualifier)
-A brief phrase or a standard term ("cf.", "aff.") to express the determiner's doubts about the identification.
+Una breve frase o un término estándar ("cf.", "aff.") para expresar las dudas del determinante sobre la identificación.
 
-The use of **confer** meaning compare and abbeviated to *cf.* in a scientific name means that the person using the name is saying the animal should be compared to a given species, as it might not be exactly the same species. It's a way of applying a provisional name to a species and is most frequently used when new fish are discovered that look slightly different to the form normally encountered. It indicates that the fish might be a variant of the same species, but could also turn out to be something completely different.
+El uso de **confer**, que significa "comparar" y se abrevia como *cf.* en un nombre científico, significa que la persona que usa el nombre está diciendo que el animal debe compararse con una especie dada, ya que podría no ser exactamente la misma especie. Es una forma de aplicar un nombre provisional a una especie y se utiliza con mayor frecuencia cuando se descubren peces nuevos que se ven ligeramente diferentes a la forma normalmente encontrada. Indica que el pez podría ser una variante de la misma especie, pero también podría resultar ser algo completamente diferente.
 
-**Species affinis** (commonly abbreviated to: sp. aff., aff., or affin.) indicates that available material or evidence suggests that the proposed species is related to, has an affinity to, but is not identical to, the species with the binomial name that follows. 
+**Species affinis** (comúnmente abreviado como: sp. aff., aff. o affin.) indica que el material o evidencia disponible sugiere que la especie propuesta está relacionada con, tiene afinidad con, pero no es idéntica a la especie con el nombre binomial que sigue.
 
-**Species** abbreviated as sp. commonly occurs when authors are confident that some individuals belong to a particular genus but are not sure to which exact species they belong.
+**Species** abreviado como sp. ocurre comúnmente cuando los autores están seguros de que algunos individuos pertenecen a un género particular, pero no están seguros de a qué especie exacta pertenecen. 
 
-Authors may also use "spp." (**Species pluralis**) as a short way of saying that something applies to many species within a genus, but not to all.
-
+Los autores también pueden usar "spp." (**Species pluralis**) como una forma abreviada de decir que algo se aplica a muchas especies dentro de un género, pero no a todas.
 
 ```{r echo = FALSE}
 showtbl(tribble(~"", ~scientificName, ~scientificNameAuthorship, ~IdentificationQualifier, ~taxonrank,
@@ -196,24 +192,24 @@ showtbl(tribble(~"", ~scientificName, ~scientificNameAuthorship, ~Identification
 4, "[Electrona](http://www.marinespecies.org/aphia.php?p=taxdetails&id=125821)", "Goode & Bean, 1896", "spp.", "genus"))
 ```
 
-What do these examples mean?
+¿Qué significan estos ejemplos?
 
-- Case 1:  "I collected something that looks like *Electrona risso* but I'm not sure."
-- Case 2:  "I'm 100% sure this is *Electrona antarctica*)
-- Case 3: "I'm sure about the genus, but it could be any one of multiple species"
-- Case 4: "I have this bag with fish; I'm sure about the genus but it could be a variety of species within the genus"
+Caso 1: "Recolecté algo que parece ser *Electrona risso* pero no estoy seguro."
+Caso 2: "Estoy 100% seguro de que esto es *Electrona antarctica*."
+Caso 3: "Estoy seguro del género, pero podría ser cualquiera de varias especies."
+Caso 4: "Tengo esta bolsa con peces; estoy seguro del género, pero podría ser una variedad de especies dentro del género."
 
 #### [occurrenceStatus](https://dwc.tdwg.org/terms/#dwc:occurrenceStatus)
 
-Additional Terms
+Términos adicionales
 
 *[organismQuantity](https://dwc.tdwg.org/terms/#dwc:organismQuantity)*, *[organismQuantityType](https://dwc.tdwg.org/terms/#dwc:organismQuantityType)*, *[sex](https://dwc.tdwg.org/terms/#dwc:sex)*, *[lifeStage](https://dwc.tdwg.org/terms/#dwc:lifeStage)*, *[behavior](https://dwc.tdwg.org/terms/#dwc:behavior)*, *[occurrenceRemarks](https://dwc.tdwg.org/terms/#dwc:occurrenceRemarks)*
 
 
-*occurrenceStatus* is a statement about the presence or absence of a taxon at a location. It is an important term, because it allows us to distinguish between presence and absence records. It is an OBIS required term and should be filled in with either "present" or "absent".
+*occurrenceStatus* es una declaración sobre la presencia o ausencia de un taxón en una ubicación. Es un término importante, ya que nos permite distinguir entre registros de presencia y ausencia. Es un término requerido por OBIS y debe completarse con "presente" o "ausente".
 
 *[organismQuantity](https://dwc.tdwg.org/terms/#dwc:organismQuantity)*, *[organismQuantityType](https://dwc.tdwg.org/terms/#dwc:organismQuantityType)*
-These two always go together. *organismQuantity* is a number for the quantity of animals and *organismQuantityType* defines the type of quantification system used for the quantity of organisms.
+Estos dos términos siempre van juntos. *organismQuantity* es un número que representa la cantidad de animales y *organismQuantityType* define el tipo de sistema de cuantificación utilizado para la cantidad de organismos.
 
 ```{r echo = FALSE}
 showtbl(tribble(~organismQuantity, ~organismQuantityType,
@@ -222,47 +218,47 @@ showtbl(tribble(~organismQuantity, ~organismQuantityType,
                  "r", "BraunBlanquetScale"))
 ```
 
-There are a few other terms as well that we want to mention. The old term that was used was *individualCount* but that wasn't really versatile. Still in some cases it can be useful to mention it.
+Hay algunos otros términos que queremos mencionar. El término antiguo que se solía usar era *individualCount*, pero no era realmente versátil. Sin embargo, en algunos casos, puede ser útil mencionarlo.
 
 Please take note that OBIS recommends all quantitative measurements and sampling facts to be treated in the ExtendedMeasurementOrFact extension and not in the Darwin Core files. OBIS recomends using ExtendedMeasurementOrFact in combination with Darwin Core Event Core, which is a little more advanced.
 
 *sex[decimalLatitude](https://dwc.tdwg.org/terms/#dwc:decimalLatitude)*
-The sex of the biological individual(s) represented in the occurrence. For the OBIS-recommended vocabulary for sex see [BODC vocab : S10](http://vocab.nerc.ac.uk/collection/S10/current/)
+El sexo del individuo o individuos biológicos representados en la ocurrencia. Para el vocabulario recomendado por OBIS para el sexo, consulte [BODC vocab : S10](http://vocab.nerc.ac.uk/collection/S10/current/)
 
 *lifeStage[decimalLatitude](https://dwc.tdwg.org/terms/#dwc:decimalLatitude)*
-The age class or life stage of the biological individual(s) at the time the occurrence was recorded. The OBIS recommended vocabulary for lifestage is [BODC vocab: S11](http://vocab.nerc.ac.uk/collection/S10/current/)
+La clase de edad o etapa de vida del individuo o individuos biológicos en el momento en que se registró la ocurrencia. El vocabulario recomendado por OBIS para la etapa de vida es [BODC vocab: S11](http://vocab.nerc.ac.uk/collection/S10/current/)
 
 *behavior[decimalLatitude](https://dwc.tdwg.org/terms/#dwc:decimalLatitude)*
-The behavior shown by the subject at the time the occurrence was recorded (no OBIS recomended vocab available).
+El comportamiento mostrado por el sujeto en el momento en que se registró la ocurrencia (no hay vocabulario recomendado por OBIS disponible).
 
-*occurrenceRemarks[decimalLatitude](https://dwc.tdwg.org/terms/#dwc:decimalLatitude)* can hold any comments or notes about the occurrence.
+*occurrenceRemarks[decimalLatitude](https://dwc.tdwg.org/terms/#dwc:decimalLatitude)* cpuede contener cualquier comentario u observación sobre la ocurrencia.
 
 
-### Where
+### Dónde
 
 #### [decimalLatitude](https://dwc.tdwg.org/terms/#dwc:decimalLatitude) and[decimalLongitude](https://dwc.tdwg.org/terms/#dwc:decimalLongitude)
 
-Additional Terms
+Términos adicionales
+
 
 *[geodeticDatum](https://dwc.tdwg.org/terms/#dwc:geodeticDatum)*, *[coordinateUncertaintyInMeters](https://dwc.tdwg.org/terms/#dwc:coordinateUncertaintyInMeters)*, *[locality](https://dwc.tdwg.org/terms/#dwc:locality)*, *[locationID](https://dwc.tdwg.org/terms/#dwc:locationID)*, *[footprintWKT](https://dwc.tdwg.org/terms/#dwc:footprintWKT)*
 
-To determine the location of a point on a globe you need at least the *decimalLatitude* and *decimalLongitude* and and a definition of the spatial reference system that was used. The spatial reference system defines the model of the earths shape that was used.
+Para determinar la ubicación de un punto en el globo, necesita al menos la *decimalLatitude* y la *decimalLongitude* y una definición del sistema de referencia espacial que se utilizó. El sistema de referencia espacial define el modelo de la forma de la Tierra que se utilizó.
 
-The system currently used by GPS is WGS84 (also known as WGS 1984, EPSG:4326). Quite often the geodeticDatum is not provided but it is actually essential.
+El sistema utilizado actualmente por el GPS es WGS84 (también conocido como WGS 1984, EPSG:4326). A menudo, el geodeticDatum no se proporciona, pero en realidad es esencial.
 
-*decimalLatitude* defines the position (in degrees) relative to the equator and ranges from 90 (North Pole) to -90 (South Pole).
+*decimalLatitude* define la posición (en grados) con respecto al ecuador y varía de 90 (Polo Norte) a -90 (Polo Sur).
 
-*decimalLongitude* defines the position (in degrees) relative to the Greenwich Meridian and ranges from 180 to -180.
+*decimalLongitude* define la posición (en grados) con respecto al Meridiano de Greenwich y varía de 180 a -180.
 
-Mak sure not to switch those around. The standard notation has them as latitude followed by longitude. Some people naturally tend to write them as longitude followed by latitude, because this is conceptually similar to a cartesian (x-y) notation. However, especially for samples collected in the area of the Antarctic Peninsula, these switches can be hard to spot.
+Asegúrese de no intercambiarlos. La notación estándar los tiene como latitud seguida de longitud. Algunas personas tienden naturalmente a escribirlos como longitud seguida de latitud, porque esto es conceptualmente similar a una notación cartesiana (x-y). Sin embargo, especialmente para las muestras recolectadas en el área de la Península Antártica, estos intercambios pueden ser difíciles de detectar.
 
 *[coordinateUncertaintyInMeters](https://dwc.tdwg.org/terms/#dwc:coordinateUncertaintyInMeters)*
-The horizontal distance (in meters) from the given *decimalLatitude* and *decimalLongitude* describing the smallest circle containing the whole of the location. Leave the value empty if the uncertainty is unknown, cannot be estimated, or is not applicable (because there are no coordinates). Zero is not a valid value for this term.
-This one is actually closely linked to the number of decimals in your latitude and longitude values.
+La distancia horizontal (en metros) desde la *decimalLatitude* y la *decimalLongitude* dadas que describe el círculo más pequeño que contiene toda la ubicación. Deje el valor en blanco si la incertidumbre es desconocida, no se puede estimar o no es aplicable (porque no hay coordenadas). Cero no es un valor válido para este término. Esto está estrechamente relacionado con el número de decimales en sus valores de latitud y longitud.
 
-In cases where decimal latitude are calculated they are often expressed with too many digits. If you have more than 6 in biology it doesn't real make sense anymore or it doesn't represent how precise the measurement was in the field.
+En los casos en que se calculan las latitudes decimales, a menudo se expresan con demasiados dígitos. Si tiene más de 6 en biología, ya no tiene mucho sentido o no representa cuán precisa fue la medición en el campo.
 
-To explain it, see this XKCD commic or the table below.
+Para explicarlo, consulte esta viñeta de XKCD o la tabla a continuación.
 
 <img src="https://imgs.xkcd.com/comics/coordinate_precision.png" alt="coordinate precisionXKCD" title="coordinate precision XKCD" width="400" align="center"/>
 
@@ -280,11 +276,11 @@ showtbl(tribble(~"decimal places", ~"decimal degrees", ~DMS, ~"Object that can b
 8, "0.00000001", "0° 00' 0.000036\"", "specialized surveying (e.g. tectonic plate mapping)", "1.1132 mm", "434.96 µm"))
 ```
 
-### When
+### Cuando
 
 #### [eventDate](https://dwc.tdwg.org/terms/#dwc:eventDate)
 
-Additional Terms
+Términos adicionales
 
 *[year](https://dwc.tdwg.org/terms/#dwc:year)*,
 *[month](https://dwc.tdwg.org/terms/#dwc:month)*,
@@ -294,14 +290,14 @@ Additional Terms
 
 
 
-**[eventDate](https://dwc.tdwg.org/terms/#dwc:eventDate)**  The date and time when the occurrence/event was recorded. Can be the date-time or interval during which an event occurred. This term uses the ISO 8601 standard. OBIS recommends using the extended ISO 8601 format with hyphens.
+**[eventDate](https://dwc.tdwg.org/terms/#dwc:eventDate)**  TLa fecha y la hora en que se registró la ocurrencia/evento. Puede ser la fecha y hora o el intervalo durante el cual ocurrió un evento. Este término utiliza el estándar ISO 8601. OBIS recomienda utilizar el formato ISO 8601 extendido con guiones.
 
 <img src="https://imgs.xkcd.com/comics/iso_8601.png" alt="iso 8601 time XKCD" title="iso 8601 time XKCD" width="400" align="center"/>
 
-For time intervals ISO 8601 uses / as a separator. 
-Date and time are separated by T. 
-Times can have a time zone indicator at the end, if this is not the case then the time is assumed to be local time. 
-When a time is UTC, a Z is added. Some examples of ISO 8601 dates are:
+Para intervalos de tiempo, ISO 8601 utiliza / como separador.
+La fecha y la hora se separan con la letra T.
+Las horas pueden tener un indicador de zona horaria al final; si este no es el caso, se asume que la hora es la hora local.
+Cuando la hora es UTC, se agrega una Z. Algunos ejemplos de fechas en formato ISO 8601 son:
 
 1973-02-28T15:25:00
 2005-08-31T12:11+12
@@ -312,35 +308,35 @@ When a time is UTC, a Z is added. Some examples of ISO 8601 dates are:
 1993-01
 1993
 
-It is an option to split out the *eventDate* into its seperate components. This can be a good safeguard against software like Excel reformatting your dates and times.
+Es una opción separar la *eventDate* en sus componentes individuales. Esto puede ser una buena medida de precaución contra el software que reformatea sus fechas y horas, como Excel.
 
-*year*, 
-*month*,
-*Day*,
-*Time*,
-*Timezone*
+*year*, año
+*month*, mes
+*Day*, día
+*Time*, Hora
+*Timezone* zona horaria
 
-*verbatimEventDate* You can put the original date format here, not really needed but might be useful, in case where you are digitising old literature records. 
+*verbatimEventDate* Puede colocar el formato de fecha original aquí, que no es realmente necesario, pero puede ser útil en caso de que esté digitalizando registros de literatura antigua.
 
 
-### Who
+### Quién
 
 *[identifiedBy](https://dwc.tdwg.org/terms/#dwc:identifiedBy)*, *[dateIdentified](https://dwc.tdwg.org/terms/#dwc:dateIdentified)*
 
 
 *[identifiedBy](https://dwc.tdwg.org/terms/#dwc:identifiedBy)*
 
-A list (concatenated and separated) of names of people, groups, or organizations who assigned the Taxon to the subject. Recommended best practice is to separate the values in a list with space vertical bar space ( | )
+Una lista (concatenada y separada) de nombres de personas, grupos u organizaciones que asignaron el taxón al sujeto. La práctica recomendada es separar los valores en una lista con espacio, barra vertical, espacio ( | ).
 
 *[dateIdentified](https://dwc.tdwg.org/terms/#dwc:dateIdentified)*
 
-This one is very seldom filled out but it is actually an important one and it should be specific. It should be the person that did the actual identification not the suprvisor.
+Este campo rara vez se completa, pero en realidad es importante y debe ser específico. Debería ser la persona que realizó la identificación real, no el supervisor.
 
-In case of a reindentification it is often useful to be able to contact the person who did the initial identification.
+En caso de una reidentificación, a menudo es útil poder contactar a la persona que realizó la identificación inicial.
 
-### How
+### Cómo
 *[samplingProtocol](https://dwc.tdwg.org/terms/#dwc:samplingProtocol)*
 
 
-This is a tricky one it is quite relevent but this field often doesn't provide enough space to describe what you did. For describing a specific gear you can use [BODC vocab : L22](https://www.bodc.ac.uk/resources/vocabularies/vocabulary_search/L22/)
+Este es un tema complicado y es bastante relevante, pero este campo a menudo no proporciona suficiente espacio para describir lo que hizo. Para describir un equipo o protocolo específico, puede utilizar el [BODC vocab : L22](https://www.bodc.ac.uk/resources/vocabularies/vocabulary_search/L22/)
 
