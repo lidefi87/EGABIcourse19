@@ -1,121 +1,119 @@
-# Metadata - Darwin Core
+# Metadatos - Darwin Core
 
-The Darwin Core (DwC) is a body of standards maintained by [TDWG](https://www.tdwg.org)  (Biodiversity Information Standards, formerly known as The International Working Group on Taxonomic Databases).
-It includes a glossary of terms intended to facilitate the sharing of information about biological diversity by providing reference definitions, examples, and commentaries. The Darwin Core is primarily based on taxa, their occurrence in nature as documented by observations, specimens, and samples, and related information.
+El Darwin Core (DwC) es un conjunto de estándares mantenidos por [TDWG](https://www.tdwg.org) (Biodiversity Information Standards, anteriormente conocido como The International Working Group on Taxonomic Databases).
+Incluye un glosario de términos destinado a facilitar el intercambio de información sobre la diversidad biológica al proporcionar definiciones de referencia, ejemplos y comentarios. El Darwin Core se basa principalmente en taxones, su presencia en la naturaleza documentada mediante observaciones, especímenes y muestras, y la información relacionada.
 
-Darwin Core revolves around a standard file format, the Darwin Core Archive (DwC-A). This compact package (a ZIP file) contains interconnected text files and enables data publishers to share their data using a common terminology. DwC is used both by [GBIF](www.gbif.org) and [OBIS](www.obis.org) for publishing data.
- 
-This standardization not only simplifies the process of publishing biodiversity datasets, it also makes it easy for users to discover, search, evaluate and compare datasets as they seek answers to today’s data-intensive research and policy questions.
+El Darwin Core gira en torno a un formato de archivo estándar, el Darwin Core Archive (DwC-A). Este paquete compacto (un archivo ZIP) contiene archivos de texto interconectados y permite a los editores de datos compartir sus datos utilizando una terminología común. DwC es utilizado tanto por GBIF [GBIF](www.gbif.org) como por OBIS [OBIS](www.obis.org) para la publicación de datos.
 
+Esta estandarización no solo simplifica el proceso de publicación de conjuntos de datos de biodiversidad, sino que también facilita que los usuarios descubran, busquen, evalúen y comparen conjuntos de datos mientras buscan respuestas a las preguntas de investigación y políticas intensivas en datos de hoy.
 
-## Darwin Core structure
+## Estructura de Darwin Core
 
-A DWC-A can contains 4 types of components. These files can include:
+Un archivo DWC-A puede contener 4 tipos de componentess. Estos archivos pueden incluir:
 
 * eml.xml
-* core file
-* extension files (optional)
+* aricho princial (core file)
+* archivos de extensión (opcional)
 * meta.xml
 
-EML stands for [Ecological Metadata Language](https://en.wikipedia.org/wiki/Ecological_Metadata_Language). This file contains the dataset metadata in an XML format.
+EML significa [Ecological Metadata Language](https://en.wikipedia.org/wiki/Ecological_Metadata_Language). Este archivo contiene los metadatos del conjunto de datos en formato XML.
 
-Core and extension files contain data records, arranged one per line. Each row in the extension file or extension record points to a single record in the core file. For each single core record there can be many extension records. This is sometimes referred to as a “star schema”.
+Los archivos principales (core) y de extensión contienen registros de datos, dispuestos uno por línea. Cada fila en el archivo de extensión o registro de extensión apunta a un solo registro en el archivo principal (core). Para cada registro principal puede haber muchos registros de extensión. A esto a veces se le llama un "esquema en estrella" ("star schema").
 
-The meta.xml file describes how the files in the archive are organised. It describes the linkage between the core and extension files and maps non-standards column names to Darwin Core terms.
+El archivo meta.xml describe cómo se organizan los archivos en el archivo de datos. Describe la relación entre los archivos principales (core) y de extensión y asigna nombres de columnas no estándar a términos del Darwin Core.
 
 To publish the data as a DwC-A, we recommend to upload the core and extension files to the IPT (e.g. [IPT.biodiversity.aq](http://IPT.biodiversity.aq)). Use the IPT's built-in metadata editor to enter dataset metadata. The IPT will compile the EML on the data you provided, as well as the meta.xml.
 
-## Types of Darwin Core archives
+## Tipos de archivos en Darwin Core
 
-* [Resource Metadata](https://github.com/gbif/ipt/wiki/resourceMetadata) - Used to describe a biodiversity information resource, including contact details, even if no digital data can currently be shared (this provides a way for researchers to discover resources which are not yet available online).
-* [Checklist](https://github.com/gbif/ipt/wiki/checklistData) - Used to share annotated species checklists, taxonomic catalogues, and other information about taxa.
-* [Occurrence](https://github.com/gbif/ipt/wiki/occurrenceData) - Used to share information about a specific instance of a taxon such as a specimen or observation.
-* [Event](https://github.com/gbif/ipt/wiki/samplingEventData) - Used to share information about the protocols used in ecological investigations.
+*  Metadatos de recursos [Resource Metadata](https://github.com/gbif/ipt/wiki/resourceMetadata) - Utilizados para describir un recurso de información sobre biodiversidad, incluyendo detalles de contacto, incluso si actualmente no se pueden compartir datos digitales (esto proporciona una forma para que los investigadores descubran recursos que aún no están disponibles en línea).
+* Lista de verificación [Checklist](https://github.com/gbif/ipt/wiki/checklistData) - Utilizados para compartir listas de verificación de especies, catálogos taxonómicos y otra información sobre taxones.
+* Ocurrencia [Occurrence](https://github.com/gbif/ipt/wiki/occurrenceData) - Utilizados para compartir información sobre una instancia específica de un taxón, como un espécimen u observación.
+* Evento [Event](https://github.com/gbif/ipt/wiki/samplingEventData) - Utilizados para compartir información sobre los protocolos utilizados en investigaciones ecológicas.ns.
 
 
-## Darwin Core details
+## Detalles del Darwin Core
 
-In general, metadata EML will accompany some data core in a DwC-A. It provides a description and details on the resource.
+En general, los metadatos EML acompañarán a algún archivo principal de datos en un DwC-A. Proporciona una descripción y detalles sobre el recurso.
 
-It is also possible to initially only publish your metadata and add your data at a later stage.
+También es posible publicar inicialmente solo sus metadatos y agregar sus datos mas adelante.
 
-This allows researchers to discover resources that or not yet available online.
-It is best to consider your abstract as the material and methods section of your paper but then for just your data.
-Try to provide as much detail as possible.
+Esto permite que los investigadores descubran recursos que aún no están disponibles en línea.
+Lo mejor es considerar el resumen como la sección de materiales y métodos de su artículo, pero solo para sus datos. Trate de proporcionar la mayor cantidad de detalles posible.
 
-Actually if you fill out your metadata extensively you have a first very good draft for a data paper (if that is something you would like to make). You'll just have to add some maps, summary statistics, and you are good to go.
+De hecho, si completa sus metadatos de manera exhaustiva, tendrá un primer borrador muy bueno para un artículo de datos (si eso es algo que le gustaría hacer). Solo tendrá que agregar algunos mapas, estadísticas y estará listo.
 
-If you are in a hurry, below is an overview of what currently are the required fields.
+Si tiene prisa, a continuación se muestra una descripción general de los campos requeridos actualmente.
 
-If you use the IPT to create your Darwin Core archive, you will have to choose a short name for your dataset. Choose this wisely because it can't be changed. The short name serves as an identifier within the IPT installation, and will be used as a parameter in the URL to access the resource via the Internet. For the short name you can only use alphanumeric characters, hyphens, or underscores.
+Si utiliza el IPT para crear su archivo del Darwin Core, deberá elegir un nombre corto para su conjunto de datos. Elija esto sabiamente porque no se puede cambiar. El nombre corto sirve como identificador dentro de la instalación del IPT y se utilizará como parámetro en la URL para acceder al recurso a través de Internet. Para el nombre corto, solo puede usar caracteres alfanuméricos, guiones o guiones bajos.
 
-### Required metadata fields:
+### Campos de metadata requeridos:
 
-#### Basic Metadata
+#### Metadatos básicos
 
-##### title
-> This will be the long title of your dataset, and how the dataset will be cited
+##### Título
+> Este será el título largo de su conjunto de datos y cómo se citará el conjunto de datos.
 
-##### publishing organisation
->Please select the organisation responsible for publishing (producing, releasing, holding) this resource. It will be used as the resource's publishing organisation when registering this resource with GBIF and when submitting metadata during DOI registrations. It will also be used to auto-generate the citation for the resource (if auto-generation is turned on), so consider the prominence of the role. Please be aware your selection cannot be changed after the resource has been either registered with GBIF or assigned a DOI.
+##### Organización de publicación
+>Por favor, seleccione la organización responsable de publicar (producir, liberar, mantener) este recurso. Se utilizará como la organización de publicación del recurso al registrar este recurso en GBIF y al enviar metadatos durante el registro de DOI. También se utilizará para generar automáticamente la cita del recurso (si la generación automática está activada), así que considere la importancia de la función. Tenga en cuenta que su selección no se puede cambiar después de que el recurso haya sido registrado en GBIF o se le haya asignado un DOI.
 
-On our IPT you can choose
+En nuestro IPT puede elegir
 
-* Antarctic Biodiversity Information Facility (AntaBIF) for terrestrial datasets
-* SCAR - AntOBIS for marine datasets
-* SCAR - Microbial Antarctic Resource System for microbial datasets
+* Antarctic Biodiversity Information Facility (AntaBIF) para conjuntos de datos terrestres
+* SCAR - AntOBIS para conjuntos de datos marinos
+* SCAR - Microbial Antarctic Resource System para conjuntos de datos microbianos
 
-We can also publish on behalf of others. Currently we have agreements with
+También podemos publicar en nombre de otros. Actualmente tenemos acuerdos con
 
 * British Antarctic Survey
 * Italian Antarctic National Museum (MNA, section Genua)
  
 
-##### type
->The type of resource. The value of this field depends on the core mapping of the resource and is no longer editable if the Darwin Core mapping has already been made.
+##### Tipo
+>El tipo de recurso. El valor de este campo depende de la asignación principal del recurso y no es editable si ya se ha realizado la asignación del Darwin Core.
 
-This can be
+Esto puede ser
 
-* Metadata-only
-* Checklist
-* Occurence
-* Event-Core
+* Metadata-only - solo metadatos
+* Checklist - Lista de verificación
+* Occurence -Ocurrencia
+* Event-Core - Evento central
 
-##### metadata language
->The language in which the metadata document is written.
+##### Idioma/lenguaje de los metadatos
+>El idioma en el que está escrito el documento de metadatos.
 
-##### data language
->The primary language in which the described data (not the metadata document) is written.
+##### Idioma/lenguaje de datos
+>El idioma principal en el que están escritos los datos descritos (no el documento de metadatos).
 
-##### Update Frequency
->The frequency with which changes are made to the resource after the initial resource has been published. For convenience, its value will default to the auto-publishing interval (if auto-publishing has been turned on), however, it can always be overridden later. Please note a description of the maintenance frequency of the resource can also be entered on the Additional Metadata page.
+##### Frecuencia de actualización
+>La frecuencia con la que se realizan cambios en el recurso después de que se haya publicado inicialmente. Por conveniencia, su valor se establecerá por defecto en el intervalo de publicación automática (si se ha activado la publicación automática), sin embargo, siempre se puede anular más tarde. Tenga en cuenta que también se puede introducir una descripción de la frecuencia de mantenimiento del recurso en la página de Metadatos adicionales.
 
-##### data license
->The licence that you apply to a dataset provides a standardized way to define appropriate uses of your work. GBIF encourages publishers to adopt the least restrictive licence possible from among three machine-readable options (CC0 1.0, CC-BY 4.0 or CC-BY-NC 4.0) to encourage the widest possible use and application of data. Learn more here. If you are unable to choose one of the three options, and your dataset contains occurrence data, you will not be able to register your dataset with GBIF or make it globally discoverable through GBIF.org. If you feel unable to select one of the three options, please contact the GBIF Secretariat at participation@gbif.org.
+##### licensia de datos
+>La licencia que se aplica a un conjunto de datos proporciona una forma estandarizada de definir los usos adecuados de su trabajo. GBIF alienta a los editores a adoptar la licencia menos restrictiva posible entre tres opciones legibles por máquina (CC0 1.0, CC-BY 4.0 o CC-BY-NC 4.0) para fomentar el uso y la aplicación más amplios de los datos. Obtenga más información aquí. Si no puede elegir una de las tres opciones y su conjunto de datos contiene datos de ocurrencia, no podrá registrar su conjunto de datos en GBIF ni hacerlo globalmente descubrible a través de GBIF.org. Si se siente incapaz de seleccionar una de las tres opciones, comuníquese con la Secretaría de GBIF en participation@gbif.org.
 
 
-##### description
->A brief overview of the resource that is being documented broken into paragraphs.
+##### Descripción
+>Una breve descripción del recurso que se está documentando, dividida en párrafos.
 
-Think of it as an abstract for a (data) paper
+Piense en esto como un resumen para un artículo de datos
 
-##### Resource contact(s)
-##### Resource creator(s)
-##### metadata provider(s)
-* Last name
-* Position
-* Organisation
+##### Contacto(s) del recurso
+##### Creador(es) del recurso
+##### Proveedor(es) de metadatos
+* Apellido
+* Cargo
+* Organisación
 	
-#### Geographic coverage
-##### description
+#### Cobertura geográfica
+##### Descripción
 
 
 
-### Citation auto generation
+### Generación automatica de citas/referencias
 
 Creator 1 R, Creator 2 R, Creator 3 R (2019): How to create a metadata record. v1. Publishing organisation. Dataset/Type. https://ipt.biodiversity.aq/resource?r=shortname&amp;v=1.0
 
-#### Example
+#### Ejemplo
 
 Griffiths H J, Linse K, Crame J (2017): SOMBASE – Southern Ocean mollusc database: a tool for biogeographic analysis in diversity and evolution. v1.6. British Antarctic Survey. Dataset/Occurrence. https://ipt.biodiversity.aq/resource?r=sombase_southern_ocean_mollusc_database&amp;v=1.6
 
