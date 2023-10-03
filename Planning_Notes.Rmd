@@ -11,13 +11,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 | Archivo |	Traduccion | Nombre | Revision | Nombre |
 |:-----|------:|------:|------:|------:|
-| 05_Overview | Done | Camila | | Denisse |
-| 10_Introduction_to_R | | Camila | | Denisse |
-| 22_Metadata | | Camila | | Denisse |
-| 25_Ocurrences | | Camila | | Denisse |
-| 30_Biological_Data | | Camila | | Denisse |
-| 40_Environmental_Data | | Camila | | Denisse |
-| 50_Mapping | | Camila | | Denisse |
+| 05_Overview | DONE | Camila | | Denisse |
+| 10_Introduction_to_R | DONE | Camila | | Denisse |
+| 22_Metadata | DONE | Camila | | Denisse |
+| 25_Ocurrences | DONE | Camila | | Denisse |
+| 30_Biological_Data | DONE | Camila | | Denisse |
+| 40_Environmental_Data | DONE | Camila | | Denisse |
+| 50_Mapping | DONE | Camila | | Denisse |
 | 60_Species_Distribution_Modelling | | Denisse| | Camila |
 | 68_SDM_Algorithms | | Denisse | | Camila |
 | 69_SDM_Extra | | Denisse | | Camila |
