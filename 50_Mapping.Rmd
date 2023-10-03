@@ -1,15 +1,15 @@
-# Mapping
+# Mapeo
 
-## Maps in R
+## Mapas en R
 
-The oldest and most *core* general mapping package in R is the `maps` package. It has a simple whole-world coastline data set for immediate use. 
+El paquete de mapeo general más antiguo y esencial en R es el paquete `maps`. Contiene un conjunto de datos simple de límites costeros de todo el mundo listos para usar.
+
 
 ```{r maps-package}
 maps::map()
 ```
 
-The data underlying this live map is available by capturing the output as an actual object. Notice that the coastline for Antarctica does not extend
-to the south pole, and that parts of Russia that are east of 180 longitude are not in the western part of the map.
+Los datos subyacentes de este mapa en vivo están disponibles al capturar la salida como un objeto real. Observa que la línea costera de la Antártida no se extiende hasta el polo sur y que partes de Rusia al este del meridiano 180 no aparecen en la parte occidental del mapa.
 
 ```{r maps-assign}
 m <- maps::map(plot = FALSE)
@@ -23,7 +23,7 @@ abline(h = c(-90, 90), v = c(-180, 180))
 
 ```
 
-A very similar and more modern data set is available in the `maptools` package.
+Un conjunto de datos muy similar y más moderno está disponible en el paquete `maptools`.
 
 ```{r wrld-simpl}
 data("wrld_simpl", package = "maptools")
@@ -31,7 +31,7 @@ library(sp)
 plot(wrld_simpl)
 ```
 
-This data set aligns exactly to the  conventional -180/180 -90/90 extent of the longitude/latitude projection.
+Este conjunto de datos se alinea exactamente con la extensión convencional de -180/180 -90/90 para la proyección de longitud/latitud.
 
 ```{r lon180-lat90}
 plot(0, type = "n", axes = FALSE, xlab = "", ylab = "", xlim = c(-180, 180), ylim = c(-90, 90))
@@ -39,19 +39,18 @@ rect(xleft = -180, ybottom = -90, xright = 180, ytop = 90, border = "darkred", l
 plot(wrld_simpl, add = TRUE)
 ```
 
-### Exercises
+### Ejercicios
 
-1. How can we find the longitude and latitude ranges of the maps data `m` and the maptools data `wrld_simpl`? 
-2. Can we draw polygons with a fill colour with the maps package? 
-
-
-Answer 1: `range(m$x, na.rm = TRUE)` `range(m$y, na.rm = TRUE`) also `m$range`
-
-Answer 2: `polygon(lonlat, col = "grey")` does not work, and `map(mp, fill = TRUE, col = "grey")` does not work, but `maps::map(fill = TRUE, col = "grey")` does seem to work.
+1. ¿Cómo podemos encontrar los rangos de longitud y latitud de los datos de mapas `m` y los datos de `wrld_simpl` de maptools?? 
+2. ¿Podemos dibujar polígonos con un color de relleno con el paquete? 
 
 
-What's going on? Look at the very south-eastern corner of the map. The "coastline" has been extended to the very south boundary of the available area. 
+Respuesta 1: `range(m$x, na.rm = TRUE)` `range(m$y, na.rm = TRUE`) y `m$range`
 
+Respuesta 2: `polygon(lonlat, col = "grey")` no funciona, y `map(mp, fill = TRUE, col = "grey")` tampoco funciona, pero `maps::map(fill = TRUE, col = "grey")` parece funcionar.
+
+
+¿Qué está pasando? Mira la esquina sureste del mapa. La línea de la costa se ha extendido hasta el límite sur del área disponible.
 
 
 ```{r south-east}
@@ -62,9 +61,9 @@ rect(xleft = -180, ybottom = -90, xright = 180, ytop = 90, border = "darkred", l
 maps::map(add = TRUE, col = "dodgerblue", lwd = 3)
 ```
 
-When we add the old maps coastline see that it does not extend to 90S and it does not traverse the southern boundary.
+Cuando agregamos la antigua línea de la costa de los mapas, vemos que no se extiende hasta 90S y no atraviesa el límite sur.
 
-One reason for this is that if we choose a projection where the east and west edges of the Antarctic coastline meet then we get what looks a fairly clean join.
+Una razón para esto es que si elegimos una proyección donde los bordes este y oeste de la línea de costa de la Antártida se encuentren, obtenemos una unión que parece bastante limpia.
 
 ```{r laea}
 ## scale factor
@@ -74,9 +73,7 @@ plot(rgdal::project(lonlat, "+proj=laea +lat_0=-90 +datum=WGS84"), asp = 1, type
 
 ```
 
-If we try the same with `wrld_simpl` it's not as neat.  We have a strange "seam" that points exactly to the south pole (our projection is centred on longitude = 0, and latitude = -90. 
-
-
+Si intentamos lo mismo con `wrld_simpl` la unión no es tan limpia.  Tenemos una extraña "costura" que apunta exactamente al polo sur (nuestra proyección está centrada en longitud = 0 y latitud = -90).
 
 ```{r wrld}
 plot(sp::spTransform(wrld_simpl, "+proj=laea +lat_0=-90 +datum=WGS84"), asp = 1,
@@ -85,9 +82,9 @@ abline(v = 0, h = 0, lty = 2, col = "grey")
 ```
 
 
-### Let's use the maps data!
+### ¡Usemos los datos de mapas!
 
-In `m` we have the maps data structure, and this looks promising.
+En m, tenemos la estructura de datos de mapas, y parece prometedor.
 
 ```{r maps-data}
 str(m)
@@ -102,15 +99,15 @@ plot(c(-1, 1) * f, c(-1, 1) * f, type = "n", asp = 1)
 maps::map(mp, add = TRUE)
 
 
-## but it doesn't take much to go awry
+## pero no se necesita mucho para que algo salga mal
 plot(c(-1, 1) * f, c(-1, 1) * f, type = "n", asp = 1)
 maps::map(mp, add = TRUE, fill = TRUE, col = "grey")
 
 ```
 
-The problem is that the maps database has enough internal structure to join lines correctly, with `NA` gaps between different connected linestrings, but not enough to draw these things as polygons. A similar problem occurs in the default projection. While `wrld_simpl` has been extend by placing two dummy coordinates at the east and west versions of the south pole, this data set does not have those.
+El problema es que la base de datos de mapas tiene suficiente estructura interna para unir líneas correctamente, con brechas `NA` entre diferentes cadenas de líneas conectadas, pero no lo suficiente como para dibujar estas cosas como polígonos. Ocurre un problema similar en la proyección predeterminada. Mientras que `wrld_simpl` se ha extendido colocando dos coordenadas ficticias en el este y oeste del polo sur, este conjunto de datos no las tiene.
 
-We have to look quite carefully to understand what is happening, but this is wrapping around overlapping itself and so close to the southern bound we barely notice.
+Tenemos que mirar cuidadosamente para entender lo que está sucediendo, pero esto se está solapando/sobreponiendo con sigo mismo y está tan cerca del límite sur que apenas lo notamos.
 
 
 ```{r no-pole}
@@ -139,61 +136,61 @@ maps::map(mpmerc,  fill = TRUE, col = "grey", add = TRUE)
 
 ## SOmap
 
-The `SOmap` package is intended to solve some of these problems, and provide an easier way to produce nice-looking maps of Antarctica and the Southern Ocean. It is primarily focused on maps in polar stereographic projection (although the `SOmap_auto` function extends this to other projections). `SOmap` won't necessarily get you exactly the map you want in every circumstance, but the idea is that in most cases it should get you close enough, and if need be you can make modifications to suit your exact purposes.
+El paquete `SOmap` está diseñado para resolver la mayoría de estos problemas y proporcionar una forma sencilla de crear buenos mapas de la Antártida y el océano austral. Está enfocado principalmente en mapas en proyección estereográfica polar (aunque la función `SOmap_auto` extiende esto a otras proyecciones). `SOmap` no necesariamente te dará el mapa exacto que deseas en todas las circunstancias, pero la idea es que en la mayoría de los casos debería acercarte lo suficiente, y si es necesario, puedes realizar modificaciones para adaptarlo a tus necesidades exactas.
 
-Please bear in mind that `SOmap` is still in development, and so its functionality (function parameters and/or behaviour) may change.
+Por favor tener en cuenta que `SOmap` aún está en desarrollo, por lo que su funcionalidad (parámetros de función y/o comportamiento) puede cambiar.
 
-By default, `SOmap` works with base graphics (and associated functionality from packages such as `raster` and `sp`). It is also possible to work with `ggplot2`-based graphics, as described below.
+Por defecto, `SOmap`  funciona con gráficos base (y funciones asociadas a paquetes como `raster` y `sp`). También es posible trabajar con gráficos basados en `ggplot2`, como se describe a continuación.
 
-Start by installing the `SOmap` package if you haven't done so already:
-
+Comienza instalando el paquete `SOmap` si es que aún no lo has hecho:
 ```{somap_install eval = FALSE}
 remotes::install_github("AustralianAntarcticDivision/SOmap")
-```
 
-Then load the package:
+```
+
+Luego carga el paquete:
 
 ```{r somap_init, cache = FALSE}
 library(SOmap)
-## also define a colour map to use for some examples
+## también define un mapa de colores para usar en algunos ejemplos
 my_cmap <- colorRampPalette(c("#4D4140", "#596F7E", "#168B98",
                               "#ED5B67", "#E27766", "#DAAD50", "#EAC3A6"))(51)
 ```
 
 ```{r somap_pkgs, echo = FALSE, message = FALSE, warning = FALSE, cache = FALSE}
-## ensure these are loaded, library calls below are cached and might not get evaluated every run
+## asegúrate de que estos estén cargados; las llamadas a library a continuación están en la memoria caché y es posible que no se evalúen en cada ejecución
 library(sp)
 library(raster)
 library(ggplot2)
 ```
 
-### Circumpolar maps
+### Mapas circumpolares
 
-A basic circumpolar map in polar stereographic projection:
+Un mapa circumpolar básico en proyección estereográfica polar:
 
-```{r somap1}
+
+```{r somap1}
 SOmap()
 ```
 
-`SOmanagement()` provides a number of contextual layers such as MPA boundaries and management zones.
-
+`SOmanagement()` proporciona una serie de capas contextuales como límites de AMP y zonas de gestión.
 ```{r somap2}
-SOmap(trim = -40) ## plot to 40S
-## add the exclusive economic zones management layer
+SOmap(trim = -40) ##traza hasta 40S
+## agrega la capa de gestión de zonas económicas exclusivas (exclusive economic zones - EEZ)
 SOmanagement(eez = TRUE)
 ```
 
 #### Adding points
 
 ```{r somap_pts1}
-## some longitude/latitude data
+## algunos datos de longitud/latitud
 library(sp)
 my_points_ll <- data.frame(lon = seq(0, 350, by = 10), lat = -55, z = runif(36))
 coordinates(my_points_ll) <- c("lon", "lat")
 projection(my_points_ll) <- "+proj=longlat +datum=WGS84"
 ```
 
-Our data need to be reprojected to match our map before plotting. The `SOproj` function does this:
+Nuestros datos deben reproyectarse para que coincidan con nuestro mapa antes de trazarlos. La función `SOproj` hace esto:
 
 ```{r somap_pts2}
 ## reproject to our SOmap projection
@@ -203,47 +200,47 @@ SOmap()
 plot(my_points, col = "blue", add = TRUE)
 ```
 
-Or use `SOplot` to reproject and plot in one step:
+O puedes usar `SOplot` para proyectar y trazar el mapa en un solo paso:
 
 ```{r somap_pts3}
 SOmap()
 SOplot(my_points_ll, col = "blue")
 ```
 
-#### Adding raster layers
+#### Agrgar capaz raster
 
-First let's construct some artificial raster data (in longitude-latitude space) for demonstration purposes:
+Primero construyamos algunos datos raster artificiales (en espacio de longitud-latitud) con fines de demostración:
 
 ```{r somap_raster1, message = FALSE, warning = FALSE}
 library(raster)
 temp <- as.data.frame(expand.grid(lon = seq(100, 140, by = 0.25),
                                   lat = seq(-65, -45, by = 0.1)))
 temp$val <- sqrt((temp$lon - 120)^2/3 + (temp$lat - -40)^2/5)
-## create raster object
+## creando objeto raster
 xr <- rasterFromXYZ(temp)
 projection(xr) <- "+proj=longlat +datum=WGS84"
 ```
 
-`SOplot` will reproject and plot this for us:
+`SOplot` reproyecta esto por nosotros:
 
 ```{r somap_raster2}
 SOmap()
 SOplot(xr)
 ```
 
-The legend is out of character with the rest of the map. We can use `SOleg` to fix that:
+La leyenda no coincide con el resto del mapa. Podemos usar `SOleg` para solucionar eso:
 
 ```{r somap_raster3}
-## draw the base map
+## dibuja mapa base
 SOmap()
-## add our raster
+## agrega nuestro raster
 SOplot(xr, legend = FALSE, col = my_cmap)
-## add the legend
+## agrega la leyenda
 SOleg(xr, position = "topright", col = my_cmap, ticks = 6,
       type = "continuous", label = "My variable")
 ```
 
-OK, well that worked but clearly the labels need tidying up. The easiest way is probably to set the number of decimal places in the label values via the `rnd` parameter:
+Bueno, eso funcionó, pero claramente las etiquetas necesitan ser ordenadas. La forma más fácil es probablemente configurar el número de decimales en los valores de etiqueta a través del parámetro  `rnd`:
 
 
 ```{r somap_raster4rnd}
@@ -253,33 +250,31 @@ SOleg(xr, position = "topright", col = my_cmap, ticks = 6, rnd = 2,
       type = "continuous", label = "My variable")
 ```
 
-Alternatively, we could explicitly set the colour range and labels.
-
+Alternativamente, podríamos establecer explícitamente el rango de colores y las etiquetas.
 ```{r somap_raster4}
-## draw the base map
+## dibuja mapa base
 SOmap()
-## add our raster, controlling the colour range to span the values 0 to 30
+## agregar nuestro raster, controlando el rango de colores para abarcar los valores de 0 a 30
 colour_breaks <- seq(0, 30, length.out = length(my_cmap) + 1)
 SOplot(xr, legend = FALSE, col = my_cmap, breaks = colour_breaks)
-## add the legend, again controlling the colour range
+## agregar la leyenda, controlando nuevamente el rango de colores
 label_breaks <- seq(0, 30, length.out = 7)
 SOleg(position = "topright", col = my_cmap, breaks = label_breaks,
       type = "continuous", label = "My variable")
 ```
 
-Note that if we *don't* want to show the bathymetric legend, we may run into problems:
-
+Ten en cuenta que si *no* queremos mostrar la leyenda batimétrica, podemos tener problemas:
 ```{r somap_legend1}
-SOmap(bathy_legend = FALSE) ## suppress the bathy legend
+SOmap(bathy_legend = FALSE) ## suprimir la leyenda batimétrica
 SOleg(position = "topright", col = my_cmap, breaks = label_breaks,
       type = "continuous", label = "My variable")
 ```
 
-The legend has been chopped off because the layout has not left enough space around the map for the curved legend. Currently, the best solution is probably to generate the `SOmap` object *with* the bathymetric legend, but then remove it before plotting (see the [Modifying map objects][Modifying map objects (advanced usage)] section for more details on this):
+La leyenda se ha cortado porque el diseño no ha dejado suficiente espacio alrededor del mapa para la leyenda curvada. Actualmente, la mejor solución probablemente sea generar el objeto `SOmap` *con* la leyenda batimétrica, pero luego eliminarla antes de trazarla
 
 ```{r somap_legend2}
 temp <- SOmap()
-temp$bathy_legend <- NULL ## remove the bathy legend
+temp$bathy_legend <- NULL ## suprimir la leyenda batimétrica
 plot(temp)
 SOleg(position = "topright", col = my_cmap, breaks = label_breaks,
       type = "continuous", label = "My variable")
@@ -289,101 +284,98 @@ SOleg(position = "topright", col = my_cmap, breaks = label_breaks,
 Multiple rasters:
 
 ```{r somap_raster5}
-xr2 <- raster::shift(xr, -70) ## offset in longitude
+xr2 <- raster::shift(xr, -70) ## agrega desplazamiento en longitud
 SOmap()
 SOplot(xr, legend = FALSE, col = my_cmap)
 SOplot(xr2, legend = FALSE, col = my_cmap)
 ```
 
 
-### Non-circumpolar maps
+### Mapas no circumpolares
+tomará tus datos de entrada y hará una suposición sobre la proyección y la extensión adecuadas para usar. Ten en cuenta que esto no siempre adivinará la *mejor* proyección y extensión, por lo que debes verlo como un punto de partida desde el cual puedes generar un mapa según tus requisitos exactos.
 
-The `SOmap_auto` function will take your input data and make a guess at an appropriate projection and extent to use. Note that this is not always going to guess the *best* projection and extent, so you should view it as a starting point from which you can generate a map to your exact requirements.
-
-Use the elephant seal track data bundled with the package:
-
+Usa los datos de seguimiento de elefantes marinos incluidos en el paquete como ejemplo:
 ```{r soauto1}
 ellie <- SOmap_data$mirounga_leonina
-## construct and plot the map
+## construir y trazar el mapa
 SOmap_auto(ellie$lon, ellie$lat)
 ```
 
-Just a blank map to which you could add other things:
+Un mapa en blanco simple para usar de base
 ```{r soauto2}
 SOmap_auto(ellie$lon, ellie$lat, input_points = FALSE, input_lines = FALSE)
 ```
 
-You can pass a raster as input data, but note that it won't plot the raster (it uses its extent to infer an appropriate extent for the map):
+Puedes pasar un raster como dato de entrada, pero ten en cuenta que no trazará el raster (utiliza su extensión para inferir una extensión adecuada para el mapa):
 ```{r soauto3}
 SOmap_auto(xr)
 ```
 
-But we can add the raster if we wish:
+Pero podemos agregar el raster si lo deseamos:
 ```{r soauto4}
 SOmap_auto(xr)
 SOplot(xr, col = my_cmap)
 ```
 
-We can force a particular projection:
+Podemos forzar una proyección de interés:
 
 ```{r soauto5}
 SOmap_auto(xr, target = "laea", centre_lon = 147, centre_lat = -42)
 SOplot(xr, col = my_cmap)
 ```
 
-Same but by supplying a full proj4 string to `target`:
+Lo mismo, pero proporcionando una cadena proj4 completa al parámetro `target`:
 
 ```{r soauto6}
 SOmap_auto(xr, target = "+proj=laea +lat_0=-42 +lon_0=147")
 SOplot(xr, col = my_cmap)
 ```
 
-See [the SOmap_auto vignette](https://australianantarcticdivision.github.io/SOmap/articles/many-automap-examples.html) for more examples.
+Consulta el tutorial de Somap_auto [the SOmap_auto vignette](https://australianantarcticdivision.github.io/SOmap/articles/many-automap-examples.html) para más ejemplos.
 
 
-### Plotting via ggplot2
+### Trazando mapas usando ggplot2
 
-The `SOmap` and `SOmap_auto` functions do their plotting using base graphics. If you are more comfortable working with `ggplot2`, this is also possible. The `SOgg` function takes an object created by one of those functions (using base graphics) and converts it to use `ggplot2` graphics instead. As with other `SOmap` functions, this returns an object (of class `SOmap_gg` or `SOmap_auto_gg`) that contains all of the information needed to generate the map. Printing or plotting this object will cause it to construct a `ggplot` object. Printing or plotting *that* object will cause it to be drawn to the graphics device, just like any other `ggplot` object.
+Las funciones `SOmap` y `SOmap_auto` hacen mapas usando un gráfico base. Si te sientes más como usando `ggplot2`, también es posible. La función `SOgg` toma un objeto creado por una de esas funciones (usando gráficos base) y lo convierte para usar gráficos `ggplot2`. Al igual que con otras funciones `SOmap` devuelve un objeto (de clase `SOmap_gg` o `SOmap_auto_gg`) que contiene toda la información necesaria para generar el mapa. Imprimir o trazar este objeto provocará que construya un objeto ggplot. Imprimir o trazar ese objeto hará que se dibuje en el dispositivo gráfico, al igual que cualquier otro objeto `ggplot`.
 
 ```{r somap3}
 myplot <- SOmap()
-myplotgg <- SOgg(myplot) ## creates a SOmap_gg object
+myplotgg <- SOgg(myplot) ## crea un objeto SOmap_gg
 class(myplotgg)
-my_ggplot <- plot(myplotgg) ## creates a ggplot object
+my_ggplot <- plot(myplotgg) ## crea un objeto ggplot
 class(my_ggplot)
-plot(my_ggplot) ## plot it
+plot(my_ggplot) ## tráza el mapa
 ```
 
-Or in one step (this will cause myplot to be converted to SOmap's internal gg format, then a ggplot object constructed from that, then that object will be plotted):
+O en un solo paso (esto hará que `myplot` se convierta en el formato gg interno de `SOmap`, luego se construirá un objeto `ggplot` a partir de eso, y ese objeto se trazará):
 
 ```{r somap4}
 SOgg(myplot)
 ```
 
-### Modifying map objects (advanced usage)
+### Modificar objetos de mapa (uso avanzado)
 
-The goal of `SOmap` is to make it fairly easy to produce a fairly-good-looking map that will be adequate for most mapping requirements. It will never be possible to automatically produce a *perfect* map in *every circumstance*, but the aim is to have a low-effort way of getting fairly close most of the time.
+El objetivo de `SOmap` es hacer que sea bastante fácil producir un mapa bastante bueno que sea adecuado para la mayoría de los requisitos de mapeo. Nunca será posible producir automáticamente un mapa *perfecto en todas las circunstancias*, pero el objetivo es tener una forma fácil que se acerque a la perfección.
 
-This section describes some approaches to modifying a map to get it closer to your particular needs. Be warned: depending on the exact modifications needed, this might get you pretty close to the crumbling edge of `SOmap` development. In particular, anything that requires modifying the internal structure of an `SOmap` object may change in the future (with luck, we'll make this sort of thing easier - but we're not there yet.)
+Esta sección describe algunos enfoques para modificar un mapa y adaptarlo a tus necesidades particulares. Ten en cuenta que, dependiendo de las modificaciones necesarias, esto podría llevarte bastante cerca del borde del desarrollo de `SOmap`. En particular, cualquier cosa que requiera modificar la estructura interna de un objeto `SOmap` puede cambiar en el futuro (con suerte, haremos que este tipo de cosas sea más fácil, pero aún no llegamos a eso).
 
-#### Modifying base graphics maps
+#### Modificar mapas con gráficos base
 
-Calls to `SOmap()`, `SOmanagement()`, `SOmap_auto()` return an object of class `SOmap`, `SOmap_management`, or `SOmap_auto`. These objects contain all of the data and plotting instructions required to draw the map. Calling `print()` or `plot()` on one of these objects will cause that code to be executed, and the object to be drawn in the current graphics device. Hence, calling `SOmap()` directly *without* assigning the result to a variable will make it appear in the graphics device, because the returned object is being printed to the console (and thus triggering the `print` method). But you can also assign the result to a variable, e.g. `myplot <- SOmap()` and then explicitly plot the object with `plot(myplot)`. The advantage of this is that you can potentially manipulate the `myplot` object to make changes to the map before plotting it.
+Las funciones `SOmap()`, `SOmanagement()`, `SOmap_auto()` devuelven/arrojan un objeto de clase `SOmap`, `SOmap_management`, or `SOmap_auto`. Estos objetos contienen todos los datos e instrucciones de trazado necesarios para dibujar el mapa. Funciones `print()` o `plot()` en uno de estos objetos hará que se ejecute ese código y se dibuje el objeto en el dispositivo gráfico actual. Por lo tanto, usando `SOmap()` directamente *sin* asignar el resultado a una variable hará que aparezca en el dispositivo gráfico, porque el objeto devuelto se imprime en la consola (y, por lo tanto, activa el método `print`). Pero también puedes asignar el resultado a una variable, por ejemplo, `myplot <- SOmap()`, y luego trazar explícitamente el objeto con `plot(myplot)`. La ventaja de esto es que puedes manipular el objeto `myplot` para realizar cambios en el mapa antes de trazarlo.
 
-Note, this is likely to be fragile. Proceed at your own risk!
-
+Ten en cuenta que esto probablemente sea frágil. ¡Procede bajo tu propio riesgo!
 ```{r somap2a}
 mymap <- SOmap()
 names(mymap)
 ```
 
-The object contains a `plot_sequence` component, which defines the order in which each part of the plot is drawn. The other components of the object contain the code required to draw each part. Take e.g. the ice component (this is the ice shelves, glacier tongues, etc). This is a list (in this case with only one element). Each element of the list specifies a function to run along with arguments to pass to it:
+El objeto contiene un componente de tipo `plot_sequence`, que define el orden en el que se dibuja cada parte del mapa. Los otros componentes del objeto contienen el código necesario para dibujar cada parte. Tomemos, por ejemplo, el componente de hielo (esto son las plataformas de hielo, lenguas de glaciar, etc.). Este es una lista (en este caso, con un solo elemento). Cada elemento de la lista especifica una función para ejecutar junto con los argumentos que se le pasarán:
 
 ```{r somap2b}
 str(mymap$ice)
 ```
 
-We can modify the function and/or its arguments:
+Podemos modificar la función y/o sus argumentos:
 
 ```{r somap2c}
 mymap$ice[[1]]$plotargs$col <- "green"
@@ -393,7 +385,7 @@ mymap$ice[[1]]$plotargs$col <- "green"
 plot(mymap)
 ```
 
-We can remove entire components:
+Podemos eliminar componentes completos:
 ```{r somap2e}
 temp <- mymap
 temp$coastline <- NULL
@@ -401,28 +393,27 @@ temp$ice <- NULL
 plot(temp)
 ```
 
-But note that some elements are required. In particular, the bathymetry layer can't currently be removed because the code that draws this is also the code that creates the plot page via `plot.new()`. The code below would fail outright if there was no existing existing plot. If there was an existing plot in the graphics device, this code would run but give unpredictable results because it would draw on top of the previously-setup plot:
+Pero ten en cuenta que algunos elementos son necesarios. En particular, la capa batimétrica actualmente no se puede eliminar porque el código que la dibuja también es el código que crea la página de trazado mediante `plot.new()`. El código a continuación fallaría si no hubiera ningún trazado existente. Si hubiera un trazado existente en el dispositivo gráfico, este código se ejecutaría pero daría resultados impredecibles porque se dibujaría encima del trazado previamente configurado:
 
 ```{r somap2f, eval = FALSE}
-## code not run here
+## código no ejecutado aquí
 temp <- mymap
 temp$bathy <- NULL
 plot(temp)
 ```
 
-One way around this would be to simply replace all of the bathymetric data values with `NA`s. The plotting code would still have the extent of the bathymetric layer that it needs in order to set up the plot, but no data would be shown:
-
+Una forma de evitar esto sería simplemente reemplazar todos los valores de datos batimétricos por `NA`s. El código de trazado seguiría teniendo la extensión de la capa batimétrica que necesita para configurar el trazado, pero no se mostrarían datos:
 ```{r somap2h2}
 temp <- mymap
-## the bathy data is held in temp$bathy[[1]]$plotargs$x
-## and it's a raster, so we can set its values to NA with
+## los datos batimétricos están en temp$bathy[[1]]$plotargs$x
+## y es un ráster, así que podemos establecer sus valores en NA con
 raster::values(temp$bathy[[1]]$plotargs$x) <- NA_real_
 temp$bathy_legend <- NULL
 plot(temp)
 
 ```
 
-We could also replace the bathymetry data with another raster object. Note that we do need to be careful about the extent and projection of this raster. For example, replacing the bathymetry raster with the ice raster (which has the same polar stereographic projection but smaller extent) gives:
+También podríamos reemplazar los datos batimétricos por otro objeto raster. Ten en cuenta que debemos tener cuidado con la extensión y la proyección de este ráster. Por ejemplo, reemplazar el ráster batimétrico por el ráster de hielo (que tiene la misma proyección estereográfica polar pero una extensión más pequeña) da como resultado:
 
 ```{r somap2g}
 temp <- mymap
@@ -431,8 +422,7 @@ temp$bathy_legend <- NULL
 plot(temp)
 ```
 
-It's chopped off because the extent of the ice raster is being used to set the plot extent. But if we extend the ice raster to match the map extent:
-
+Está cortado porque la extensión del ráster de hielo se está utilizando para establecer la extensión del trazado. Pero si extendemos el ráster de hielo para que coincida con la extensión del mapa:
 ```{r somap2h}
 temp <- mymap
 temp$bathy[[1]]$plotargs$x <- raster::extend(ice, mymap$target)
@@ -440,13 +430,13 @@ temp$bathy_legend <- NULL
 plot(temp)
 ```
 
-#### Modifying ggplot maps
+#### Modificnado mapas con ggplot
 
-We can modify `ggplot2`-based maps at two levels.
+Podemos modificar mapas basados en `ggplot2` en dos niveles
 
-##### Modifying the `ggplot` object.
+##### Modificando el objeto `ggplot`.
 
-Remember that printing or plotting a `SOmap_gg` object produces a `ggplot` object. This can be modified by adding e.g. layers or themes just like a normal `ggplot`. Remember to load the `ggplot2` library now that we are using `ggplot2` functions directly.
+Recuerda que imprimir o trazar un objeto `SOmap_gg` produce un objeto `ggplot`. Este puede ser modificado agregando, por ejemplo, capas o temas, como cualquier otro objeto `ggplot`. Asegúrate de cargar la biblioteca `ggplot2` ahora que estamos utilizando funciones de `ggplot2` directamente.
 
 ```{r somap6, message = FALSE, warning = FALSE}
 library(ggplot2)
@@ -454,7 +444,8 @@ my_ggplot + geom_point(data = as.data.frame(my_points), aes(lon, lat, colour = z
   scale_colour_distiller(palette = "Spectral")
 ```
 
-Multiple rasters or multiple sets of points gets tricky if they are on different scales, because `ggplot2` is only designed to work with a single colour scale per geometry type. You can try your luck with the `ggnewscale` or `relayer` packages, although both are in a fairly experimental stage of development.
+
+Varios rásters o varios conjuntos de puntos se vuelven complicados si están en diferentes escalas, porque `ggplot2` solo está diseñado para trabajar con una sola escala de color por tipo de geometría. Puedes probar suerte con los paquetes `ggnewscale` o `relayer`, aunque ambos están en una etapa experimental de desarrollo.
 
 ```{r somap5f, warning = FALSE, message = FALSE}
 ## remotes::install_github("clauswilke/relayer")
@@ -476,21 +467,20 @@ plot(SOgg(SOmap(straight = TRUE))) +
   scale_fill_gradientn(colors = my_cmap, na.value = NA, name = "My variable")
 ```
 
-##### Modifying the `SOmap_gg` object
+##### Modicandoe el objecto `SOmap_gg`
 
-`SOmap_gg` objects are similar in structure to `SOmap` objects, in that they contain all of the data and plotting instructions required to draw the map:
-
+El objeto `SOmap_gg` tiene una estructura similar al objeto `SOmap`, en el sentido de que contienen todos los datos e instrucciones de trazado necesarios para dibujar el mapa:
 ```{r somap5}
 names(myplotgg)
 ```
 
-However, instead of base plotting functions, `SOmap_gg` objects use `ggplot2` function calls, e.g.:
+sin embargo, n lugar de funciones de gráficos base, los objetos `SOmap_gg` utilizan llamadas a `ggplot2`, por ejemplo:
 
 ```{r somap5a}
 myplotgg$ice[[1]]$plotfun
 ```
 
-We can modify these functions and/or arguments in a similar manner to `SOmap` objects.
+Podemos modificar estas funciones y/o argumentos de manera similar a los objetos `SOmap`.
 
 ```{r somap5b}
 myplotgg$ice[[1]]$plotargs$fill <- "green"
@@ -500,7 +490,7 @@ myplotgg$ice[[1]]$plotargs$fill <- "green"
 plot(myplotgg)
 ```
 
-Or remove the bathymetric raster layer:
+O eliminar la capa de ráster batimétrico:
 
 ```{r somap5d}
 temp <- myplotgg
@@ -509,65 +499,63 @@ temp$bathy_legend <- NULL
 plot(temp)
 ```
 
-Or replace it with a different raster (use the `ice` raster as an example):
+O reemplazarlo por un ráster diferente (usaremos el ráster de hielo como ejemplo):
 
 ```{r somap5e, warning = FALSE, message = FALSE}
 temp <- myplotgg
-## convert ice raster to suitable data.frame
+## convertir el ráster de hielo a un data.frame adecuado
 ice_raster_as_df <- raster::as.data.frame(SOproj(ice), xy = TRUE)
 names(ice_raster_as_df)[3] <- "ice"
-## add this to our object in place of bathy
+## agregar esto a nuestro objeto en lugar de baty
 temp$bathy <- SO_plotter(plotfun = "ggplot2::geom_raster",
                          plotargs = list(data = ice_raster_as_df,
-                                         mapping = aes_string(fill = "ice")))
-## change the colour scale
+                                         mapping = aes_string(fill = "ice"))
+)
+## cambia la escala de color
 temp$scale_fill[[1]]$plotargs <- list(colours = my_cmap, na.value = "#FFFFFF00", guide = FALSE)
-## remove the bathy legend
+## remueve leyenda batrimétrica
 temp$bathy_legend <- NULL
 plot(temp)
 ```
 
-### Other SOmap gotchas
+### Otros detalles que tener en cuenta en SOmap
 
-Some other things worth noting.
+Algunas cosas adicionales que vale la pena mencionar.
 
-#### Automatic printing and for-loops
+#### Impresión automática y bucles `for` (for-loops)
 
-If you type a variable/object name directly into the console then it triggers that object's `print` method automatically. Typing `SOmap()` at the console returns an object of class `SOmap`, and because it's happening at the console that object's `print` method is called, which causes the map to be plotted in the current graphics device.
+Si escribes directamente el nombre de una variable/objeto en la consola, esto activa automáticamente el método `print` de ese objeto. Escribir `SOmap()` en la consola devuelve un objeto de clase `SOmap`, y como esto ocurre en la consola, se llama al método `print` de ese objeto, lo que provoca que el mapa se trace en el dispositivo gráfico actual.
 
-However, R turns off automatic printing inside `for` loops and functions. So this code:
-
+Sin embargo, R desactiva la impresión automática dentro de bucles `for` y funciones. Entonces, este código:
 ```{r eval = FALSE}
 for (i in 1:5) {
   SOmap_auto()
 }
 ```
 
-won't produce anything, because the `print` method never gets called. If you are generating maps using loops, you will need to explicitly call the `print` method:
-
+no producirá nada, porque el método `print` nunca se llama. Si estás generando mapas usando bucles, deberás llamar explícitamente al método `print`:
 ```{r eval = FALSE}
 for (i in 1:5) {
   print(SOmap_auto())
 }
 ```
 
-## Supporting data for maps
+## Datos de soporte para crear mapas
 
-When constructing maps, we commonly want to show features like oceanographic fronts, ice extent, coastline, place names, and MPA boundaries. There are a few sources of such data:
+Cuando se construyen mapas, comúnmente queremos mostrar características como frentes oceanográficos, extensión de hielo, línea de costa, nombres de lugares y límites de AMP (Áreas Marinas Protegidas). Hay algunas fuentes de estos datos:
 
-- some layers are bundled into `SOmap`, see the `SOmap::SOmap_data` object
-- `antanym` provides access to the SCAR Composite Gazetteer of place names
-- the `quantarcticR` package provides access to [Quantarctica](http://quantarctica.npolar.no/) data layers.
+- agunas capaz estan incluidas en `SOmap`, consultar objeto `SOmap::SOmap_data`
+- `antanym` proporciona acceso al Gazetteer Compuesto de la SCAR (Comité Científico de Investigación Antártica) de nombres de lugares
+- El paquete`quantarcticR` provee acceso a las capas de datos de [Quantarctica](http://quantarctica.npolar.no/)
 
 ### quantarcticR
 
-Note, this package is still in development, so the usage as shown here might change in later versions. Install if needed:
-
+Ten en cuenta que este paquete aún está en desarrollo, por lo que el uso que se muestra aquí podría cambiar en versiones posteriores. Instálalo si es necesario:
 ```{r eval = FALSE}
-remotes::install_github("SCAR-sandpit/quantarcticR")
+## remotes::install_github("SCAR-sandpit/quantarcticR")
 ```
 
-Example usage:
+Ejemplo de como usar quantarcticR:
 
 ```{r qR1}
 library(quantarcticR)
@@ -580,20 +568,20 @@ if (grepl("ben_ray", tempdir())) {
 ```
 
 ```{r qR1b}
-ds <- qa_datasets() ## all available layers
+ds <- qa_datasets() ## todas las capas disponibles
 head(ds)
 
-## more info about a particular layer
+## más informació acerca de una capa de interés
 my_layer <- qa_dataset("Median sea ice extent 1981-2010")
 my_layer
 
-## fetch the actual data for that layer
+## obtener los datos reales de esa capa
 layer_data <- qa_get(my_layer)
 
-## plot it
+## gráficalo
 plot(layer_data[layer_data$MONTH == "October", ])
 
-## or add to a SOmap
+## o añadirla a un SOmap
 SOmap(trim = -50, border_width = 0.5)
 SOplot(layer_data[layer_data$MONTH == "October", ], col = "red")
 
@@ -602,4 +590,4 @@ SOplot(layer_data[layer_data$MONTH == "October", ], col = "red")
 
 ### antanym
 
-See the [overview](overview.html) article.
+Consulta el artículo de visión general. [overview](overview.html).
