@@ -1,58 +1,58 @@
-# Course schedule
+# Programación del taller
 
-## Monday
+## Lunes
 
-Time  Item
+Hora  Descripción
 ----  ----
-9:00  [Course introduction][Course introduction], housekeeping, presentation of participants
-10:00 Break
-10:15 [Introduction to R and the Tidyverse]
-11:15 Break
-11:30 [Open data and data cleaning]
-12:30 Lunch
-13:00 Finding and downloading data through the rOpenSci packages
-14:00 Break
-14:15 [Mapping]
-15:15 Break
-15:30 [Data visualisation]
-17:30 End day 1
+9:00  [Introducción al taller][Intro taller], presentación de participantes
+10:00 Pausa
+10:15 [Introducción a R y el Tidyverse]
+11:15 Pausa
+11:30 [Datos de libre acceso y limpieza de datos]
+12:30 Almuerzo
+13:00 Encontrando y descargando datos a través de paquetes de rOpenSci
+14:00 Pausa
+14:15 [Mapeando]
+15:15 Pausa
+15:30 [Visualización de datos]
+17:30 Final del día 1
 
 
 
-## Tuesday
-Time  Item
+## Martes
+Hora  Descripción
 ----  ----
-9:00  [What are species distribution models?][SDM introduction and review]
-10:00 Break
-10:15 [Recent and past application of SDMs]
-11:15 Break
-11:30 Preparation for exercises
-12:30 Lunch
-13:30 [Run a simple SDM, understand and generate SDM outputs][SDM outputs]
-15:00 Break
-15:15 [SDM calibration: what you should know before running a model][Calibration]
-17:30 End day 2
+9:00  [¿Qué son modelos de distribución de especies (MDE)?][Intro MDE y revision]
+10:00 Pausa
+10:15 [Aplicaciones recientes y pasadas de MDE]
+11:15 Pausa
+11:30 Preparación para ejercicios prácticos
+12:30 Almuerzo
+13:30 [Correr un MDE simple, generar resultados e interpretarlos][Resultados MDE]
+15:00 Pausa
+15:15 [Calibración de MDE: ¿qué deberías saber antes de correr un modelo][Calibracion]
+17:30 Final del día 2
 
-## Wednesday
-Time  Item
+## Miércoles
+Hora  Descripción
 ----  ----
-9:30  [Introduction to different SDM algorithms][SDM algorithms]
-10:30 Break
-10:45 Questions, complete previous courses if necessary
-12:30 Lunch
-13:30 Personal work
-17:30 End day 3
+9:30  [Introducción a diferentes algoritmos de MDE][Algoritmos MDE]
+10:30 Pausa
+10:45 Preguntas y respuestas
+12:30 Almuerzo
+13:30 Aplicación de talleres a trabajo personal
+17:30 Final del día 3
 
 
-## Thursday
-Time  Item
+## Jueves
+Hora  Descripción
 ----  ----
-9:30  Personal work (with breaks)
-17:30 End Day 4
+9:30  Aplicación de talleres a trabajo personal (con pausas incluidas para el almuerzo)
+17:30 Final del día 4
 
 
-## Friday
-Time  Item
+## Viernes
+Hora  Descripción
 ----  ----
-9:30  Personal work, final presentations, and discussion (with breaks)
-17:00 End Day 5
+9:30  Aplicación de talleres a trabajo personal, presentaciones de resultados, y discusión (con pausas incluidas para el almuerzo)
+17:00 Final del día 5

@@ -1,14 +1,14 @@
-# Species distribution modelling
+# Modelos de distribución de especies (MDE)
 
-Exercise scripts are at the bottom of this page.
+El código para esta sección se encuentra al final de esta página.
 
-## SDM introduction and review
+## Introduccion y revisión de MDE
 
-What are species distribution models?
+¿Qué son los modelos de distribución de especies?
 
-[Presentation (PDF)](./course_material/Course 1 Tuesday What_are_SDM.pdf)
+[Presentación (PDF en inglés)](./course_material/Course 1 Tuesday What_are_SDM.pdf)
 
-### References
+### Referencias
 
 - [Araujo and Guisan 2006](./course_material/literature/Araujo _ Guisan2006.pdf)
 - [Elith 2006](./course_material/literature/Elith 2006.pdf)
@@ -18,13 +18,13 @@ What are species distribution models?
 - [Soberon and Peterson 2005](./course_material/literature/Soberon Peterson 2005.pdf)
 
 
-## SDM outputs
+## Resultados de MDE
 
-Understand and generate SDM outputs.
+Generar y entender resultados de MDE.
 
-[Presentation (PDF)](./course_material/Course 3 Tuesday_ SDM outputs.pdf)
+[Presentación (PDF en inglés)](./course_material/Course 3 Tuesday_ SDM outputs.pdf)
 
-### References
+### Referencias
 
  - [Elith et al. 2010](./course_material/literature/Elith_et_al-2010.pdf)
  - [Guillaumot et al. 2018 Ecol & Evol](./course_material/literature/Guillaumot et al 2018-Ecology_and_Evolution.pdf)
@@ -32,13 +32,13 @@ Understand and generate SDM outputs.
  - [Torres 2015](./course_material/literature/Torres 2015.PDF)
 
 
-## Calibration
+## Calibración
 
-What you should know before running a model.
+¿Qué deberías saber antes de correr un modelo?
 
-[Presentation (PDF)](./course_material/Course 5 Calibration- all you should think about before running a model.pdf)
+[Presentación (PDF en inglés)](./course_material/Course 5 Calibration- all you should think about before running a model.pdf)
 
-### References
+### Referencias
 
  - [Appendix S1 Elith 2008](./course_material/literature/Appendix  S1 Elith 2008.pdf)
  - [Barbet-Massin et al. 2012](./course_material/literature/Barbet-Massin_et_al-2012.pdf)
@@ -54,35 +54,36 @@ What you should know before running a model.
  - [Phillips et al. 2009](./course_material/literature/Phillips 2009.pdf)
  - [Wisz and Guisan 2009](./course_material/literature/Wisz Guisan 2009.pdf)
 
-## Exercise scripts
+## Ejercicios
 
-**Exercise - Run your first SDM**
+**Ejercicio - Corre tu primer MDE**
 
 [SDM_EXERCISE.pdf](./course_material/exercises/SDM_EXERCISE.pdf)
 
-**Final practical work**
+**Ejercicio práctico**
 
-Run models, compare different model calibrations and compare your model outputs!
+Corre el modelo, compara diferentes calibraciones para el modelo y compara los resultados del modelo.  
 
 [SDM_FINAL.pdf](./course_material/exercises/SDM_FINAL.pdf)
 
-**Other scripts**
+**Otros scripts**
 
 [calibration_BRT.R](./course_material/exercises/scripts/calibration_BRT.R)
 
 ```{r eval = FALSE}
 
-#### Open environmental data and occurrences (run_yOur_SDM.R file)
+#### Carga datos ambientales y de ocurrencia (archivo run_yOur_SDM.R)
 #---------------------------------------------------------
-# compute there the MATRIX_OCC_ENVI variable (1 set)
-# in the run_yOur_SDM.R file, run until the MyFold definition 
-# for set.seed(1) (j=1)
-# run the model and compare the predictive deviance according to the set of parameters chosen
+# calcula la variable MATRIX_OCC_ENVI (1 set)
+# en el archivo run_yOur_SDM.R, corre todo hasta la creacion de MyFold 
+# set.seed(1) (j=1)
+# corre el modelo y compara la dispersion de las predicciones de acuerdo
+# al conjunto de parametros escogido
 #=============================================================
 source("scripts/Function_gbm.R")
-tc=4   # tree complexity
-lr=0.011 # learning rate
-bf=0.8 # bag fraction
+tc=4   # complejidad del arbol
+lr=0.011 # tasa de aprendizaje
+bf=0.8 # fraccion de la bolsa (bag fraction)
 
 model.res<- gbm.step_v2 (data=MATRIX_OCC_ENVI, 
                          gbm.x = 2:ncol(MATRIX_OCC_ENVI),
@@ -104,7 +105,7 @@ model7<-model.res  # tc4 lr0.005 bf=0.9 nbt 10000
 model8<-model.res  # tc4 lr0.011 bf=0.8 nbt 10000 
 
 
-# GENERATE THE PLOTS 
+# Genera graficos
 tree.list1 <- seq(100, model1$gbm.call$best.trees, by = 100)
 tree.list2 <- seq(100, model2$gbm.call$best.trees, by = 100)
 tree.list3 <- seq(100, model3$gbm.call$best.trees, by = 100)
@@ -173,18 +174,18 @@ legend("topright",legend=c("tc3 lr0.001 bf=0.8","tc4 lr0.001 bf=0.8","tc4 lr0.00
 
 ```{r eval = FALSE}
 clock4 <- function(occ, bg.coords){
-  # the spatial sampling aims at defining areas containing either test or training data 
-  # for the CLOCK-4 method, 4 triangle areas are defined, cutting the Southern Ocean circle into 4 equal areas. Three of these 4 areas contain the data that will be used to train the model, the other remaining one, the data that will be used to test the model after predictions 
-  # the areas used to train and test the model are randomly defined at each loop step 
+  # el muestro espacial tiene como objetivo definir areas que contengan datos de prueba o entrenamiento 
+  # para el metodo CLOCK-4, 4 areas triangulares son definidas, dividiendo el Oceano del Sur en 4 areas iguales. Tres de las 4 areas contienen datos para entrenar el modelo, mientras que el area restante tiene datos para probar la precision de las predicciones del modelo 
+  # las areas utilizadas para entrenar y probar el modelo son definidas al azar durante cada iteracion del bucle 
   
-  #initialise vectors that are used to generate the spatial sampling structure
+  #initialisando vectores que son usados para muestrear datos considerando su espacio geografico
   random_longA <- seq(0,179,1)
   random_longB <- seq(-180,-1,1)
   random_longC <- seq(0,180,1)
   random_longD <- seq(-179,0,1)
   random_long <- c(random_longA,random_longB,random_longC,random_longD)
   
-  # sample a number between -180 and 180 to define the random sampling transect 
+  # muestreando un numero entre -180 and 180 para definir la ubicacion del transecto a ser muestreado 
   tirage <- sample(seq(181,541,1),1)
   random_long_tirage <- random_long[tirage]
   random_long_tirage_A1 <- random_long[tirage+90]
@@ -193,11 +194,11 @@ clock4 <- function(occ, bg.coords){
   #random_long_tirage_A4 <- random_long[tirage-180]
   
 
-  ## define training and test groups (composed of both presence and background data)
+  ## definir los grupos de entrenamiento y prueba (los grupos contienen presencias y datos background)
   occ.grp <- rep(NA, nrow(occ))
   bg.coords.grp <- rep(NA, nrow(bg.coords))
   
-  ## define training and test groups (composed of both presence and background data)
+  ## definir los grupos de entrenamiento y prueba (los grupos contienen presencias y datos background)
   presence_tot <- occ
   background_data <- bg.coords
   training_presences.occ1 <- NA;training_presences.occ3 <-NA
@@ -214,12 +215,12 @@ clock4 <- function(occ, bg.coords){
   training_backgr.occ2_part2 <- NA;training_backgr.occ4_part2 <- NA
   
   
-  #---------------------
-  # TRAINING PRESENCES
-  #---------------------
+  #------------------------------------------
+  # PRESENCIAS PARA CONJUNTO DE ENTRENAMIENTO
+  #------------------------------------------
   
-  ### ZONE 1 ####
-  if (random_long_tirage <= 0 & random_long_tirage_A1 <=0){ # imply that A2 >= 0 and A3>=0
+  ### ZONA 1 ####
+  if (random_long_tirage <= 0 & random_long_tirage_A1 <=0){ # significa que A2 >= 0 y A3>=0
     training_presences.occ1 <- which(presence_tot[,1] > random_long_tirage & presence_tot[,1] < random_long_tirage_A1)
     training_backgr.occ1 <- which(background_data[,1] > random_long_tirage & background_data[,1] < random_long_tirage_A1)
   } 
@@ -242,7 +243,7 @@ clock4 <- function(occ, bg.coords){
     training_backgr.occ1_part2 <- which(background_data[,1] > 0 & background_data[,1] < random_long_tirage_A1 )
   }
   
-  ### ZONE 2 ####
+  ### ZONA 2 ####
   
   if (random_long_tirage_A1 <= 0 & random_long_tirage_A2 <=0){
     training_presences.occ2 <- which(presence_tot[,1] > random_long_tirage_A1 & presence_tot[,1] < random_long_tirage_A2 )
@@ -267,7 +268,7 @@ clock4 <- function(occ, bg.coords){
     training_backgr.occ2_part2 <- which(background_data[,1] > 0 & background_data[,1] < random_long_tirage_A2 )
   }
   
-  ### ZONE 3 ####
+  ### ZONA 3 ####
   if (random_long_tirage_A2 <= 0 & random_long_tirage_A3 <=0){
     training_presences.occ3 <- which(presence_tot[,1] > random_long_tirage_A2 & presence_tot[,1] < random_long_tirage_A3 )
     training_backgr.occ3 <- which(background_data[,1] > random_long_tirage_A2 & background_data[,1] < random_long_tirage_A3)
@@ -291,7 +292,7 @@ clock4 <- function(occ, bg.coords){
     training_backgr.occ3_part2 <- which(background_data[,1] > 0 & background_data[,1] < random_long_tirage_A3 )
   }
   
-  ### set the groups 
+  ### definiendo grupos
   training_presence_grp1_all <- as.vector(na.omit(c(training_presences.occ1,training_presences.occ1_part1,training_presences.occ1_part2)))
   training_presence_grp2_all <- as.vector(na.omit(c(training_presences.occ2,training_presences.occ2_part1,training_presences.occ2_part2)))
   training_presence_grp3_all <- as.vector(na.omit(c(training_presences.occ3,training_presences.occ3_part1,training_presences.occ3_part2)))
@@ -338,9 +339,9 @@ clock4 <- function(occ, bg.coords){
 ### gbm.stepv2
 
 .roc <-function (obsdat, preddat) {
-  # code adapted from Ferrier, Pearce and Watson's code, by J.Elith
+  # codigo adaptado por J.Elith de Ferrier, Pearce and Watson
   #
-  # see:
+  # para mas informacion:
   # Hanley, J.A. & McNeil, B.J. (1982) The meaning and use of the area
   # under a Receiver Operating Characteristic (ROC) curve.
   # Radiology, 143, 29-36
@@ -348,12 +349,13 @@ clock4 <- function(occ, bg.coords){
   # Pearce, J. & Ferrier, S. (2000) Evaluating the predictive performance
   # of habitat models developed using logistic regression.
   # Ecological Modelling, 133, 225-245.
-  # this is the non-parametric calculation for area under the ROC curve, 
-  # using the fact that a MannWhitney U statistic is closely related to
-  # the area
+  # este es el calculo no-parametrico para el area bajo la curva ROC, 
+  # que se basa en el uso de la estadistica U de MannWhitney U statistic
+  # que esta relacionada a esta area
   #
   
-  # in dismo, this is used in the gbm routines, but not elsewhere (see evaluate).
+  # en dismo, esto se usa solamente en las rutinas gbm, pero no en otros casos 
+  # (mira evaluate para mas informacion).
   
   if (length(obsdat) != length(preddat)) { 
     stop("obs and preds must be equal lengths")
@@ -369,12 +371,10 @@ clock4 <- function(occ, bg.coords){
 
 .calibration <- function(obs, preds, family = "binomial")  {
   #
-  # j elith/j leathwick 17th March 2005
-  # calculates calibration statistics for either binomial or count data
-  # but the family argument must be specified for the latter 
-  # a conditional test for the latter will catch most failures to specify
-  # the family
-  #
+  # j elith/j leathwick 17 de marzo del 2005
+  # calcula estadisticas de calibracion para datos binomiales o de conteo
+  # pero el argumento family de ser especificado porque la prueba condicional 
+  # aplicada mas tarde depende de ello para detectar errores
   
   if (family == "bernoulli") {
     family <- "binomial"
@@ -680,16 +680,16 @@ gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
     
     
     
-    ############################
-    ## JA editions / 08/02/19 ##
-    ############################
+    ################################
+    ## ediciones de JA / 08/02/19 ##
+    ################################
     
     cv.corr.class  <- rep(0, n.folds)
     cv.length <- rep(0, n.folds)
     tss.stat <- rep(0, n.folds)
         
     ####################
-    ## End / 08/02/19 ##
+    ## Fin / 08/02/19 ##
     ####################
     
     
@@ -734,22 +734,22 @@ gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
       threshold.stats[i] <- approx(ppoints(u_i), sort(u_i, 
                                                       decreasing = T), prevalence)$y
       
-      ############################
-      ## JA editions / 08/02/19 ##
-      ############################
+    ################################
+    ## ediciones de JA / 08/02/19 ##
+    ################################
       
       c_i <- c(1, 0)[as.factor(u_i <= threshold.stats[i])]
       tab1 <- table(c_i, y_i)
       
-      # Correctly classified test data
+      # Set de datos de prueba correctamente clasificados
       cv.corr.class[i] <- sum(diag(tab1)) / sum(tab1)
       
-      # % cv / total data
+      # % cv / datos totales
       cv.length[i] <- table(y_i)["1"] / table(y.data)["1"]
       
       # TSS
-      # Sensitivity =  TP/(TP + FN) 
-      # Specificity =  TN/(TN + FP) 
+      # Sensitividad =  TP/(TP + FN) 
+      # Especificidad =  TN/(TN + FP) 
       tp <- tab1["1", "1"]
       fn <- tab1["0", "1"]
       tn <- tab1["0", "0"]
@@ -763,7 +763,7 @@ gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
 
 
       ####################
-      ## End / 08/02/19 ##
+      ## Fin / 08/02/19 ##
       ####################
       
       
@@ -836,15 +836,15 @@ gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
     
     
     
-    ############################
-    ## JA editions / 08/02/19 ##
-    ############################
+    ################################
+    ## ediciones de JA / 08/02/19 ##
+    ################################
     
     self.th <- approx(ppoints(u_i), sort(u_i, 
                               decreasing = T), prevalence)$y
     
     ####################
-    ## End / 08/02/19 ##
+    ## Fin / 08/02/19 ##
     ####################
     
   }
@@ -923,9 +923,9 @@ gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
   gbm.object$cv.loss.matrix <- cv.loss.matrix
   gbm.object$cv.roc.matrix <- cv.roc.stats
   
-  ############################
-  ## JA editions / 08/02/19 ##
-  ############################
+    ################################
+    ## ediciones de JA / 08/02/19 ##
+    ################################
   
   gbm.object$cv.cor.matrix <- cv.cor.stats
   gbm.object$cv.th.matrix <- threshold.stats
@@ -935,7 +935,7 @@ gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
   gbm.object$tss.cv <- tss.stat
   
   ####################
-  ## End / 08/02/19 ##
+  ## Fin / 08/02/19 ##
   ####################
   
   if (keep.fold.models) {
@@ -963,12 +963,12 @@ gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
 ## II.
 ## https://github.com/cran/ENMeval/tree/master/R
 
-#########################################################
-#########  MAKE BLOCK EVALUATION GROUPS	#############
-#########################################################
+#################################################################
+#########  CREAR GRUPOS PARA EVALUACION DE BLOQUES	#############
+#################################################################
 
 get.block <- function(occ, bg.coords){
-  # SPLIT OCC POINTS INTO FOUR SPATIAL GROUPS
+  # Dividiendo puntos de presencia (OCC) en cuatro grupos espaciales
   noccs <- nrow(occ)
   n1 <- ceiling(nrow(occ)/2)
   n2 <- floor(nrow(occ)/2)
@@ -981,7 +981,7 @@ get.block <- function(occ, bg.coords){
   grp3 <- grpB[order(grpB[, 1]),][1:(n4),]
   grp4 <- grpB[!rownames(grpB)%in%rownames(grp3),]
   
-  # SPLIT BACKGROUND POINTS BASED ON SPATIAL GROUPS
+  # Dividiendo puntos de background en grupos espaciales
   bvert <- mean(max(grp1[, 1]), min(grp2[, 1])) + 0.5
   tvert <- mean(max(grp3[, 1]), min(grp4[, 1])) + 0.5
   horz <- mean(max(grpA[, 2]), min(grpB[, 2])) + 0.5
@@ -1012,18 +1012,18 @@ get.block <- function(occ, bg.coords){
 
 ## III.
 
-# Fonction pour calculer les nouveaux coordonnées issues d'une rotation d'un nuage de points  
+# Funcion para calcular coordenadas nuevaspara rotar la nube de puntos  
 rota <- function(matxy = MyMat, theta = pi/3, center = center){
   
   matxy <- as.matrix(matxy)
   colnames(matxy) <- c("x", "y")
   
-  #3. define a 60 degree counter-clockwise rotation matrix
+  #3. definir una rotacion de la matriz de 60 grados contra-reloj
   R <- rbind(c(cos(theta), -sin(theta)), 
              c(sin(theta), cos(theta)))
   
-  # do the rotation...
-  s <- matxy #- center    # shift points in the plane so that the center of rotation is at the origin
+  # aplicar la rotacion
+  s <- matxy #- centro    # mover los puntos en el plano para que el centro de la rotacion sea el origen
   for(hh in 1:nrow(matxy)){
     s[hh, ] <- matxy[hh,] - center
   }
@@ -1031,15 +1031,15 @@ rota <- function(matxy = MyMat, theta = pi/3, center = center){
   so <- cbind(x = s[,"x"] * R[1,1] + s[,"y"] * R[1,2],
               y = s[,"x"] * R[2,1] + s[,"y"] * R[2,2])
   
-  #so = R %*% s           # apply the rotation about the origin
-  #vo = so + center   # shift again so the origin goes back to the desired center of rotation
+  #so = R %*% s           # applicar la rotacion desde el origen
+  #vo = so + center   # mover los puntos nuevamente para el origen vuelva al centro de rotacion elegido
   
-  vo <- matxy #- center    # shift points in the plane so that the center of rotation is at the origin
+  vo <- matxy #- centro   # mover los puntos en el plano para que el centro de la rotacion sea el origen
   for(hh in 1:nrow(matxy)){
     vo[hh, ] <- so[hh,] + center
   }
   
-  # this can be done in one line as:
+  # esto puede ser hecho en una linea asi:
   # vo = R*(v - center) + center
   return(vo)
 }
@@ -1054,13 +1054,13 @@ library(raster)
 library(dismo)
 library(gbm)
 
-#### Open occurrence records ####
-#---------------------------------
+#### Abriendo registros de ocurrencia ####
+#-----------------------------------------
 occ.sterechinus <- read.csv("data/occurrences_sterechinus.csv", header=T, sep=";")
 # head(occ.sterechinus)
 
-#### Open Environmental descriptors layers and stack them together ####
-#-----------------------------------------------------------------------
+#### Abriendo las capas con variables ambientales y juntadolas en un stack ####
+#------------------------------------------------------------------------------
 depth <- raster("data/environmental_layers/depth.nc")
 sediments <- raster("data/environmental_layers/sediments.nc")
 seafloor_temp_2005_2012_max <- raster("data/environmental_layers/seafloor_temp_2005_2012_max.nc")
@@ -1069,34 +1069,35 @@ seafloor_current_speed <- raster("data/environmental_layers/seafloor_current_spe
 
 predictors_stack <- stack(depth,sediments,seafloor_temp_2005_2012_max,POC_2005_2012_max,seafloor_current_speed)
 
-## have a look at your descriptors properties 
+## verificando las propiedades de las variables ambientales
 #..............................................
 #predictors_stack
 #plot(predictors_stack)
 
-# have a look at the distribution of occurrences 
+# verificando la distribucion de ocurrencias
 #.................................................
 #plot(depth)
-#points(occ.sterechinus[,c(2,1)], pch=20) # longitude first, latitude second
+#points(occ.sterechinus[,c(2,1)], pch=20) # longitud primero, luego latitud
 
 #--------------------------------------------------------------------------------------------------------------
-# Open the KDE layer of sampling effort, on which the background data will be sampled (by weighting) 
-# The KDE (Kernel Density Estimation) is a statistical tool that helps to measure the probability of finding
-# an occurrencce on each pixel, according to the set of benthic records sampled in the entire Southern Ocean 
-# (update from the Biogeographic Atlas of the Southern Ocean)
+# Abriendo la capa KDE del esfuerzo de muestreo sobre la cual los datos background van a ser 
+# muestreados (con ponderacion) 
+# El KDE (Estimacion de Densidad de Kernel) es una herramienta estadistica que mide la probabilidad de 
+# encontrar una ocurrencia en un pixel basada en un conjunto de informacion sobre el bentos que
+# fue recogidas alrededor del Oceano del Sur (actualizacion del Biogeographic Atlas of the Southern
+# Ocean)
 #--------------------------------------------------------------------------------------------------------------
 KDE <- raster("data/KDE.asc")
-# on this layer, the continents are defined by pixels containing NA values
-# it enables R to recognise later on the areas where the background data shoud 
-# not be sampled 
+# en este capa, los continentes estan definidos por pixels que contienen valores NA
+# esto permite a R reconocer las areas en donde NO deberia muestrear datos background
 #-----------------------------------------------------------------------------------------
 
-#### Set up 
+#### Configuracion
 #-------------
-cv.boot <- 2 # number of replicates (# of times models are launched/replicated)
+cv.boot <- 2 # numero de replicas (cantidad de veces que el modelo es inicializado)
 source("scripts/Function_gbm.R")
 
-#### Stack of empty data and matrices to fill
+#### Creando un "stack" y matriz vacia para guardar resultados
 #----------------------------------------------------------
 
 stack.pred<-subset(predictors_stack,1);values(stack.pred)<-NA
@@ -1104,52 +1105,56 @@ stack.pred<-subset(predictors_stack,1);values(stack.pred)<-NA
 
 model_stats <- matrix(NA, 6, cv.boot*4,dimnames = list(c("AUC", "COR", "TSS", "maxSSS", "valid_test_data","prop_test"), NULL))
 
-# Stores the contribution
+# Guardando contribucion
 contTr <- matrix(NA, dim(predictors_stack)[3], cv.boot, dimnames = list(names(predictors_stack), NULL))
-n.seed <- seq(1,60,1)[-c(4,5,17,28,32,41,45,46,48,53)] # controls and fixes the random sampling (to compare results more accurately) 
+n.seed <- seq(1,60,1)[-c(4,5,17,28,32,41,45,46,48,53)] # controla y fija el muestreo aleatorio (para
+# comparar resultados con mayor precision) 
 
 for (j in 1:cv.boot){
 
   #------------------------------------------------------------
-  #### create the matrix of occurrence-environment 
-  #------------------------------------------------
+  #### creando una matriz de ocurrencia-datos ambientales
+  #------------------------------------------------------------
   envi.presences <- unique(extract (predictors_stack,occ.sterechinus[,c(2,1)]))
   presence.data <- occ.sterechinus[-which(duplicated(extract(predictors_stack,occ.sterechinus[,c(2,1)]))),c(2,1)]; colnames(presence.data)<- c("longitude","latitude")
-  # the function 'unique' enables to remove the duplicates that may be contained in the dataset (occurrences found in a same pixel); 'duplicated' aims at spotting which of these rows are similar 
+  # la funcion 'unique' remueve datos duplicados (por ej., ocurrencias que se encuentran en un mismo
+  # pixel); 'duplicated' tiene el objetivo de identificar las filas que son iguales 
   #head(envi.presences)
-  # the presence data will be associated to ID=1
+  # los datos de presencia estaran asociados al ID=1
   
   set.seed(n.seed[j])
-  # sampling of background data : in the loop, changes at each replicate 
-  # 1000 background data are randomly sampled in the environment, according to the weighting scheme of the KDE layer 
+  # muestreo de datos background: en un bucle, cambios en cada replica 
+  # 1000 datos background son muestreados aleatoriamiento para extraer datos ambientales, el muestreo
+  # es ponderado basado en la capa KDE
   background_data <- xyFromCell(KDE, sample(which(!is.na(values(KDE))), 200, prob=values(KDE)[!is.na(values(KDE))]))
 
   colnames(background_data) <- colnames(presence.data)
-  # extract environmental conditions where the background data are sampled 
+  # extrayendo condiciones ambientales en puntos background  
   envi.background <- extract(predictors_stack,background_data)
-  # the background data will be associated to ID=0
+  # datos background estaran asociados a ID=0
 
-  # Initialise the matrix containing presence, background data and the environmental values associated 
+  # Inicializar una matriz que contenga datos de presencia, background y factores ambientales 
   id<-0;sdmdata.unique<-0;  id<-c(rep(1,nrow(envi.presences)),rep(0,nrow(envi.background))) 
   MATRIX_OCC_ENVI<-data.frame(cbind(id,rbind(envi.presences,envi.background)))
   #head(MATRIX_OCC_ENVI)
 
-  # Split of the occurrence-background dataset into folds of test/training data (spatially segregated)
+  # Dividir el set de datos de presencia-background en "folds" de muestreo y entrenamiento 
+  #(segregados espacialmente)
   dat1 <- rbind(cbind(background_data, Isp=rep(0,nrow(background_data))), cbind(presence.data,Isp=rep(1,nrow(presence.data)))); colnames(dat1)<- c("longitude","latitude","Isp")
   #tail(dat1)
-  idP <- which(dat1$Isp == 1) #  id of presence data to split them 
-  MyFold <- rep(NA, nrow(dat1)) # an empty box to store the group of the data (1 to 4 afterwards)
+  idP <- which(dat1$Isp == 1) #  dividir basados en id de presencia  
+  MyFold <- rep(NA, nrow(dat1)) # variable vacia para guardar datos por grupo (1 to 4)
   
   source("scripts/clock4_crossValidation.R")
   clock4F <- clock4(dat1[idP, c("longitude", "latitude")], dat1[-idP, c("longitude", "latitude")])
   
-  # Extracts the folds
+  # Extrayendo "folds"
   MyFold[idP] <- clock4F$occ.grp
   MyFold[-idP] <- clock4F$bg.coords.grp
   plot(dat1[,c("longitude", "latitude")], pch = 20, col = c("red", "blue","black","purple")[as.factor(MyFold)])
   
   #--------------------------
-  #### launch the model  ! 
+  #### inicializando modelo 
   #--------------------------
   model.res<- gbm.step_v2 (data=MATRIX_OCC_ENVI, 
                          gbm.x = 2:ncol(MATRIX_OCC_ENVI),
@@ -1162,50 +1167,51 @@ for (j in 1:cv.boot){
                          bag.fraction =0.5)
 
   #------------------------------------------------------------
-  #### Extract data and model outputs 
+  #### Extrayendo datos y resultados del modelo 
   #------------------------------------------------------------
-  # Predictions 
+  # Predicciones
   p<-predict(predictors_stack,model.res,n.trees=model.res$gbm.call$best.trees,type="response", na.rm=F)
-  stack.pred<-stack(stack.pred,p) # stack all the maps replicates 
+  stack.pred<-stack(stack.pred,p) # creando un stack con los mapas de cada replica 
   
   ########
-  ## CV ## (= on CV folds)
+  ## CV ## (= en "folds" de validacion cruzada)
   ########
-    j_cv <- ((j-1) * 4+1):(j*4) # to count the folds 
+    j_cv <- ((j-1) * 4+1):(j*4) # contando "folds" 
   
   model_stats["AUC", j_cv] <- model.res$cv.roc.matrix
   model_stats["COR", j_cv] <- model.res$cv.cor.matrix
   model_stats["TSS", j_cv] <- model.res$tss.cv
   model_stats["maxSSS", j_cv] <- model.res$cv.th.matrix
 
-  ## correctly classified test data 
+  ## datos de prueba clasificados correctamente
   model_stats["valid_test_data", j_cv] <- model.res$cv.corr.class*100
   model_stats["prop_test", j_cv] <- model.res$cv.length*100
   
-  # Get contributions 
-  RI <- summary(model.res, plotit = F) # extract the contribution
+  # Obtener contribuciones
+  RI <- summary(model.res, plotit = F) # extrayendo la contribucion
   contTr[match(RI$var, rownames(contTr)), j] <- RI[,"rel.inf"]
 
 }
 
-#------------------------
-#### Maps of predictions 
-#------------------------
+#-------------------------
+#### Mapas de predicciones 
+#-------------------------
 mean_stack <- raster::calc(stack.pred, mean, na.rm=T); mean_stack <- mask(mean_stack, depth)
 #sd_stack <- raster::calc(stack.pred,sd, na.rm=T); sd_stack <- mask(sd_stack, depth)
 
-# you can plot the results 
-#continent <- read.csv("data/worldmap.csv") # add continents lines 
+# visualizando resultados 
+#continent <- read.csv("data/worldmap.csv") # agregando bordes de continentes
 #plot(mean_stack) ; points(continent, type="l")
 
-# this is an approximate map, if you want to have a nicer representation, you can 
-# export the ascii document and open it on another software such as Qgis or other
+# este mapa es un borrador para visualizacion rapida, un mejor mapa puede ser preparado
+# en software especializado como QGIS o similar. Solo es necesario exportar las capas
+# como archivos ascii o GeoTif
 # writeRaster(mean_stack, "results/mean_raster.asc")
 # writeRaster(sd_stack, "results/sd_raster.asc")
 
-#---------------------
-#### Model statistics 
-#---------------------
+#---------------------------
+#### Estadisticas del modelo 
+#---------------------------
 ecM <- apply(model_stats, 1, mean, na.rm=T)
 ecSD <- apply(model_stats, 1, sd, na.rm=T)
 ecTot <- paste(round(ecM, 3), round(ecSD, 3), sep = " ± ")
@@ -1214,38 +1220,39 @@ names(ecTot) <- names(ecM)
 ResF <- data.frame(c(ecTot["AUC"],ecTot["COR"],ecTot["TSS"],ecTot["maxSSS"], ecTot["valid_test_data"], ecTot["prop_test"]))
 rownames(ResF) <- c("AUC","COR","TSS", "maxSSS",  "Correctly classified test data", "Test data (% of total dataset)") ; colnames(ResF) <- "Model average statistics"
 
-# matrix of raw results 
+# Matriz de los resultados
 #model_stats
-# average values 
+# Valores promedio
 #ResF
 
-# same, you can export the results 
+# Resultados pueden ser exportados de la siguiente manera
 #write.csv(model_stats,"results/model_stats.csv"))
 
-## Contribution of environmental descriptors 
-# raw data 
+## Contribucion de factores ambientales 
+# datos en bruto
 #contTr
 
-# calculate the average 
+# calculando el promedio
 CtM <- apply(contTr, 1, mean)
 CtSD <- apply(contTr, 1, sd)
 CtTot <- paste(round(CtM, 3), round(CtSD, 3), sep = " ± ")
 names(CtTot) <- names(CtM)
 
-CtTot <- data.frame(CtTot) ; colnames(CtTot) <- "Contribution (%) of environmental descriptors to the model"
+CtTot <- data.frame(CtTot) ; colnames(CtTot) <- "Contribucion (%) de variables ambientales al modelo"
 #write.csv(CtTot, "results/avg_contribution.csv")
 
 
 ####---------------------------------------------------------------------------
 ####---------------------------------------------------------------------------
-### CALCULATE EXTRAPOLATION 
-# Multivariate Environmental Similarity Surface (Elith et al. 2010) 
+### CALCULANDO EXTRAPOLACION 
+# Surperficie de Similaridad Ambiental Multivariada (Elith et al. 2010) 
 # envi.presences <- unique(extract (predictors_stack,occ.sterechinus[,c(2,1)]))
 # x <- dismo::mess(predictors_stack, na.omit(envi.presences))
 # 
-# y <- x; values(y)<- values(x)>0  # refers to Elith et al. (2010): when the calculated MESS values are negative, it means that it is extrapolating (outside of boundaries)
-# y <- reclassify(y,cbind(FALSE,0)) # extrapolation area 
-# y <- reclassify(y,cbind(TRUE,1))  # non extrapolation, inside the boundaries of calibration
+# y <- x; values(y)<- values(x)>0  # referencia Elith et al. (2010): cuando los valores MESS son
+#negativos significa que hay extrapolacion (prediccion fuera de limites del modelo)
+# y <- reclassify(y,cbind(FALSE,0)) # area extrapolada
+# y <- reclassify(y,cbind(TRUE,1))  # no hubo extrapolacion, dentro de los limites de la calibracion
 # 
 # plot(y)
 

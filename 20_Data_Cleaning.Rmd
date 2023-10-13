@@ -1,6 +1,6 @@
-# Open data and data cleaning
+# Datos de libre acceso y limpieza de datos
 
-## FAIR principles
-[Presentation (PDF)](./course_material/AVDP_02_FAIR_OPEN.pdf)
+## Principios FAIR
+[Presentación (PDF en inglés)](./course_material/AVDP_02_FAIR_OPEN.pdf)
 
-See also the [Metadata - Darwin Core] section.
+Mira también la sección de [Metadata - Darwin Core].

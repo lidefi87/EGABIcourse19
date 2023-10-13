@@ -1,106 +1,105 @@
-# SDM algorithms
+# Algoritmos de modelos de distribucion de especies
 
-Introduction to different SDM algorithms.
+Introducción a varios algoritmos disponibles para modelar distribución de especies.  
+  
+[Presentation (PDF)](./course_material/C6_Different algorithms.pdf)  
+  
+## Ejercicios - Práctica con modelos
 
-[Presentation (PDF)](./course_material/C6_Different algorithms.pdf)
-
-## Exercises - Practice with models
-
-For this exercise, we're going to play with a superhero dataset! Although this is an SDM focused course, we don't want to spoil the surprises coming when you start playing with the environmental data. 
-
-We want to run models for two questions:  
-
-1) CLASSIFICATION: Is there a bias towards alignment? (i.e. can we predict if a character will be good or bad)  
-2) REGRESSION: Are men stronger than women in the comics? (i.e., can we predict total power, and is Gender one of the most important predictors? Or is there something else that predicts total power)  
-
-
-As per the slides, we're going to do a few things:  
-
-1) Explore and clean our data  
-2) Use one-hot-encoding to help deal with many categories  
-3) Build a single decision tree and visualise it. Re-build the tree with different settings  
-4) Run a model with gbm.step and visualise the train/test plot, as well as the variable importance plot  
-5) Run the same model with random forests and look at the differences in the outputs    
-
-***Pick either the classification or regression problem. Solution for the classification problem are included in this document if you need a poke in the right direction. We run the GBM model ONLY for the regression problem here, but you could try out with RF if you wanted***
-
-
-Let's start by loading libraries
+Para este ejercicio vamos a utilizar un set de datos de superhéroes. De seguro que se sorprenderán cuando comiencen a explorar los datos ambientales.  
+  
+El objetivo es correr modelos que nos permitan responder dos preguntas:  
+  
+1) CLASIFICACIÓN: ¿Existe un sesgo hacia la armonización? Es decir, ¿somos capaces de predecir si un personaje es bueno o malo?  
+2) REGRESIÓN: ¿Son los hombres de los cómics más fuertes que las mujeres? Es decir, ¿somos capaces de predecir la fuerza total del personaje? Además, ¿es el género uno de los predictores más importantes o hay alguna otra variable que es mejor para predecir la fuerza total?  
+  
+Aquí haremos lo siguiente:  
+  
+1) Explorar y limpiar datos  
+2) Usar el método de codificación "one-hot" para incluir muchas categorías en el modelo  
+3) Construir un árbol de decisión y visualizar resultados. Reconstruir este árbol pero con configuración diferente  
+4) Correr un modelo con `gbm.step` y visualizar las figuras de entrenamiento y prueba, así como crear una figura de la importancia de las variables usadas en el modelo  
+5) Correr el mismo modelo pero con random forests y contrastar las diferencias en los resultados      
+  
+***Escoge un problema de clasificación o regresión. La solución para el problema de clasificación está incluida en este documento por si necesitas ayuda. Aquí vamos a correr el modelo GBM solamente para el problema de regresión, pero también puedes probarlo con random forest (RF)***  
+  
+Empecemos llamando a las librerías que necesitaremos  
 
 ```{r sdmalg1, warning=FALSE}
-library(tidyverse)  ## Isn't tidyverse awesome?
-library(dismo)  ## This package contains the gbm.step command
-library(randomForest)  ## This package contains the randomForest
-library(rpart)   ## This package contains a series of useful decision tree functions
+library(tidyverse)
+library(dismo)  ## Esta librería incluye el comando gbm.step
+library(randomForest)  ## Esta librería incluye randomForest
+library(rpart)   ## Esta librería incluye una serie de funciones útiles para los árboles de decisión
 library(rpart.plot)
 library(gbm)
 ```
+  
+### Cargando y limpiando datos
 
-### Load and clean the data
-
-Now that we've got some libraries ready, let's load and clean our SUPERHERO dataset in preparation for our modelling.
-
+Una vez llamadas las librerías relevantes, vamos a subir el set de datos de superhéroes y los limpiaremos antes de poder iniciar con los modelos.  
+  
 ```{r sdmalg2, echo = FALSE}
-## hide this, since the path may be confusing to readers
+## Aqui leemos los datos de superheroes
 Supes <- readr::read_csv('docs/course_material/exercises/data/SuperheroDataset.csv')
 ```
 
 ```{r sdmalg3, eval = FALSE}
 Supes <- readr::read_csv('SuperheroDataset.csv')
 ```
-
-For the purposes of this exercise, we're going to use the following columns: Name, Intelligence, Strength, Speed, Durability, Power, Combat, Gender, Race, Creator, Alignment, Total Power.  Use the tidyverse to extract those columns. 
-
+  
+Para este ejercicios vamos a utilizar las siguientes columnas: Name, Intelligence, Strength, Speed, Durability, Power, Combat, Gender, Race, Creator, Alignment, Total Power. Usamos `tidyverse` para extraer estas columnas.   
+  
 ```{r sdmalg4}
 SuperData <- Supes %>%
   dplyr::select(Name, Intelligence:Combat, Alignment:Race, Creator, TotalPower)
 ```
-
-#### Exploring the data
-
-If you explore the data a little bit, you'll be able to see some of the interesting quirks of the dataset. Use ggplot2 (or base plot if you're feeling lazy ;) ). 
+  
+#### Explorando los datos
+  
+Si exploramos los datos podemos ver algunos elementos interesantes de este set de datos. Usamos `ggplot2` (o `plot` de `R` base si prefieres). 
 
 ```{r sdmalg5, warning=FALSE,message=FALSE}
-
 
 SuperData %>%
   filter(!is.na(Intelligence))%>% 
   ggplot(aes(x=Intelligence,y=Strength)) + geom_point() + geom_smooth(method=lm) + theme_bw()
 
-## Looking at the line, it seems like the problem is that there are some extreme low values
-##   of intelligence. Outliers perhaps?? Try to find out who those values belong to, and
-##   that may help you determine if they should be included in the analysis
+## Mirando a la linea parece que existe un valor extremadamente bajo de inteligencia.
+##   Probablemete puntos atipicos. Veremos a quien le pertenecen estos valores, y que 
+##   podria ayudar a determinar si deberiamos incluirlos en nuestro analisis
 
 SuperData %>%
   filter(!is.na(Combat))%>% 
   ggplot(aes(x=Combat,y=Strength)) + geom_point() + geom_smooth(method=lm) + theme_bw()
 
-## We can also filter the data conditionally to explore the dataset with specific classes, e.g.:
+## Podemos tambien filtrar datos simplemente para explorar el set de datos usando condiciones
+## especificas, como por ejemplo:
 SuperData %>%
   filter(!is.na(Combat),Gender=='Female')%>% 
   ggplot(aes(x=Combat,y=Strength)) + geom_point() + geom_smooth(method=lm) + theme_bw()
 
 
 library(GGally)
-## This is a great library for exploring data quickly! Rather than coding everything bit by bit
+## Esta es una buena librería para visualizar datos rapidamente en lugar de crear gráficos
+## unicos con codigo
 
 quant_df <- SuperData %>% dplyr::select(Intelligence:Gender,TotalPower)
 ggpairs(quant_df, progress = FALSE)
 
 ```
   
-Note that 'total power' is highly correlated with strength, speed, durability and power. This could impact how we interpret the regression problem later as these variables may wash out the signal we're trying to explore. Not a bad thing if we're just trying to make predictions! But if we're trying to answer a specific question, it could 'muddy the waters'.    
+Nota que `total power` está altamente correlacionado con `strength` (fuerza), `speed` (velocidad), `durability` (durabilidad) y `power` (poder). Esto podría influenciar cómo interpretamos el problema de regresión, ya que la correlación de estas variables pueden interferir con la señal de influencia de las variables exploradas. Esto puede interferir en nuestra habilidad de responder nuestras preguntas.  
 
-If you have checked out some of the variables, you might notice two things:  
-
-1)  Race and Creator have too many categories!
-2)  There are a number of Creators that are only used once, or may not be appropriate to include.   
-
+Si has explorado el set de datos quizás hayas notado lo siguiente:  
+  
+1)  `Race` (raza) and `Creator` (creador) tienen muchas categorías.  
+2)  Existen muchos creadores que solo fueron mencionados una vez, y quizás no sea apropriado incluirlos todos.  
+  
 ```{r sdmalg6}
-length(unique(SuperData$Race)) ## Number of unique levels in Race
-length(unique(SuperData$Creator))  ## Same only for creator
+length(unique(SuperData$Race)) ## Cantidad de categorias unicas en raza
+length(unique(SuperData$Creator))  ## Lo mismo pero para creador
 
-## Let's just check out Creator:
+## Explremos a Creator:
 unique(SuperData$Creator)
 
 SuperData %>% count(Creator)
