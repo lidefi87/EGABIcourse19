@@ -106,48 +106,50 @@ SuperData %>% count(Creator)
 
 ```
 
-There are many classes here that may not be appropriate to include. For example, creator Ian Fleming (creator of James Bond) only has one character.  This dataset also has Star Trek characters. So, we decide here to filter out the appropriate classes (keeping Marvel Comics, DC Comics, Dark Horse Comics, and Image Comics).  
-
-***Note the usage of %in%***
+Esta columna tiene muchas categorías y probablemente no sea apropriado incluir todas en el análisis. Por ejemplo, Ian Fleming (creador de James Bond) está asociado a un solo personaje. Este set de datos también tiene personajes de Star Trek y muchas otras películas o series de televisión. Quizás podamos solo incluir personajes de cómics como Marvel Comics, DC Comics, Dark Horse Comics, e Image Comics.   
+  
+***Nota el uso de `%in%`***
 
 ```{r sdmalg7}
 FilteredSupes <- SuperData %>%
   dplyr::filter(Creator %in% c('Marvel Comics','DC Comics','Dark Horse Comics','Image Comics')) %>%
   dplyr::filter(!is.na(Intelligence))
-## we do this last part to remove NA data for cleanliness, though trees don't require you to do this!
+## la ultima linea remueve NA del set de datos. Este paso no es estrictamente necesario con arboles 
+## de decision
 
 FilteredSupes
 
-## How many races do we now have??
+## ¿Cuantas razas tenemos?
 length(unique(FilteredSupes$Race))
 
 ```
-
-Now let's explore this again.
-
+  
+Exploremos los datos otra vez.  
+  
 ```{r sdmalg8, warning = FALSE, message = FALSE}
 quant_df <- FilteredSupes %>% dplyr::select(Intelligence:Gender,TotalPower)
 ggpairs(quant_df, progress = FALSE)
 
 ```
-
-Not much has really changed, as we have not removed too many rows, which is good thing because it means that those data we removed won't impact the final conclusions in any major way. This just simplifies our data cleaning for this particular exercise. However, we still have lots of 'Race' categories. 
-
+  
+No mucho ha cambiado porque no removimos muchas filas. Esto es bueno porque mantenemos la mayor parte de nuestros datos y esperemos que las conclusiones finales no sean muy diferentes. Pero el beneficio de remover esas pocas filas es que nos ayuda a simplificar el proceso de limpieza de nuestros datos para este ejercicio. Sin embargo, aún tenemos muchas categorías bajo `Race`.  
+  
 ```{r sdmalg9}
 FilteredSupes %>% count(Race)
 ```
-Looking at the breakdown of Race, there are many with a count of 1. These can cause some issues when trying to do any cross validation... so we should remove them.
-
+  
+Mirando en más detalle a `Race`, vemos varias categorías con una sola observación. Esto puedo ocasionar problemas cuando hagamos validación cruzada, así que es preferible removerlos.  
+  
 ```{r sdmalg10}
 FilteredSupes <- FilteredSupes %>% add_count(Race) %>% filter(n > 1)
 
 FilteredSupes %>% count(Race)
 ```
 
-### One hot encoding!
+### Codificación One-hot
 
-Race has MANY categories! This COULD cause the trees to get swamped by this predictor.  Also, by one-hot encoding, we can keep data that would otherwise get thrown out if just filtering out categories. For example, if we removed the 'cyborg' category by way of filtering, those character data would be removed as well (they might be useful). One hot encoding turns each category into a binary variable. Can be done easily in tidyverse!
-
+`Race` tiene muchas categoría y esto podrías ocasionar que se pierda la señal de las variables utilizadas como predictores por los árboles de decisión.  Para evitar problemas vamos a hacer uso de la codificación one-hot, la cual nos permitirá mantener el mayor número de categorías posibles. La codificación one-hot nos permite crear categorías utilizando variables binarias, y esto se puede hacer de manera sencilla con el `tidyverse`.  
+  
 ```{r sdmalg11}
 OOEdata <- FilteredSupes %>% 
         separate_rows(Race)%>% 
@@ -156,11 +158,12 @@ OOEdata <- FilteredSupes %>%
 
 OOEdata
 ```
-Now, you can very easily explore each category!!   
+  
+Ahora podemos explorar las categorías fácilmente.
 
-***Remember though, these need to be converted to factors or else they'll be confused as integers!!***  
+***Recuerda que necesitamos convertir estas categorías a factores. De otra manera serán considerados como números enteros***  
  
-***magrittr*** package can help do this easily  
+La librería ***magrittr*** nos puede ayudar a hacer esto rápidamente.  
 
 ```{r sdmalg12, message = FALSE, warning = FALSE}
 library(magrittr)
@@ -176,15 +179,16 @@ ggpairs(quant_df, progress = FALSE)
 
 ```
 
-This figure is very messy to look at here in R Markdown - but if you eliminate a few of the variables, or use R Studio's zoom button in the plot window, you should be able to explore this!
-
-### The models
+Este gráfico no se muestra muy bien en el `R Markdown`, pero si excluimos algunas variables podríamos obtener un mejor gráfico. También es posible usar el visualizador de gráficos de R Studio, el cual tiene un botón de zoom que nos puede ayudar a explorar el gráfico de mejor manera.   
+  
+### Los modelos  
 
 #### CART
+  
+Comencemos construyendo un solo árcbol. Puedes usar cualquier variable aquí.  
 
-Let's start by building ourselves a single tree. Feel free to try this with different variables.
-
-##### Classification example
+##### Ejemplo de clasificación  
+  
 ```{r sdmalg13}
 ## Let's remove 'neutral' characters from our dataset so we can look at if we can predict
 ##   if they are good or evil. We'll also select just a few columns to work with for

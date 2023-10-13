@@ -1,11 +1,11 @@
-# Other R resources for Southern Ocean/Antarctic use
+# Otros recursos en `R` relacionados al Océano del Sur y la Antártida
 
-## Diet data: sohungry
+## Datos de dieta: `sohungry`
 
-The [sohungry](https://github.com/SCAR/sohungry) package provides access to data from the [SCAR Southern Ocean Diet and Energetics Database](http://data.aad.gov.au/trophic/), and some tools for working with these data. The database includes data related to diet and energy flow from conventional (e.g. gut content) and modern (e.g. molecular) studies, stable isotopes, fatty acids, and energetic content. It is a product of the SCAR community and open for all to participate in and use.
+La librería [`sohungry`](https://github.com/SCAR/sohungry) te da acceso a la base de datos [Southern Ocean Diet and Energetics de SCAR](http://data.aad.gov.au/trophic/), así como algunas herramientas que te permiten trabajar con estos datos. La base datos incluye datos sobre dieta y flujos energéticos de estudios convencionales (por ej., contenidos de estómagos) y modernos (por ej., métodos moleculares), isótopos estables, ácidos grasos, y contenido energético. Este es un producto de la comunidad SCAR de acceso abierto y la cual está abierta a nuevos contribuyentes de datos.
 
-See the [sohungry package vignette](https://scar.github.io/sohungry/articles/sohungry.html) for more information.
+Mira la [viñeta de la librería `sohungry`](https://scar.github.io/sohungry/articles/sohungry.html) para más información.
 
-## Allometric equations: solong
+## Ecuaciones alométricas: `solong`
 
-The [solong package](https://github.com/SCAR/solong) provides allometric equations that relate the body size of Southern Ocean taxa to their body part measurements. It is a component of the Southern Ocean Diet and Energetics Database project. See the [package reference](https://scar.github.io/solong/).
+La librería [`solong`](https://github.com/SCAR/solong) incluye ecuaciones alométricas relacionadas a organismos del Océano del Sur. Estas ecuaciones son parte de la base de datos Southern Ocean Diet and Energetics de SCAR. Para más información, presiona [aquí](https://scar.github.io/solong/).
