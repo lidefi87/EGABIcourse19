@@ -19,13 +19,13 @@ knitr::opts_chunk$set(echo = TRUE)
 | 40_Environmental_Data | DONE | Camila | | Denisse |
 | 50_Mapping | DONE | Camila | | Denisse |
 | 60_Species_Distribution_Modelling | DONE | Denisse| | Camila |
-| 68_SDM_Algorithms | | Denisse | | Camila |
-| 69_SDM_Extra | | Denisse | | Camila |
+| 68_SDM_Algorithms | DONE | Denisse | | Camila |
+| 69_SDM_Extra | DONE | Denisse | | Camila |
 | 70_Other | DONE | Denisse | | Camila |
 | License | DONE | Denisse | | Camila |
 | README | Done | Denisse | | Camila |
 | coc | DONE | Denisse | | Camila |
-| Index | | Denisse | | Camila |
+| Index | DONE | Denisse | | Camila |
 
 #####################################
 #####################################
