@@ -4,11 +4,16 @@
 
 ## Autores
   
-TBA
+- Anton Van de Putte (Royal Belgian Institute for Natural Sciences, KULeuven)  
+- Charlène Guillaumot (ULB, Bruxelles)  
+- Grant Humphries (HiDef Aerial Surveying Ltd)  
+- Huw Griffiths (British Antarctic Survey)  
+- Ben Raymond (Australian Antarctic Division and the University of Tasmania)  
+- Ryan Reisinger (CEBC-CNRS)   
 
 ## Traducción al español
   
-[Denisse Fierro Arcos](https://github.com/lidefi87/), Camila Cataldo Méndez
+[Denisse Fierro Arcos](https://github.com/lidefi87/), [Camila Cataldo Méndez](https://github.com/CCataldoM)
   
 ## Acerca del curso
 
