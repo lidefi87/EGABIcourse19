@@ -18,7 +18,7 @@ El código para esta sección se encuentra al final de esta página.
 
 
 ## Resultados de MDE
-Comprender y generar resultados SDM.
+Comprender y generar resultados MDE.
 
 [Presentación (PDF en inglés)](./course_material/Course 3 Tuesday_ SDM outputs.pdf)
 
@@ -55,7 +55,7 @@ Lo que debes saber antes de ejecutar un modelo.
 
 ## Scripts / guiones de Ejercicios
 
-**Ejercicio - ejecuta tu primer SDM**
+**Ejercicio - ejecuta tu primer MDE**
 
 [SDM_EXERCISE.pdf](./course_material/exercises/SDM_EXERCISE.pdf)
 
