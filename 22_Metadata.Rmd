@@ -1,31 +1,31 @@
 # Metadatos - Darwin Core
 
 El Darwin Core (DwC) es un conjunto de estándares mantenidos por [TDWG](https://www.tdwg.org) (Biodiversity Information Standards, anteriormente conocido como The International Working Group on Taxonomic Databases).
-Incluye un glosario de términos destinado a facilitar el intercambio de información sobre la diversidad biológica al proporcionar definiciones de referencia, ejemplos y comentarios. El Darwin Core se basa principalmente en taxones, su presencia en la naturaleza documentada mediante observaciones, especímenes y muestras, y la información relacionada.
+El DwC incluye un glosario de términos destinados a facilitar el intercambio de información sobre la diversidad biológica. Este estándar proporciona definiciones de referencia, ejemplos y comentarios. El Darwin Core se basa principalmente en taxones, incluye información sobre la presencia de estos taxones en la naturaleza (documentada mediante observaciones), así como especímenes, muestras de tejido, e información relacionada.  
+  
+El Darwin Core gira en torno a un formato de archivo estándar, el Darwin Core Archive (DwC-A). Este paquete compacto (un archivo `zip`) contiene archivos de texto interconectados y permite a los editores de datos compartir sus datos utilizando una terminología común. DwC es utilizado para la publicación de datos tanto por GBIF [GBIF](www.gbif.org) como por OBIS [OBIS](www.obis.org).
 
-El Darwin Core gira en torno a un formato de archivo estándar, el Darwin Core Archive (DwC-A). Este paquete compacto (un archivo ZIP) contiene archivos de texto interconectados y permite a los editores de datos compartir sus datos utilizando una terminología común. DwC es utilizado tanto por GBIF [GBIF](www.gbif.org) como por OBIS [OBIS](www.obis.org) para la publicación de datos.
-
-Esta estandarización no solo simplifica el proceso de publicación de conjuntos de datos de biodiversidad, sino que también facilita que los usuarios descubran, busquen, evalúen y comparen conjuntos de datos mientras buscan respuestas a las preguntas de investigación y políticas intensivas en datos de hoy.
+Esta estandarización no solo simplifica el proceso de publicación de conjuntos de datos de biodiversidad, sino que también facilita que los usuarios descubran, busquen, evalúen y comparen conjuntos de datos mientras buscan respuestas a preguntas de investigación que requieren una gran cantidad de datos para ser resueltas, y para facilitar decisiones de políticas.
 
 ## Estructura de Darwin Core
 
-Un archivo DWC-A puede contener 4 tipos de componentess. Estos archivos pueden incluir:
+Un archivo DWC-A puede contener 4 tipos de componentes. Estos archivos pueden incluir:
 
-* eml.xml
-* aricho princial (core file)
+* `eml.xml`
+* archivo principal (core file)
 * archivos de extensión (opcional)
-* meta.xml
+* `meta.xml`
 
-EML significa [Ecological Metadata Language](https://en.wikipedia.org/wiki/Ecological_Metadata_Language). Este archivo contiene los metadatos del conjunto de datos en formato XML.
+EML significa [Ecological Metadata Language](https://en.wikipedia.org/wiki/Ecological_Metadata_Language). Este archivo contiene los metadatos del conjunto de datos en formato `XML`.
 
 Los archivos principales (core) y de extensión contienen registros de datos, dispuestos uno por línea. Cada fila en el archivo de extensión o registro de extensión apunta a un solo registro en el archivo principal (core). Para cada registro principal puede haber muchos registros de extensión. A esto a veces se le llama un "esquema en estrella" ("star schema").
 
-El archivo meta.xml describe cómo se organizan los archivos en el archivo de datos. Describe la relación entre los archivos principales (core) y de extensión y asigna nombres de columnas no estándar a términos del Darwin Core.
+El archivo `meta.xml` describe cómo se organizan los archivos en el archivo de datos. Describe la relación entre los archivos principales (core) y de extensión y asigna nombres de columnas no estándar a términos del Darwin Core.
 
-To publish the data as a DwC-A, we recommend to upload the core and extension files to the IPT (e.g. [IPT.biodiversity.aq](http://IPT.biodiversity.aq)). Use the IPT's built-in metadata editor to enter dataset metadata. The IPT will compile the EML on the data you provided, as well as the meta.xml.
+Para publicar datos en estándar DwC-A, recomendamos subir los archivos prinicipales (core) y de extensión al IPT (por ejemplo, [IPT.biodiversity.aq](http://IPT.biodiversity.aq)). Usa el editor de metadatos de la IPT para escribir metadatos sobre el conjunto de datos que serán publicados. La IPT compilará el archivo `eml.xml` y `meta.xml` en base al conjunto de datos subidos al IPT.
 
 ## Tipos de archivos en Darwin Core
-
+  
 *  Metadatos de recursos [Resource Metadata](https://github.com/gbif/ipt/wiki/resourceMetadata) - Utilizados para describir un recurso de información sobre biodiversidad, incluyendo detalles de contacto, incluso si actualmente no se pueden compartir datos digitales (esto proporciona una forma para que los investigadores descubran recursos que aún no están disponibles en línea).
 * Lista de verificación [Checklist](https://github.com/gbif/ipt/wiki/checklistData) - Utilizados para compartir listas de verificación de especies, catálogos taxonómicos y otra información sobre taxones.
 * Ocurrencia [Occurrence](https://github.com/gbif/ipt/wiki/occurrenceData) - Utilizados para compartir información sobre una instancia específica de un taxón, como un espécimen u observación.
@@ -34,9 +34,9 @@ To publish the data as a DwC-A, we recommend to upload the core and extension fi
 
 ## Detalles del Darwin Core
 
-En general, los metadatos EML acompañarán a algún archivo principal de datos en un DwC-A. Proporciona una descripción y detalles sobre el recurso.
+En general, los metadatos EML acompañarán a algún archivo principal en el DwC-A. Este archivo proporciona una descripción y detalles sobre el recurso.
 
-También es posible publicar inicialmente solo sus metadatos y agregar sus datos mas adelante.
+También es posible publicar inicialmente solo sus metadatos y agregar sus datos más adelante.
 
 Esto permite que los investigadores descubran recursos que aún no están disponibles en línea.
 Lo mejor es considerar el resumen como la sección de materiales y métodos de su artículo, pero solo para sus datos. Trate de proporcionar la mayor cantidad de detalles posible.
@@ -57,7 +57,7 @@ Si utiliza el IPT para crear su archivo del Darwin Core, deberá elegir un nombr
 ##### Organización de publicación
 >Por favor, seleccione la organización responsable de publicar (producir, liberar, mantener) este recurso. Se utilizará como la organización de publicación del recurso al registrar este recurso en GBIF y al enviar metadatos durante el registro de DOI. También se utilizará para generar automáticamente la cita del recurso (si la generación automática está activada), así que considere la importancia de la función. Tenga en cuenta que su selección no se puede cambiar después de que el recurso haya sido registrado en GBIF o se le haya asignado un DOI.
 
-En nuestro IPT puede elegir
+En el IPT de Antártica puede elegir
 
 * Antarctic Biodiversity Information Facility (AntaBIF) para conjuntos de datos terrestres
 * SCAR - AntOBIS para conjuntos de datos marinos
@@ -76,7 +76,7 @@ Esto puede ser
 
 * Metadata-only - solo metadatos
 * Checklist - Lista de verificación
-* Occurence -Ocurrencia
+* Occurence - Ocurrencia
 * Event-Core - Evento central
 
 ##### Idioma/lenguaje de los metadatos
@@ -88,8 +88,8 @@ Esto puede ser
 ##### Frecuencia de actualización
 >La frecuencia con la que se realizan cambios en el recurso después de que se haya publicado inicialmente. Por conveniencia, su valor se establecerá por defecto en el intervalo de publicación automática (si se ha activado la publicación automática), sin embargo, siempre se puede anular más tarde. Tenga en cuenta que también se puede introducir una descripción de la frecuencia de mantenimiento del recurso en la página de Metadatos adicionales.
 
-##### licensia de datos
->La licencia que se aplica a un conjunto de datos proporciona una forma estandarizada de definir los usos adecuados de su trabajo. GBIF alienta a los editores a adoptar la licencia menos restrictiva posible entre tres opciones legibles por máquina (CC0 1.0, CC-BY 4.0 o CC-BY-NC 4.0) para fomentar el uso y la aplicación más amplios de los datos. Obtenga más información aquí. Si no puede elegir una de las tres opciones y su conjunto de datos contiene datos de ocurrencia, no podrá registrar su conjunto de datos en GBIF ni hacerlo globalmente descubrible a través de GBIF.org. Si se siente incapaz de seleccionar una de las tres opciones, comuníquese con la Secretaría de GBIF en participation@gbif.org.
+##### Licensia de datos
+>La licencia que se aplica a un conjunto de datos proporciona una forma estandarizada de definir los usos adecuados de su trabajo. GBIF alienta a los editores a adoptar la licencia menos restrictiva posible entre tres opciones legibles por máquina (CC0 1.0, CC-BY 4.0 o CC-BY-NC 4.0) para fomentar el uso y la aplicación más amplios de los datos. Obtenga más información aquí. Si no puede elegir una de las tres opciones y su conjunto de datos contiene datos de ocurrencia, no podrá registrar su conjunto de datos en GBIF ni hacerlo globalmente descubrible a través de GBIF.org. Si se siente incapaz de seleccionar una de las tres opciones, comuníquese con la Secretaría de GBIF en [participation@gbif.org](mailto:participation@gbif.org).
 
 
 ##### Descripción
@@ -102,7 +102,7 @@ Piense en esto como un resumen para un artículo de datos
 ##### Proveedor(es) de metadatos
 * Apellido
 * Cargo
-* Organisación
+* Organización
 	
 #### Cobertura geográfica
 ##### Descripción

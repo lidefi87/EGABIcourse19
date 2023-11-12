@@ -1,23 +1,22 @@
-# Introducción a R y a Tidyverse
+# Introducción a `R` y a `Tidyverse`
 
 [Presentation (PDF)](./course_material/tidyverse/Tidyverse.pdf)
 
-## Ejercicio R script
+## Ejercicio `R` script
 
-El script se puede descargar en el siguiente link [downloaded here](./course_material/tidyverse/Intro_to_tidyverse.R) y también esta copiado abajo.
-
-
+El script se puede descargar en el siguiente link [downloaded here](./course_material/tidyverse/Intro_to_tidyverse.R) y también esta copiado abajo.  
+  
 ```{r eval = FALSE}
 
-## Aquí cargamos el tidyverse. Tidyverse incluye multiples paquetes que pueden trabajar juntos. 
+## Aquí cargamos el tidyverse. Tidyverse incluye múltiples paquetes que pueden trabajar juntos. 
 ## Si lo cargamos directamente como lo hacemos aquí, nos arroja una tabla identificando todos los paquetes que están adjuntos. 
 library(tidyverse)
-## también se puede ver una lista de funciones que arrojan conflictos - ver nombres de funciones que aparecen bajo multiples paquetes
+## también se puede ver una lista de funciones que arrojan conflictos - ver nombres de funciones que aparecen bajo múltiples paquetes
 ## Por ejemplo, Hay una función "filter" (filtro) repetida en los paquetes 'stats'
 ## y en 'dplyr'. Mira las notas del curso sobre los prefijos de espacio de nombres (por 
 ## ejemplo, los usos de "dplyr::filter()" a continuación).
 
-## Carga el conjunto de datos (dataset) 'starwars' que se encuentra en el paquete dplyr (lo usaremos más adelante!)
+## Carguemos el conjunto de datos (dataset) 'starwars' que se encuentra en el paquete dplyr (lo usaremos más adelante)
 data(starwars)
 
 
@@ -38,7 +37,7 @@ sapply(X.csv, class)
 X.csv_r <- readr::read_csv('tidyverse_dummy_import.csv',
                            col_types=list(Occurrence_field = col_factor()))
 
-## La biblioteca readxl se utiliza para leer otros formatos de Excel y funcoina bien para 
+## La biblioteca readxl se utiliza para leer otros formatos de Excel y funciona bien para 
 ## columnas de fecha y hora
 ## Sin embargo, no tiene una opción de tipo de columna para factores
 ## (si quisieras definir una columna como factor)
@@ -52,10 +51,12 @@ X.xlsx_t$Occurrence_field <- as.factor(X.xlsx_t$Occurrence_field)
 #### Manipulación de datos ####
 ########################
 
-# selecciona las columnas name (nombre), gender (genero) y homeworld 
+# selecciona las columnas name (nombre), gender (género) y homeworld (mundo de origen)
 starwars %>% dplyr::select(name,gender,homeworld)
-## Ten en cuenta que usamos dplyr::select() en lugar de select() porque hay varias funciones ## "select" en diferentes paquetes.
-## Usar el prefijo de espacio de nombres hace que sea claro cuál estamos usando y reduce la ## posibilidad de errores causados por paquetes que se cargan en un orden diferente.
+## Ten en cuenta que usamos dplyr::select() en lugar de select() porque hay varias funciones 
+## "select" en diferentes paquetes.
+## Usar el nombre del paquete como prefijo hace que sea claro cuál función y de qué paquete estamos usando y reduce la 
+## posibilidad de errores causados por paquetes que se cargan en un orden diferente.
 
 
 # Equivalente en R base
@@ -97,7 +98,7 @@ starwars %>%
   dplyr::filter(!is.na(homeworld))
 
 
-### Otras formas de contar!
+### Otras formas de contar
 starwars %>% count(homeworld,gender) %>% dplyr::filter(!is.na(homeworld))
 starwars %>% add_count(homeworld,gender) %>% dplyr::filter(!is.na(homeworld))
 
@@ -112,7 +113,7 @@ starwars %>%
             sdmass=sd(mass,na.rm = T)) %>%
   dplyr::filter(species == 'Human',hair_color=='brown')
 
-## Obtén al personaje no humano más alto y al más bajo.
+## Obtén al personaje no humano más alto y el más bajo.
 starwars %>%
   dplyr::filter(species != 'Human') %>%
   arrange(height)
@@ -131,10 +132,9 @@ starwars %>%
 ######################################
 #### Mutaciones ####
 
-# Esto calculará una nueva columna que es la relación entre altura y masa. (height:mass)
+# Esto calculará una nueva columna con la relación entre la altura y la masa. (height:mass)
 starwars %>%
   mutate(hm_ratio = height/mass)
-
 
 
 ######################################
@@ -159,8 +159,8 @@ df1 %>% left_join(df2,by='id')
 #### Reunir y Extender ####
 ###########################
 
-### Este es un conjunto de datos que podrías encontrar: 
-### diferentes dispositivos toman medidas en el mismo día
+### Este es un conjunto de datos en el que podrás encontrar: 
+### diferentes dispositivos que toman medidas en el mismo día
 sst_data <- data.frame(
   time = as.Date('2009-01-01') + 0:9,
   unit_A = round(runif(10, 6, 9),2),
@@ -168,17 +168,16 @@ sst_data <- data.frame(
   unit_C = round(runif(10, 6, 10),2)
 )
 
-## Reunir hace que el marco de datos pase de un formato ANCHO (WIDE) a LARGO (LONG) 
+## "pivot_longer" hace que el marco de datos pase de un formato ANCHO (WIDE) a LARGO (LONG) 
 ## (el formato LARGO suele ser utilizado por ggplot2).
 
 sst_data %>%
-  gather(unit,sst,-time)
+  pivot_longer(!time, names_to = "unit", values_to = "sst")
 
-## spread es la función opuesta a gather y cambia el formato de LARGO a ANCHO
+## "pivot_wider" es la función opuesta a "pivot_longer" y cambia el formato de LARGO a ANCHO
 sst_data %>%
-  gather(unit,sst,-time) %>%
-  spread(unit,sst)
-
+  pivot_longer(!time, names_to = "unit", values_to = "sst") %>%
+  pivot_wider(names_from = "unit", values_from = "sst")
 
 
 ###############################
@@ -186,8 +185,8 @@ sst_data %>%
 
 ## Esto anida las columnas unit y sst en una tabla para cada columna de tiempo.
 nested_sst <- sst_data %>%
-  gather(unit,sst,-time) %>%
-  nest(unit,sst)
+  pivot_longer(!time, names_to = "unit", values_to = "sst") %>%
+  nest_by(time)
 
 ## Esto se puede usar para ver una tabla de datos en específico
 nested_sst$data[[1]]
@@ -196,7 +195,7 @@ nested_sst$data[[1]]
 #### Tarea 2 ####
 #################################
 
-## Un tibble con películas de Star Wars clasificadas (según mi preferencia)
+## Un tibble con películas de Star Wars clasificadas según mi preferencia
 film.rankings <- tibble(
   films = c('The Phantom Menace','Attack of the Clones','Revenge of the Sith',
            'A New Hope','The Empire Strikes Back','Return of the Jedi',
@@ -207,7 +206,7 @@ film.rankings <- tibble(
 
 ## ¿En qué películas aparece el personaje Plo Koon, ordenadas por clasificación? 
 ## El resultado final
-##  debe ser una unica tabla obtenida de una columna
+##  debe ser una única tabla obtenida de una columna
 Plo.Koon <-starwars %>%
   dplyr::select(name,films) %>%
   unnest(films) %>%
@@ -235,7 +234,7 @@ nested.mass.height <- starwars %>%
 ## Crea un objeto que sea una lista de vectores
 X <- c(list(seq(1,50,5)),list(seq(40,100,2)))
 
-## base R
+## R base
 lapply(X,mean)
 
 ## tidyverse
@@ -277,9 +276,6 @@ nested.mass.height %>%
 
 #########################################################################
 #### ggplot2 link ####
-
-
-
 starwars %>%
   dplyr::filter(species=='Human',gender=='male') %>%
   ggplot(aes(x=mass,y=height))+
@@ -290,7 +286,7 @@ starwars %>%
 
 ## Ver tambien
 
-- The Software Carpentry [Introduction to R and RStudio](https://swcarpentry.github.io/r-novice-gapminder/01-rstudio-intro/).
-- An [Introduction to R](https://obis.org/manual/intror/) by the Ocean Biogeographic Information System (OBIS).
-- [Getting Started in R &mdash; Tidyverse Edition](./course_material/Getting-Started-in-R.pdf) by [Saghir Bashir](https://github.com/saghirb/Getting-Started-in-R/).
+- [Introducción a `R` y RStudio de Software Carpentry](https://swcarpentry.github.io/r-novice-gapminder-es/01-rstudio-intro.html).
+- [Introducción a `R` (en inglés)](https://obis.org/manual/intror/) por el Sistema de Información Biogeográficos de los Océanos (OBIS por sus siglas en inglés).
+- [`R` para Ciencia de Datos](https://es.r4ds.hadley.nz/).
 

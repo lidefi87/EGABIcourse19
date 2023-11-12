@@ -50,7 +50,7 @@ Si crees que tu experiencia en `R` no es suficiente para cubrir este curso, te r
 **Software necesario**  
 - La versión más reciente de `R` para tu sistema operativo. Podrás encontrar más información en [CRAN](https://cran.r-project.org)  
 - RStudio para escrito. Puedes descargarlo desde [Posit](https://posit.co/download/rstudio-desktop/) de manera gratuita
-- *Usuarios de Windows* además deberán instalar compatible con la versión de `R` en su computador. Más información en [CRAN](https://cran.r-project.org/bin/windows/Rtools/)  
+- *Usuarios de Windows solamente* además deberán instalar compatible con la versión de `R` en su computador. Más información en [CRAN](https://cran.r-project.org/bin/windows/Rtools/)  
   
 *Software opcional*  
 - Para crear mapas y llevar a cabo análisis espaciales, recomendamos [QGIS](https://www.qgis.org/en/site/forusers/download.html). Este software es gratuito y está disponible para varios sistemas operativos.   
@@ -86,5 +86,5 @@ El Grupo de Expertos en Informático de la Biodiversidad Antártica (EG-ABI por 
 
 <img src="/images/AntaBIF_Logo.jpg" alt="Antarctic Biodiversity Portal" title="Antarctic Biodiversity Portal" width="75"  align="left"/>
 
-El Portal de Biodiversidad Antártica ofrece acceso a datos de Biodiversidad Antártica. Esta es una de las contribuciones del gobierno federal Belga a [LifeWatch-ERIC](https://www.lifewatch.eu/): un Consorcio de Infrastructure Europea que provee infrastructura de investigación e-Science a científicos que buscan incrementar sus conocimientos y enriquecer su entendiemiento de la organización de la biodiversidad y las funciones y servicios ecosistémicos.  
+El Portal de Biodiversidad Antártica ofrece acceso a datos de Biodiversidad Antártica. Esta es una de las contribuciones del gobierno federal Belga a [LifeWatch-ERIC](https://www.lifewatch.eu/): un Consorcio de Infrastructura Europea que provee infrastructura de investigación e-Science a científicos que buscan incrementar sus conocimientos y enriquecer su entendiemiento de la organización de la biodiversidad y las funciones y servicios ecosistémicos.  
   

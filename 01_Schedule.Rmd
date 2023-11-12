@@ -6,7 +6,7 @@ Hora  Descripción
 ----  ----
 9:00  [Introducción al taller][Intro taller], presentación de participantes
 10:00 Pausa
-10:15 [Introducción a R y el Tidyverse]
+10:15 [Introducción a `R` y a `Tidyverse`]
 11:15 Pausa
 11:30 [Datos de libre acceso y limpieza de datos]
 12:30 Almuerzo

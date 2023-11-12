@@ -72,14 +72,14 @@ Ejecuta  modelos, compara diferentes calibraciones de modelos y compara los resu
 ```{r eval = FALSE}
 
 
-#### Carga datos ambientales y de ocurrencia (archivo run_yOur_SDM.R)
+#### Importa datos ambientales y de ocurrencia (archivo run_yOur_SDM.R)
 #---------------------------------------------------------
 # calcula la variable MATRIX_OCC_ENVI (1 set)
 # en el archivo run_yOur_SDM.R, corre todo hasta la creacion de MyFold 
 # set.seed(1) (j=1)
 # corre el modelo y compara la dispersion de las predicciones de acuerdo
 # al conjunto de parametros escogido
-source("scripts/Function_gbm.R")
+source("docs/course_material/exercises/scripts/Function_gbm.R")
 tc=4   # complejidad del arbol
 lr=0.011 # tasa de aprendizaje
 bf=0.8 # fraccion de la bolsa (bag fraction)
@@ -104,7 +104,7 @@ model7<-model.res  # tc4 lr0.005 bf=0.9 nbt 10000
 model8<-model.res  # tc4 lr0.011 bf=0.8 nbt 10000 
 
 
-# Genera graficos
+# Genera gráficos
 tree.list1 <- seq(100, model1$gbm.call$best.trees, by = 100)
 tree.list2 <- seq(100, model2$gbm.call$best.trees, by = 100)
 tree.list3 <- seq(100, model3$gbm.call$best.trees, by = 100)
@@ -1057,16 +1057,18 @@ library(gbm)
 
 #### Abre datos de ocurrencia ####
 #---------------------------------
-occ.sterechinus <- read.csv("data/occurrences_sterechinus.csv", header=T, sep=";")
+occ.sterechinus <- read.csv("docs/course_material/exercises/data/occurrences_sterechinus.csv", header=T, sep=";")
 # head(occ.sterechinus)
 
 #### Abre capas de descriptores ambientales y las agrupa/apila ####
 #-----------------------------------------------------------------------
-depth <- raster("data/environmental_layers/depth.nc")
-sediments <- raster("data/environmental_layers/sediments.nc")
-seafloor_temp_2005_2012_max <- raster("data/environmental_layers/seafloor_temp_2005_2012_max.nc")
-POC_2005_2012_max <- raster("data/environmental_layers/POC_2005_2012_max.nc")
-seafloor_current_speed <- raster("data/environmental_layers/seafloor_current_speed.nc")
+data_folder <- "docs/course_material/exercises/data"
+depth <- raster(file.path(data_folder, "environmental_layers/depth.nc"))
+sediments <- raster(file.path(data_folder, "environmental_layers/sediments.nc"))
+seafloor_temp_2005_2012_max <- raster(file.path(data_folder, "environmental_layers/seafloor_temp_2005_2012_max.nc"))
+POC_2005_2012_max <- raster(file.path(data_folder, "environmental_layers/POC_2005_2012_max.nc"))
+seafloor_current_speed <- raster(file.path(data_folder, "environmental_layers/seafloor_current_speed.nc"))
+
 
 predictors_stack <- stack(depth,sediments,seafloor_temp_2005_2012_max,POC_2005_2012_max,seafloor_current_speed)
 
@@ -1087,7 +1089,7 @@ predictors_stack <- stack(depth,sediments,seafloor_temp_2005_2012_max,POC_2005_2
 # una ocurrencia en cada píxel, según el conjunto de registros bentónicos muestreados en todo el Océano Austral
 # (actualización del Atlas Biogeográfico del Océano Austral)
 #--------------------------------------------------------------------------------------------------------------
-KDE <- raster("data/KDE.asc")
+KDE <- raster(file.path(data_folder, "KDE.asc"))
 # en esta capa, los continentes están definidos por píxeles que contienen valores NA
 # permite que R reconozca más adelante las áreas donde deberían estar los datos de fondo
 # no ser muestreado
@@ -1096,7 +1098,7 @@ KDE <- raster("data/KDE.asc")
 #### Configuracion
 #-------------
 cv.boot <- 2 # numero de replicas (# de veces que se replican modelos)
-source("scripts/Function_gbm.R")
+source("docs/course_material/exercises/scripts/Function_gbm.R")
 
 #### Pila de datos vacíos y matrices para llenar
 #----------------------------------------------------------
@@ -1141,7 +1143,7 @@ for (j in 1:cv.boot){
   idP <- which(dat1$Isp == 1) #  Identificación de datos de presencia para dividirlos
   MyFold <- rep(NA, nrow(dat1)) # un cuadro vacío para almacenar el grupo de datos (1 a 4 después)
   
-  source("scripts/clock4_crossValidation.R")
+  source("docs/course_material/exercises/scripts/clock4_crossValidation.R")
   clock4F <- clock4(dat1[idP, c("longitude", "latitude")], dat1[-idP, c("longitude", "latitude")])
   
   # Extrayendo "folds"

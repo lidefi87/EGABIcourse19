@@ -4,19 +4,19 @@
 
 El Registro de Especies Marinas Antárticas (RAMS) es la base de datos taxonómica autorizada para organismos marinos antárticos. RAMS forma parte del Registro Mundial de Especies Marinas (WoRMS).
 
-- [worrms](https://cran.r-project.org/package=worrms) es un cliente de la API [WoRMS](http://www.marinespecies.org/). Contiene principalmente datos taxonómicos,  pero también datos de rasgos.
-- [taxize](https://cran.r-project.org/package=taxize) proporciona acceso a alrededor de 20 fuentes de datos taxonómicos, incluido WoRMS. Tiene salidas de datos coherentes e interfaces de funciones consistentes en las diferentes fuentes de datos taxonómicos, para que no necesites adaptar tu código a diferentes proveedores de datos taxonómicos.
+- [`worrms`](https://cran.r-project.org/package=worrms) es un cliente API [WoRMS](http://www.marinespecies.org/). Contiene principalmente datos taxonómicos,  pero también datos de rasgos.
+- [`taxize`](https://cran.r-project.org/package=taxize) proporciona acceso a alrededor de 20 fuentes de datos taxonómicos, incluido WoRMS. Tiene salidas de datos coherentes e interfaces de funciones consistentes en las diferentes fuentes de datos taxonómicos, para que no necesites adaptar tu código a diferentes proveedores de datos taxonómicos.
 
-Actualmente, RAMS se está ampliando para cubrir taxones no marinos, que se convertirán en el Registro de Especies Antárticas (RAS). Esperamos que esto siga siendo compatible con worrms y la infraestructura en el servidor alojada por VLIZ.
+Actualmente, RAMS se está ampliando para cubrir taxones no marinos, que se convertirán en el Registro de Especies Antárticas (RAS). Esperamos que esto siga siendo compatible con `worrms` y la infraestructura en el servidor alojada por VLIZ.
 
-Para obtener más detalles sobre paquetes de R relacionados con la taxonomía en general, consulta la vista de tareas de taxonomía de rOpenSci. [rOpenSci taxonomy task view](https://github.com/ropensci/taxonomy).
+Para obtener más detalles sobre paquetes de `R` relacionados con la taxonomía en general, consulta la [vista de tareas de taxonomía de rOpenSci](https://github.com/ropensci/taxonomy).
 
 ## Otros paquetes
 
-El seguimiento de animales mediante etiquetas de satélite, GPS o geolocalización a nivel de luz es común, y existen muchos paquetes de R que pueden ayudar con esto. Consulta la vista de tareas espacio-temporales [spatiotemporal task view](https://cloud.r-project.org/web/views/SpatioTemporal.html) para obtener una lista más completa. También pueden resultar de interés:
+El seguimiento de animales mediante etiquetas de satélite, GPS o geolocalización a nivel de luz es común, y existen muchos paquetes de `R` que pueden ayudar con esto. Consulta la [vista de tareas espacio-temporales](https://cloud.r-project.org/web/views/SpatioTemporal.html) para obtener una lista más completa. También pueden resultar de interés:
 
-- [TwilightFree](https://github.com/ABindoff/TwilightFree) proporciona un método para procesar datos de geolocalización a nivel de luz que es robusto ante el ruido (sombreado y ocultación del sensor) y puede ser especialmente adecuado para aplicaciones en el Océano Austral.
+- [`TwilightFree`](https://github.com/ABindoff/TwilightFree) proporciona un método para procesar datos de geolocalización a nivel de luz que es robusto ante el ruido (sombreado y ocultación del sensor) y puede ser especialmente adecuado para aplicaciones en el Océano Austral.
 
-- [traipse](https://github.com/Trackage/traipse) proporciona herramientas para datos de seguimiento, para métricas comunes de distancia, dirección y velocidad.
+- [`traipse`](https://github.com/Trackage/traipse) proporciona herramientas para datos de seguimiento, para métricas comunes de distancia, dirección, y velocidad.
 
-- [foieGras](https://github.com/ianjonsen/foieGras) ajusta un modelo de tiempo continuo (RW o CRW) en forma de espacio de estado para filtrar datos de ubicación satelital de Argos.
+- [`foieGras`](https://github.com/ianjonsen/foieGras) ajusta un modelo de tiempo continuo (RW o CRW) en forma de espacio-estado para filtrar datos de ubicación satelital de Argos.

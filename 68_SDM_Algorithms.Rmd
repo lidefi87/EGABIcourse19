@@ -42,10 +42,6 @@ Una vez llamadas las librerías relevantes, vamos a subir el set de datos de sup
 ## Aqui leemos los datos de superheroes
 Supes <- readr::read_csv('docs/course_material/exercises/data/SuperheroDataset.csv')
 ```
-
-```{r sdmalg3, eval = FALSE}
-Supes <- readr::read_csv('SuperheroDataset.csv')
-```
   
 Para este ejercicios vamos a utilizar las siguientes columnas: Name, Intelligence, Strength, Speed, Durability, Power, Combat, Gender, Race, Creator, Alignment, Total Power. Usamos `tidyverse` para extraer estas columnas.   
   
@@ -225,16 +221,15 @@ Notas adicionales de `gbm.step`:
 ***`gbm.step` también necesita una categoría meta forma binaria (0/1)***
 
 ```{r sdmalg14}
+modeldf <- modeldat %>% 
+  mutate(Alignment_targ = case_when(Alignment == "good" ~ 0, Alignment == "bad" ~ 1 )) %>%
+  mutate(across(c("Alignment_targ", "Gender", "Creator"), factor)) %>% 
+  as.data.frame()
 
-modeldat <- modeldat %>% 
-  mutate(Alignment_targ = case_when(Alignment == 'good' ~ 0, Alignment == 'bad' ~ 1 )) %>%
-  mutate_at(c('Alignment_targ','Gender','Creator'), funs(factor(.)))
-
-modeldf <- data.frame(modeldat)
 modeldf$Alignment_targ <- as.numeric(as.character(modeldf$Alignment_targ))
 
-gbmModel <- gbm.step(data=modeldf,gbm.=c(1:6,8:17),gbm.y=18,family="bernoulli",
-                     tree.complexity = 10,learning.rate=0.001,bag.fraction=0.8,max.trees = 8000)
+gbmModel <- gbm.step(data = modeldf, gbm. = c(1:6,8:17), gbm.y = 18, family = "bernoulli",
+                     tree.complexity = 10, learning.rate = 0.001, bag.fraction = 0.8, max.trees = 8000)
 
 ```
   
@@ -247,10 +242,10 @@ summary(gbmModel)
 Puedes también crear gráficos de dependencia parcial, y además puedes explorar las interacciones entre variables con las líneas de código de abajo  
   
 ```{r sdmalg16}
-gbm.plot(gbmModel,n.plots=5,write.title=F)
+gbm.plot(gbmModel, n.plots = 5, write.title = F)
 
 ## el gbm.perspec produce un gráfico de inteligencia y velocidad  contra los valores ajustados (z)
-gbm.perspec(gbmModel,1,3,z.range=c(0.15,0.6),theta=205)
+gbm.perspec(gbmModel, 1, 3, z.range = c(0.15, 0.6), theta = 205)
 
 ```
   
@@ -262,24 +257,23 @@ Este modelo puede ser configurado de manera muy similar al modelo `CART` que vim
   
 ```{r sdmalg17}
 modeldat <- OOEdata %>% 
-  dplyr::filter(Alignment!='neutral') %>%
+  dplyr::filter(Alignment!="neutral") %>%
   dplyr::select(Intelligence:TotalPower, Race_Animal, Race_Human, Race_Demon, Race_God,
                 Race_Asgardian, Race_Mutant, Race_Android)
 
 ## Asegurate que las categorias esten en formato factor
 modeldat <- modeldat %>% 
   mutate(Alignment_targ = case_when(Alignment == 'good' ~ 0, Alignment == 'bad' ~ 1 )) %>%
-  mutate_at(c('Alignment_targ','Gender','Creator'), funs(factor(.)))
+   mutate(across(c("Alignment_targ", "Gender", "Creator"), factor))
 
-
-form <- as.formula(paste("Alignment_targ ~ ",paste(names(modeldat),collapse='+')))
+form <- as.formula(paste("Alignment_targ ~ ", paste(names(modeldat), collapse = '+')))
 form <- update(form, . ~ . -Alignment) 
 form <- update(form, . ~ . -Alignment_targ) 
 
-rf.model <- randomForest(data=data.frame(modeldat),form,mtry=3,maxnodes=10)
+rf.model <- randomForest(data = data.frame(modeldat), form, mtry = 3, maxnodes = 10)
 importance(rf.model)
-partialPlot(rf.model,data.frame(modeldat),Intelligence)
-partialPlot(rf.model,data.frame(modeldat),Gender)
+partialPlot(rf.model, data.frame(modeldat), Intelligence)
+partialPlot(rf.model, data.frame(modeldat), Gender)
 ```
   
 ***Los gráficos de dependencia parcial se enfoca en la PRIMERA clase. Esto quiere decir que si usamos clases 0 y 1, los gráficos deberán ser interpretados en referencia al grupo 0. Pero podemos cambiar esto con el argumento `which.class` en la función `partialPlot`***
@@ -289,29 +283,27 @@ partialPlot(rf.model,data.frame(modeldat),Gender)
 Ahora vamos a utilizar `gbm.step` para resolver un problema de regresión. Si quieres usar random forest, también es posible y te alentamos a intentarlo. Puedes pedir ayuda a los instructores o si prefieres puedes usar Google, ya que hay muchos recursos disponibles en línea.  
   
 ```{r sdmalg18}
-
 modeldat <- OOEdata %>% 
-  dplyr::filter(Alignment!='neutral') %>%
+  dplyr::filter(Alignment != "neutral") %>%
   dplyr::select(Intelligence:TotalPower, Race_Animal, Race_Human, Race_Demon, Race_God,
                 Race_Asgardian, Race_Mutant, Race_Android)
 
-modeldat <- modeldat %>% 
-  mutate_at(c('Alignment','Gender','Creator'), funs(factor(.)))
-
-modeldf <- data.frame(modeldat)
+modeldf <- modeldat %>% 
+  mutate(across(c("Alignment", "Gender", "Creator"), factor)) %>% 
+  as.data.frame()
 
 ## usa names(modeldf) para encontrar los indices
 
-gbmModel <- gbm.step(data=modeldf,gbm.x=c(1,6:9,11:17),gbm.y=10,family="laplace",
-                     tree.complexity = 20,learning.rate=0.001,bag.fraction=0.5,max.trees = 8000)
+gbmModel <- gbm.step(data = modeldf, gbm.x = c(1,6:9,11:17), gbm.y = 10, family = "laplace",
+                     tree.complexity = 20, learning.rate = 0.001, bag.fraction = 0.5, max.trees = 8000)
 
 summary(gbmModel)
 
-gbm.plot(gbmModel,n.plots=5,write.title=F)
+gbm.plot(gbmModel, n.plots = 5, write.title = F)
 
 ## En este caso estamos interesados en el genero, asi que vamos a graficar esto.
 
-gbm.plot(gbmModel,variable.no=4,plot.layout=c(1,1))
+gbm.plot(gbmModel, variable.no = 4, plot.layout = c(1,1))
 ```
   
 Podemos ver que la fuerza de un personaje está sesgada de acuerdo al género, con más héroes que heroínas con mucho poder. Sin embargo, vale recalcar que el poder predictivo de nuestro modelo no es muy alto (basado en el resumen estadístico).    

@@ -1,12 +1,9 @@
 # Descripción general
-
-Ejemplo de análisis que demuestra brevemente algunas de las tareas que abordaremos durante el taller.
-
-
+Ejemplo de flujo de análisis que demuestra brevemente algunas de las tareas que abordaremos durante el taller.  
+  
 ## Preparación
-
-Asegúrese de que tenemos los paquetes que necesitamos de CRAN:
-
+Asegurémonos de que tenemos los paquetes que necesitamos, sino los instalamos desde CRAN:  
+  
 ```{r pkgs1, message = FALSE}
 pkgs <- c("dplyr", "ncdf4", "raster", "remotes", "robis", "worrms")
 pkgs <- setdiff(pkgs, installed.packages()[, 1])
@@ -15,7 +12,7 @@ if (length(pkgs) > 0) install.packages(pkgs)
 library(dplyr)
 ```
 
-y de GitHub:
+También podemos instalarlos desde GitHub:
 
 ```{r pkgs2}
 ## paquetes necesarios
@@ -44,14 +41,14 @@ my_aphia_id <- tax[[1]]$valid_AphiaID
 
 ## Occurrencias
 
-Obtenga todos los datos del conjunto de datos de la familia Euphausiacea antartica de las expediciones "recursos marinos antarticos alemanes": [Antarctic Euphausiacea occurence data from "German Antarctic Marine Living Resources" (GAMLR) Expeditions](https://ipt.biodiversity.aq/resource?r=gamlr) data set:
+Obtengamos todos los datos disponibles de la familia *Euphausiacea* de Antártica desde el conjunto de datos obtenidos en las expediciones "recursos marinos antárticos alemanes": [Antarctic Euphausiacea occurence data from "German Antarctic Marine Living Resources" (GAMLR) Expeditions](https://ipt.biodiversity.aq/resource?r=gamlr)  
 
 ```{r occ1, message = FALSE}
 library(robis)
 x <- occurrence(datasetid = "cb16377b-56a8-4d95-802d-4eec02466773")
 ```
 
-Crea el gráfico de la distribución completa de las muestras en negro y de *Euphausia crystallorophias* en verde:
+Creemos el gráfico de la distribución completa de las muestras de la familia *Euphasia* en negro y de *Euphausia crystallorophias* en verde:
 
 ```{r map1, message = FALSE}
 library(SOmap)
@@ -59,9 +56,9 @@ SOmap_auto(x$decimalLongitude, x$decimalLatitude, input_lines = FALSE, pcol = "b
 with(x %>% dplyr::filter(aphiaID == my_aphia_id), 
      SOplot(decimalLongitude, decimalLatitude, pch = 19, cex = 0.2, col = "green"))
 ```
-
-O como un mapa polar estereográfico:
-
+  
+También podemos crear un mapa polar estereográfico:
+  
 ```{r map2, message = FALSE}
 basemap <- SOmap(trim = ceiling(max(x$decimalLatitude))+1, bathy_legend = FALSE)
 plot(basemap)
@@ -69,9 +66,9 @@ SOplot(x$decimalLongitude, x$decimalLatitude, pch = 19, cex = 0.2, col = "black"
 with(x %>% dplyr::filter(aphiaID == my_aphia_id), 
      SOplot(decimalLongitude, decimalLatitude, pch = 19, cex = 0.2, col = "green"))
 ```
-
-Vamos a ajustar un modelo de distribución de especies (presencia/ausencia), así que primero reorganicemos nuestros datos en presencia/ausencia por sitio de muestreo:
-
+  
+Vamos a ajustar un modelo de distribución de especies (presencia/ausencia), así que primero reorganizaremos nuestros datos de presencia/ausencia por sitio de muestreo:  
+  
 ```{r dat1}
 xfit <- x %>% dplyr::rename(lon = "decimalLongitude", lat = "decimalLatitude") %>%
     group_by(lon, lat) %>%
@@ -82,27 +79,27 @@ xfit <- x %>% dplyr::rename(lon = "decimalLongitude", lat = "decimalLatitude") %
 
 ```{r envdat1, message = FALSE}
 library(blueant)
-## añade los datos en un directorio temporal
+## añadimos los datos en un directorio temporal
 my_data_directory <- tempdir()
 
-## el origen de los datos que queremos
+## agregamos el origen de los datos que queremos
 data_source <- sources_sdm("Southern Ocean marine environmental data")
 
-## busca los datos
+## buscamos los datos
 status <- bb_get(data_source, local_file_root = my_data_directory, verbose = TRUE)
 ```
 
 ```{r envdat2, message = FALSE}
 nc_files <- Filter(function(z) grepl("\\.nc$", z), status$files[[1]]$file)
 
-## crea una pila de raster de todas las capas
+## creamos un raster apilado con todas las capas
 env_stack <- stack(nc_files)
 
-## las primeras capas
+## veamos las primeras capas
 head(names(env_stack))
 ```
 
-Seleccione solo las capas de `depth` (Profundidad) y `ice_cover_mean` (cobertura de hielo promedio); y extraiga sus valores en nuestros sitios de muestreo:
+Seleccionemos solo las capas de `depth` (Profundidad) y `ice_cover_mean` (cobertura de hielo promedio); y extraigamos sus valores en nuestros sitios de muestreo:
 
 ```{r envdat3}
 env_stack <- subset(env_stack, c("depth", "ice_cover_mean"))
@@ -171,20 +168,20 @@ SOplot(pr, col = my_cmap)
 ```{r placenames1}
 library(antanym)
 
-## obtener datos completos del diccionario geográficos de SCAR
+## obtengamos datos completos del diccionario geográfico de SCAR
 xn <- an_read(cache = "session", sp = TRUE)
 
-## reducir a un nombre por lugar
+## reduzcamos a un nombre por lugar
 xn <- an_preferred(xn, origin = "United Kingdom")
 
-## solicitando sugerencias en nuestra región de estudio para añadir a nuestro mapa
+## solicitemos sugerencias en nuestra región de estudio para añadir a nuestro mapa
 xns <- an_suggest(xn, map_scale = 20e6, map_extent = extent(pr))
 
-## transforma a nuestra proyección, convirtd datos a dataframe (marco de datos), mostrar los primeros 10
+## transformemos a nuestra proyección, convirtimos datos a dataframe (marco de datos), mostramos las primeros 10 filas
 xns <- as_tibble(SOproj(xns, target = basemap$projection)) %>% head(10)
 ```
 
-Añadir nombres al mapa:
+Añadimos nombres al mapa:
 
 ```{r predmap3}
 plot(basemap)
