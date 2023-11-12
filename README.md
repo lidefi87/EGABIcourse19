@@ -1,4 +1,4 @@
-# Curso de SCAR-EGABI: Herramientas para análisis especial y modelado en el Océanos del Sur
+# Curso de SCAR-EGABI: Herramientas para análisis espacial y modelado en el Océanos del Sur
 
 <img src="/images/EGABI_logo.svg" alt="EG-ABI Logo" title="EG-ABI Logo" width="150"  align="right"/>
 
@@ -13,7 +13,8 @@
 
 ## Traducción al español
   
-[Denisse Fierro Arcos](https://github.com/lidefi87/), [Camila Cataldo Méndez](https://github.com/CCataldoM)
+- [Denisse Fierro Arcos](https://github.com/lidefi87/) (Institute for Marine and Antarctic Studies, University of Tasmania)
+- [Camila Cataldo Méndez](https://github.com/CCataldoM) (Institute for Marine and Antarctic Studies, University of Tasmania)
   
 ## Acerca del curso
 
@@ -50,7 +51,7 @@ Si crees que tu experiencia en `R` no es suficiente para cubrir este curso, te r
 **Software necesario**  
 - La versión más reciente de `R` para tu sistema operativo. Podrás encontrar más información en [CRAN](https://cran.r-project.org)  
 - RStudio para escrito. Puedes descargarlo desde [Posit](https://posit.co/download/rstudio-desktop/) de manera gratuita
-- *Usuarios de Windows solamente* además deberán instalar compatible con la versión de `R` en su computador. Más información en [CRAN](https://cran.r-project.org/bin/windows/Rtools/)  
+- ***Usuarios de Windows solamente*** además deberán instalar compatible con la versión de `R` en su computador. Más información en [CRAN](https://cran.r-project.org/bin/windows/Rtools/)  
   
 *Software opcional*  
 - Para crear mapas y llevar a cabo análisis espaciales, recomendamos [QGIS](https://www.qgis.org/en/site/forusers/download.html). Este software es gratuito y está disponible para varios sistemas operativos.   
