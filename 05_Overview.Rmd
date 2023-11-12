@@ -8,8 +8,6 @@ Asegurémonos de que tenemos los paquetes que necesitamos, sino los instalamos d
 pkgs <- c("dplyr", "ncdf4", "raster", "remotes", "robis", "worrms")
 pkgs <- setdiff(pkgs, installed.packages()[, 1])
 if (length(pkgs) > 0) install.packages(pkgs)
-
-library(dplyr)
 ```
 
 También podemos instalarlos desde GitHub:
@@ -24,19 +22,43 @@ for (pkg in names(pkgs)) {
         remotes::install_github(pkg)
     }
 }
+
+remotes::install_github("ropensci/antanym")
 ```
+
+## Llamando paquetes relevantes
+  
+```{r}
+#Manipulacion de datos
+library(dplyr)
+#Taxonomia
+library(worrms)
+#Datos de ocurrencia desde OBIS
+library(robis)
+#Graficando mapas
+library(SOmap)
+#Datos ambientales
+library(blueant)
+#Modelos aditivos generalizados
+library(mgcv)
+#Nombres de lugares
+library(antanym)
+```
+
 
 ## Taxonomía
 
 ```{r tax1, message = FALSE}
-library(worrms)
+#Especie de interes
+especie_interes <- "Euphausia crystallorophias"
 
-my_species <- "Euphausia crystallorophias"
-tax <- wm_records_names(name = my_species)
-tax
+#Revisar records en WoRMS
+tax <- wm_records_names(name = especie_interes)
 
-## Aphia ID (identificación taxonómica) de nuestras especies
-my_aphia_id <- tax[[1]]$valid_AphiaID
+# Aphia ID (identificación taxonómica) de nuestras especies
+my_aphia_id <- tax |> 
+  as.data.frame() |> 
+  pull(valid_AphiaID)
 ```
 
 ## Occurrencias
@@ -44,14 +66,12 @@ my_aphia_id <- tax[[1]]$valid_AphiaID
 Obtengamos todos los datos disponibles de la familia *Euphausiacea* de Antártica desde el conjunto de datos obtenidos en las expediciones "recursos marinos antárticos alemanes": [Antarctic Euphausiacea occurence data from "German Antarctic Marine Living Resources" (GAMLR) Expeditions](https://ipt.biodiversity.aq/resource?r=gamlr)  
 
 ```{r occ1, message = FALSE}
-library(robis)
 x <- occurrence(datasetid = "cb16377b-56a8-4d95-802d-4eec02466773")
 ```
 
 Creemos el gráfico de la distribución completa de las muestras de la familia *Euphasia* en negro y de *Euphausia crystallorophias* en verde:
 
 ```{r map1, message = FALSE}
-library(SOmap)
 SOmap_auto(x$decimalLongitude, x$decimalLatitude, input_lines = FALSE, pcol = "black", pcex = 0.2)
 with(x %>% dplyr::filter(aphiaID == my_aphia_id), 
      SOplot(decimalLongitude, decimalLatitude, pch = 19, cex = 0.2, col = "green"))
@@ -70,15 +90,15 @@ with(x %>% dplyr::filter(aphiaID == my_aphia_id),
 Vamos a ajustar un modelo de distribución de especies (presencia/ausencia), así que primero reorganizaremos nuestros datos de presencia/ausencia por sitio de muestreo:  
   
 ```{r dat1}
-xfit <- x %>% dplyr::rename(lon = "decimalLongitude", lat = "decimalLatitude") %>%
-    group_by(lon, lat) %>%
-    dplyr::summarize(present = any(my_aphia_id %in% aphiaID))
+xfit <- x %>% 
+  dplyr::rename(lon = "decimalLongitude", lat = "decimalLatitude") %>%
+  group_by(lon, lat) %>%
+  dplyr::summarize(present = any(my_aphia_id %in% aphiaID))
 ```
 
 ## Datos ambientales
 
 ```{r envdat1, message = FALSE}
-library(blueant)
 ## añadimos los datos en un directorio temporal
 my_data_directory <- tempdir()
 
@@ -107,8 +127,8 @@ env_stack <- subset(env_stack, c("depth", "ice_cover_mean"))
 temp <- as.data.frame(raster::extract(env_stack, xfit[, c("lon", "lat")]))
 
 xfit <- bind_cols(xfit, temp)
-head(xfit)
 
+head(xfit)
 ```
 
 ## Ajustando el modelo
@@ -116,8 +136,6 @@ head(xfit)
 Tenemos datos de presencia/ausencia, así que ajustaremos un modelo binomial simple. La probabilidad de presencia de *Euphausia crystallorophias* se ajusta como una función suave de la profundidad (smooth function; s()) y la cobertura media de hielo marino:
 
 ```{r mod1, message = FALSE}
-library(mgcv)
-
 fit <- gam(present ~ s(depth) + s(ice_cover_mean), family = binomial, data = xfit)
 
 summary(fit)
@@ -166,8 +184,6 @@ SOplot(pr, col = my_cmap)
 ### Nombres de lugares
 
 ```{r placenames1}
-library(antanym)
-
 ## obtengamos datos completos del diccionario geográfico de SCAR
 xn <- an_read(cache = "session", sp = TRUE)
 
@@ -178,7 +194,8 @@ xn <- an_preferred(xn, origin = "United Kingdom")
 xns <- an_suggest(xn, map_scale = 20e6, map_extent = extent(pr))
 
 ## transformemos a nuestra proyección, convirtimos datos a dataframe (marco de datos), mostramos las primeros 10 filas
-xns <- as_tibble(SOproj(xns, target = basemap$projection)) %>% head(10)
+xns <- as_tibble(SOproj(xns, target = basemap$projection)) %>% 
+  head(10)
 ```
 
 Añadimos nombres al mapa:
