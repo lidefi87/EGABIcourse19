@@ -1,4 +1,4 @@
-# Curso de SCAR-EGABI: Herramientas para análisis espacial y modelado en el Océanos del Sur
+# Curso de SCAR-EGABI: Herramientas para análisis espacial y modelado en el Océano del Sur
 
 <img src="/images/EGABI_logo.svg" alt="EG-ABI Logo" title="EG-ABI Logo" width="150"  align="right"/>
 
