@@ -69,20 +69,18 @@ Ejecuta  modelos, compara diferentes calibraciones de modelos y compara los resu
 
 [calibration_BRT.R](./course_material/exercises/scripts/calibration_BRT.R)
 
+### Importa datos ambientales y de ocurrencia ----------------------------------
+Archivo `run_yOur_SDM.R` calcula la variable MATRIX_OCC_ENVI (1 set) en el archivo run_yOur_SDM.R, corre todo hasta la creacion de MyFold `set.seed(1) (j=1)`.
+Corre el modelo y compara la dispersion de las predicciones de acuerdo al conjunto de parametros escogidos  
+  
 ```{r eval = FALSE}
-
-
-#### Importa datos ambientales y de ocurrencia (archivo run_yOur_SDM.R)
-#---------------------------------------------------------
-# calcula la variable MATRIX_OCC_ENVI (1 set)
-# en el archivo run_yOur_SDM.R, corre todo hasta la creacion de MyFold 
-# set.seed(1) (j=1)
-# corre el modelo y compara la dispersion de las predicciones de acuerdo
-# al conjunto de parametros escogido
 source("docs/course_material/exercises/scripts/Function_gbm.R")
-tc=4   # complejidad del arbol
-lr=0.011 # tasa de aprendizaje
-bf=0.8 # fraccion de la bolsa (bag fraction)
+# complejidad del arbol
+tc = 4
+# tasa de aprendizaje
+lr = 0.011
+# fraccion de la bolsa (bag fraction)
+bf = 0.8 
 
 model.res<- gbm.step_v2 (data=MATRIX_OCC_ENVI, 
                          gbm.x = 2:ncol(MATRIX_OCC_ENVI),
@@ -125,47 +123,63 @@ pred8 <- predict.gbm(model8,MATRIX_OCC_ENVI, n.trees = tree.list8, "response")
 
 graphe.deviance1 <- rep(0,max(tree.list1)/100)
 for (i in 1:length(graphe.deviance1)) {
-  graphe.deviance1 [i] <- calc.deviance(MATRIX_OCC_ENVI$id, pred1[,i],calc.mean=T)
+  graphe.deviance1 [i] <- calc.deviance(MATRIX_OCC_ENVI$id, 
+                                        pred1[,i], calc.mean = T)
 }
 graphe.deviance2 <- rep(0,max(tree.list2)/100)
 for (i in 1:length(graphe.deviance2)) {
-  graphe.deviance2 [i] <- calc.deviance(MATRIX_OCC_ENVI$id, pred2[,i],calc.mean=T)
+  graphe.deviance2 [i] <- calc.deviance(MATRIX_OCC_ENVI$id, 
+                                        pred2[,i], calc.mean = T)
 }
 graphe.deviance3 <- rep(0,max(tree.list3)/100)
 for (i in 1:length(graphe.deviance3)) {
-  graphe.deviance3 [i] <- calc.deviance(MATRIX_OCC_ENVI$id, pred3[,i],calc.mean=T)
+  graphe.deviance3 [i] <- calc.deviance(MATRIX_OCC_ENVI$id, 
+                                        pred3[,i], calc.mean = T)
 }
 graphe.deviance4 <- rep(0,max(tree.list4)/100)
 for (i in 1:length(graphe.deviance4)) {
-  graphe.deviance4 [i] <- calc.deviance(MATRIX_OCC_ENVI$id, pred4[,i],calc.mean=T)
+  graphe.deviance4 [i] <- calc.deviance(MATRIX_OCC_ENVI$id, 
+                                        pred4[,i], calc.mean = T)
 }
 graphe.deviance5 <- rep(0,max(tree.list5)/100)
 for (i in 1:length(graphe.deviance5)) {
-  graphe.deviance5 [i] <- calc.deviance(MATRIX_OCC_ENVI$id, pred5[,i],calc.mean=T)
+  graphe.deviance5 [i] <- calc.deviance(MATRIX_OCC_ENVI$id, 
+                                        pred5[,i], calc.mean = T)
 }
 graphe.deviance6 <- rep(0,max(tree.list6)/100)
 for (i in 1:length(graphe.deviance6)) {
-  graphe.deviance6 [i] <- calc.deviance(MATRIX_OCC_ENVI$id, pred6[,i],calc.mean=T)
+  graphe.deviance6 [i] <- calc.deviance(MATRIX_OCC_ENVI$id, 
+                                        pred6[,i], calc.mean = T)
 }
 graphe.deviance7 <- rep(0,max(tree.list7)/100)
 for (i in 1:length(graphe.deviance7)) {
-  graphe.deviance7 [i] <- calc.deviance(MATRIX_OCC_ENVI$id, pred7[,i],calc.mean=T)
+  graphe.deviance7 [i] <- calc.deviance(MATRIX_OCC_ENVI$id, 
+                                        pred7[,i], calc.mean = T)
 }
 graphe.deviance8 <- rep(0,max(tree.list8)/100)
 for (i in 1:length(graphe.deviance8)) {
-  graphe.deviance8 [i] <- calc.deviance(MATRIX_OCC_ENVI$id, pred8[,i],calc.mean=T)
+  graphe.deviance8 [i] <- calc.deviance(MATRIX_OCC_ENVI$id, 
+                                        pred8[,i], calc.mean = T)
 }
 
-par(mai=c(0.5,0.5,0.5,0.5))
-plot(tree.list1,graphe.deviance1,xlim = c(-100,4000), ylim=c(0,1),type='l', xlab = "number of trees",ylab = "predictive deviance", cex.lab = 1.5) 
-lines(tree.list2,graphe.deviance2,col="blue")
-lines(tree.list3,graphe.deviance3,col="red")
-lines(tree.list4,graphe.deviance4,col="green")
-lines(tree.list5,graphe.deviance5,col="orange")
-lines(tree.list6,graphe.deviance6,col="pink")
-lines(tree.list7,graphe.deviance7,col="deepskyblue")
-lines(tree.list8,graphe.deviance8,col="purple")
-legend("topright",legend=c("tc3 lr0.001 bf=0.8","tc4 lr0.001 bf=0.8","tc4 lr0.005 bf=0.8 ","tc3 lr0.005 bf=0.8","tc4 lr0.01 bf=0.8","tc4 lr0.008 bf=0.8","tc4 lr0.005 bf=0.9","tc4 lr0.011 bf=0.8"),col=c("black","blue","red","green","orange","pink","deepskyblue","purple"),pch=16,cex=0.7)
+par(mai = c(0.5, 0.5, 0.5, 0.5))
+plot(tree.list1, graphe.deviance1, xlim = c(-100,4000), ylim = c(0,1),
+     type='l', xlab = "number of trees", ylab = "predictive deviance",
+     cex.lab = 1.5) 
+lines(tree.list2, graphe.deviance2, col = "blue")
+lines(tree.list3, graphe.deviance3, col = "red")
+lines(tree.list4, graphe.deviance4, col = "green")
+lines(tree.list5, graphe.deviance5, col = "orange")
+lines(tree.list6, graphe.deviance6, col = "pink")
+lines(tree.list7, graphe.deviance7, col = "deepskyblue")
+lines(tree.list8, graphe.deviance8, col = "purple")
+legend("topright",
+       legend = c("tc3 lr0.001 bf=0.8", "tc4 lr0.001 bf=0.8",
+                  "tc4 lr0.005 bf=0.8", "tc3 lr0.005 bf=0.8", 
+                  "tc4 lr0.01 bf=0.8", "tc4 lr0.008 bf=0.8", 
+                  "tc4 lr0.005 bf=0.9", "tc4 lr0.011 bf=0.8"),
+       col=c("black", "blue", "red", "green", "orange", "pink", "deepskyblue",
+             "purple"), pch = 16, cex = 0.7)
 
 ```
 
@@ -173,18 +187,24 @@ legend("topright",legend=c("tc3 lr0.001 bf=0.8","tc4 lr0.001 bf=0.8","tc4 lr0.00
 
 ```{r eval = FALSE}
 clock4 <- function(occ, bg.coords){
-  # El muestreo espacial tiene como objetivo definir areas que contienen datos de prueba o entrenamiento
-  # para el metodo CLOCK-4, se definen 4 areas triangulares, cortando el circulo del oceano austral en 4 areas iguales. Tres de estas 4 areas contienen datos que se utilizaran para entrenar el modelo, el otro triangulo, contiene datos que se utilizaran para poner a prueba el modelo despues de hacer predicciones.  
-  # las áreas utilizadas para entrenar y probar el modelo se definen aleatoriamente en cada paso del ciclo
+  # El muestreo espacial tiene como objetivo definir areas que contienen datos 
+  #de prueba o entrenamiento para el metodo CLOCK-4, se definen 4 areas 
+  #triangulares, cortando el circulo del oceano austral en 4 areas iguales. 
+  #Tres de estas 4 areas contienen datos que se utilizaran para entrenar el 
+  #modelo, el otro triangulo, contiene datos que se utilizaran para poner a 
+  #prueba el modelo despues de hacer predicciones. Las áreas utilizadas para
+  #entrenar y probar el modelo se definen aleatoriamente en cada paso del ciclo
   
-  #Crea los vectores que se utilizaran para generar la estructura de muestreo espacial
-  random_longA <- seq(0,179,1)
-  random_longB <- seq(-180,-1,1)
-  random_longC <- seq(0,180,1)
-  random_longD <- seq(-179,0,1)
-  random_long <- c(random_longA,random_longB,random_longC,random_longD)
+  #Crea los vectores que se utilizaran para generar la estructura de muestreo 
+  #espacial
+  random_longA <- seq(0, 179, 1)
+  random_longB <- seq(-180, -1, 1)
+  random_longC <- seq(0, 180, 1)
+  random_longD <- seq(-179, 0, 1)
+  random_long <- c(random_longA, random_longB, random_longC, random_longD)
   
-  # muestrear un numero entre -180 y 180 para definir el transecto de muestreo aleatorio
+  # muestrear un numero entre -180 y 180 para definir el transecto de muestreo 
+  #aleatorio
   tirage <- sample(seq(181,541,1),1)
   random_long_tirage <- random_long[tirage]
   random_long_tirage_A1 <- random_long[tirage+90]
@@ -193,25 +213,27 @@ clock4 <- function(occ, bg.coords){
   #random_long_tirage_A4 <- random_long[tirage-180]
   
 
-  ## definir grupos de entrenamiento y prueba (compuestos por datos de presencia y background data)
+  ## definir grupos de entrenamiento y prueba (compuestos por datos de 
+  # presencia y background data)
   occ.grp <- rep(NA, nrow(occ))
   bg.coords.grp <- rep(NA, nrow(bg.coords))
   
-  ## definir grupos de entrenamiento y prueba(compuestos por datos de presencia y background data)
+  ## definir grupos de entrenamiento y prueba(compuestos por datos de presencia
+  #y background data)
   presence_tot <- occ
   background_data <- bg.coords
-  training_presences.occ1 <- NA;training_presences.occ3 <-NA
-  training_presences.occ1_part1 <- NA;training_presences.occ3_part1 <-NA
-  training_presences.occ1_part2 <- NA;training_presences.occ3_part2 <-NA
+  training_presences.occ1 <- NA; training_presences.occ3 <-NA
+  training_presences.occ1_part1 <- NA; training_presences.occ3_part1 <-NA
+  training_presences.occ1_part2 <- NA; training_presences.occ3_part2 <-NA
   training_backgr.occ1 <- NA; training_backgr.occ3 <- NA
   training_backgr.occ1_part1 <- NA; training_backgr.occ3_part1 <- NA
   training_backgr.occ1_part2 <- NA; training_backgr.occ3_part2 <- NA
   training_presences.occ2 <- NA;training_presences.occ4 <- NA
-  training_presences.occ2_part1 <- NA;training_presences.occ4_part1 <- NA
-  training_presences.occ2_part2 <- NA;training_presences.occ4_part2 <- NA
-  training_backgr.occ2 <- NA;training_backgr.occ4 <- NA
-  training_backgr.occ2_part1 <- NA;training_backgr.occ4_part1 <- NA
-  training_backgr.occ2_part2 <- NA;training_backgr.occ4_part2 <- NA
+  training_presences.occ2_part1 <- NA; training_presences.occ4_part1 <- NA
+  training_presences.occ2_part2 <- NA; training_presences.occ4_part2 <- NA
+  training_backgr.occ2 <- NA; training_backgr.occ4 <- NA
+  training_backgr.occ2_part1 <- NA; training_backgr.occ4_part1 <- NA
+  training_backgr.occ2_part2 <- NA; training_backgr.occ4_part2 <- NA
   
   
   #------------------------------------------
@@ -219,83 +241,128 @@ clock4 <- function(occ, bg.coords){
   #------------------------------------------
   
   ### ZONA 1 ####
-  if (random_long_tirage <= 0 & random_long_tirage_A1 <=0){ # significa que A2 >= 0 y A3>=0
-    training_presences.occ1 <- which(presence_tot[,1] > random_long_tirage & presence_tot[,1] < random_long_tirage_A1)
-    training_backgr.occ1 <- which(background_data[,1] > random_long_tirage & background_data[,1] < random_long_tirage_A1)
+  # significa que A2 >= 0 y A3>=0
+  if (random_long_tirage <= 0 & random_long_tirage_A1 <=0){ 
+    training_presences.occ1 <- which(presence_tot[,1] > random_long_tirage &
+                                       presence_tot[,1] < random_long_tirage_A1)
+    training_backgr.occ1 <- which(background_data[,1] > random_long_tirage &
+                                    background_data[,1] < random_long_tirage_A1)
   } 
   if (random_long_tirage >= 0 & random_long_tirage_A1 >=0){
-    training_presences.occ1 <- which(presence_tot[,1] > random_long_tirage & presence_tot[,1] < random_long_tirage_A1)
-    training_backgr.occ1 <- which(background_data[,1] > random_long_tirage & background_data[,1] < random_long_tirage_A1)
+    training_presences.occ1 <- which(presence_tot[,1] > random_long_tirage &
+                                       presence_tot[,1] < random_long_tirage_A1)
+    training_backgr.occ1 <- which(background_data[,1] > random_long_tirage &
+                                    background_data[,1] < random_long_tirage_A1)
   }
   
   if (random_long_tirage >= 0 & random_long_tirage_A1 <=0){
-    training_presences.occ1_part1 <- which(presence_tot[,1] > random_long_tirage & presence_tot[,1] < 180 )
-    training_presences.occ1_part2 <- which(presence_tot[,1] > -180 & presence_tot[,1] < random_long_tirage_A1 )
-    training_backgr.occ1_part1 <- which(background_data[,1] > random_long_tirage & background_data[,1] < 180 )
-    training_backgr.occ1_part2 <- which(background_data[,1] > -180 & background_data[,1] < random_long_tirage_A1 )
+    training_presences.occ1_part1 <- which(presence_tot[,1] > random_long_tirage &
+                                             presence_tot[,1] < 180)
+    training_presences.occ1_part2 <- which(presence_tot[,1] > -180 & 
+                                             presence_tot[,1] < random_long_tirage_A1)
+    training_backgr.occ1_part1 <- which(background_data[,1] > random_long_tirage &
+                                          background_data[,1] < 180)
+    training_backgr.occ1_part2 <- which(background_data[,1] > -180 & 
+                                          background_data[,1] < random_long_tirage_A1)
   }
   
   if (random_long_tirage <= 0 & random_long_tirage_A1 >=0){
-    training_presences.occ1_part1 <- which(presence_tot[,1] > random_long_tirage & presence_tot[,1] < 0 )
-    training_presences.occ1_part2 <- which(presence_tot[,1] > 0 & presence_tot[,1] < random_long_tirage_A1 )
-    training_backgr.occ1_part1 <- which(background_data[,1] > random_long_tirage & background_data[,1] < 0 )
-    training_backgr.occ1_part2 <- which(background_data[,1] > 0 & background_data[,1] < random_long_tirage_A1 )
+    training_presences.occ1_part1 <- which(presence_tot[,1] > random_long_tirage &
+                                             presence_tot[,1] < 0)
+    training_presences.occ1_part2 <- which(presence_tot[,1] > 0 & 
+                                             presence_tot[,1] < random_long_tirage_A1)
+    training_backgr.occ1_part1 <- which(background_data[,1] > random_long_tirage &
+                                          background_data[,1] < 0)
+    training_backgr.occ1_part2 <- which(background_data[,1] > 0 & 
+                                          background_data[,1] < random_long_tirage_A1)
   }
   
   ### ZONA 2 ####
   
   if (random_long_tirage_A1 <= 0 & random_long_tirage_A2 <=0){
-    training_presences.occ2 <- which(presence_tot[,1] > random_long_tirage_A1 & presence_tot[,1] < random_long_tirage_A2 )
-    training_backgr.occ2 <- which(background_data[,1] > random_long_tirage_A1 & background_data[,1] < random_long_tirage_A2)
+    training_presences.occ2 <- which(presence_tot[,1] > random_long_tirage_A1 &
+                                       presence_tot[,1] < random_long_tirage_A2)
+    training_backgr.occ2 <- which(background_data[,1] > random_long_tirage_A1 &
+                                    background_data[,1] < random_long_tirage_A2)
   } 
   if (random_long_tirage_A1 >= 0 & random_long_tirage_A2 >=0){
-    training_presences.occ2 <- which(presence_tot[,1] > random_long_tirage_A1 & presence_tot[,1] < random_long_tirage_A2 )
-    training_backgr.occ2 <- which(background_data[,1] > random_long_tirage_A1 & background_data[,1] < random_long_tirage_A2)
+    training_presences.occ2 <- which(presence_tot[,1] > random_long_tirage_A1 &
+                                       presence_tot[,1] < random_long_tirage_A2)
+    training_backgr.occ2 <- which(background_data[,1] > random_long_tirage_A1 &
+                                    background_data[,1] < random_long_tirage_A2)
   }
   
   if (random_long_tirage_A1 >= 0 & random_long_tirage_A2 <=0){
-    training_presences.occ2_part1 <- which(presence_tot[,1] > random_long_tirage_A1 & presence_tot[,1] < 180)
-    training_presences.occ2_part2 <- which(presence_tot[,1] > -180 & presence_tot[,1] < random_long_tirage_A2)
-    training_backgr.occ2_part1 <- which(background_data[,1] > random_long_tirage_A1 & background_data[,1] < 180)
-    training_backgr.occ2_part2 <- which(background_data[,1] > -180 & background_data[,1] < random_long_tirage_A2)
+    training_presences.occ2_part1 <- which(presence_tot[,1] > random_long_tirage_A1 &
+                                             presence_tot[,1] < 180)
+    training_presences.occ2_part2 <- which(presence_tot[,1] > -180 &
+                                             presence_tot[,1] < random_long_tirage_A2)
+    training_backgr.occ2_part1 <- which(background_data[,1] > random_long_tirage_A1 &
+                                          background_data[,1] < 180)
+    training_backgr.occ2_part2 <- which(background_data[,1] > -180 & 
+                                          background_data[,1] < random_long_tirage_A2)
   }
   
   if (random_long_tirage_A1 <= 0 & random_long_tirage_A2 >=0){
-    training_presences.occ2_part1 <- which(presence_tot[,1] > random_long_tirage_A1 & presence_tot[,1] < 0 )
-    training_presences.occ2_part2 <- which(presence_tot[,1] > 0 & presence_tot[,1] < random_long_tirage_A2 )
-    training_backgr.occ2_part1 <- which(background_data[,1] > random_long_tirage_A1 & background_data[,1] < 0 )
-    training_backgr.occ2_part2 <- which(background_data[,1] > 0 & background_data[,1] < random_long_tirage_A2 )
+    training_presences.occ2_part1 <- which(presence_tot[,1] > random_long_tirage_A1 &
+                                             presence_tot[,1] < 0)
+    training_presences.occ2_part2 <- which(presence_tot[,1] > 0 &
+                                             presence_tot[,1] < random_long_tirage_A2)
+    training_backgr.occ2_part1 <- which(background_data[,1] > random_long_tirage_A1 &
+                                          background_data[,1] < 0)
+    training_backgr.occ2_part2 <- which(background_data[,1] > 0 &
+                                          background_data[,1] < random_long_tirage_A2)
   }
   
   ### ZONA 3 ####
   if (random_long_tirage_A2 <= 0 & random_long_tirage_A3 <=0){
-    training_presences.occ3 <- which(presence_tot[,1] > random_long_tirage_A2 & presence_tot[,1] < random_long_tirage_A3 )
-    training_backgr.occ3 <- which(background_data[,1] > random_long_tirage_A2 & background_data[,1] < random_long_tirage_A3)
+    training_presences.occ3 <- which(presence_tot[,1] > random_long_tirage_A2 &
+                                       presence_tot[,1] < random_long_tirage_A3)
+    training_backgr.occ3 <- which(background_data[,1] > random_long_tirage_A2 &
+                                    background_data[,1] < random_long_tirage_A3)
   } 
   if (random_long_tirage_A2 >= 0 & random_long_tirage_A3 >=0){
-    training_presences.occ3 <- which(presence_tot[,1] > random_long_tirage_A2 & presence_tot[,1] < random_long_tirage_A3 )
-    training_backgr.occ3 <- which(background_data[,1] > random_long_tirage_A2 & background_data[,1] < random_long_tirage_A3)
+    training_presences.occ3 <- which(presence_tot[,1] > random_long_tirage_A2 &
+                                       presence_tot[,1] < random_long_tirage_A3)
+    training_backgr.occ3 <- which(background_data[,1] > random_long_tirage_A2 &
+                                    background_data[,1] < random_long_tirage_A3)
   }
   
   if (random_long_tirage_A2 >= 0 & random_long_tirage_A3 <=0){
-    training_presences.occ3_part1 <- which(presence_tot[,1] > random_long_tirage_A2 & presence_tot[,1] < 180 )
-    training_presences.occ3_part2 <- which(presence_tot[,1] > -180 & presence_tot[,1] < random_long_tirage_A3 )
-    training_backgr.occ3_part1 <- which(background_data[,1] > random_long_tirage_A2 & background_data[,1] < 180 )
-    training_backgr.occ3_part2 <- which(background_data[,1] > -180 & background_data[,1] < random_long_tirage_A3 )
+    training_presences.occ3_part1 <- which(presence_tot[,1] > random_long_tirage_A2 &
+                                             presence_tot[,1] < 180)
+    training_presences.occ3_part2 <- which(presence_tot[,1] > -180 & 
+                                             presence_tot[,1] < random_long_tirage_A3)
+    training_backgr.occ3_part1 <- which(background_data[,1] > random_long_tirage_A2 &
+                                          background_data[,1] < 180)
+    training_backgr.occ3_part2 <- which(background_data[,1] > -180 & 
+                                          background_data[,1] < random_long_tirage_A3)
   }
   
   if (random_long_tirage_A2 <= 0 & random_long_tirage_A3 >=0){
-    training_presences.occ3_part1 <- which(presence_tot[,1] > random_long_tirage_A2 & presence_tot[,1] < 0 )
-    training_presences.occ3_part2 <- which(presence_tot[,1] > 0 & presence_tot[,1] < random_long_tirage_A3 )
-    training_backgr.occ3_part1 <- which(background_data[,1] > random_long_tirage_A2 & background_data[,1] < 0 )
-    training_backgr.occ3_part2 <- which(background_data[,1] > 0 & background_data[,1] < random_long_tirage_A3 )
+    training_presences.occ3_part1 <- which(presence_tot[,1] > random_long_tirage_A2 &
+                                             presence_tot[,1] < 0)
+    training_presences.occ3_part2 <- which(presence_tot[,1] > 0 & 
+                                             presence_tot[,1] < random_long_tirage_A3)
+    training_backgr.occ3_part1 <- which(background_data[,1] > random_long_tirage_A2 &
+                                          background_data[,1] < 0)
+    training_backgr.occ3_part2 <- which(background_data[,1] > 0 & 
+                                          background_data[,1] < random_long_tirage_A3)
   }
   
   ### Establece los grupos
-  training_presence_grp1_all <- as.vector(na.omit(c(training_presences.occ1,training_presences.occ1_part1,training_presences.occ1_part2)))
-  training_presence_grp2_all <- as.vector(na.omit(c(training_presences.occ2,training_presences.occ2_part1,training_presences.occ2_part2)))
-  training_presence_grp3_all <- as.vector(na.omit(c(training_presences.occ3,training_presences.occ3_part1,training_presences.occ3_part2)))
-
+  training_presence_grp1_all <- as.vector(
+    na.omit(c(training_presences.occ1, training_presences.occ1_part1,
+              training_presences.occ1_part2))
+    )
+  training_presence_grp2_all <- as.vector(
+    na.omit(c(training_presences.occ2, training_presences.occ2_part1,
+              training_presences.occ2_part2))
+    )
+  training_presence_grp3_all <- as.vector(
+    na.omit(c(training_presences.occ3, training_presences.occ3_part1,
+              training_presences.occ3_part2))
+    )
 
   for (i in training_presence_grp1_all){
     occ.grp[i] <- 1
@@ -306,12 +373,21 @@ clock4 <- function(occ, bg.coords){
   for (i in training_presence_grp3_all){
     occ.grp[i] <- 3
   }
-  occ.grp[which(is.na(occ.grp))]=4
+  occ.grp[which(is.na(occ.grp))] <- 4
   
   
-  training_backgr_grp1_all <- as.vector(na.omit(c(training_backgr.occ1,training_backgr.occ1_part1,training_backgr.occ1_part2)))
-  training_backgr_grp2_all <- as.vector(na.omit(c(training_backgr.occ2,training_backgr.occ2_part1,training_backgr.occ2_part2)))
-  training_backgr_grp3_all <- as.vector(na.omit(c(training_backgr.occ3,training_backgr.occ3_part1,training_backgr.occ3_part2)))
+  training_backgr_grp1_all <- as.vector(
+    na.omit(c(training_backgr.occ1, training_backgr.occ1_part1,
+              training_backgr.occ1_part2))
+    )
+  training_backgr_grp2_all <- as.vector(
+    na.omit(c(training_backgr.occ2, training_backgr.occ2_part1,
+              training_backgr.occ2_part2))
+    )
+  training_backgr_grp3_all <- as.vector(
+    na.omit(c(training_backgr.occ3, training_backgr.occ3_part1,
+              training_backgr.occ3_part2))
+    )
 
   for (i in training_backgr_grp1_all){
     bg.coords.grp[i] <- 1
@@ -322,14 +398,14 @@ clock4 <- function(occ, bg.coords){
   for (i in training_backgr_grp3_all){
     bg.coords.grp[i] <- 3
   }
-  bg.coords.grp[which(is.na(bg.coords.grp))]=4
+  bg.coords.grp[which(is.na(bg.coords.grp))] <- 4
   
   
-  out <- list(occ.grp=occ.grp,bg.coords.grp= bg.coords.grp, tirage=tirage)
+  out <- list(occ.grp = occ.grp,
+              bg.coords.grp = bg.coords.grp, 
+              tirage = tirage)
   return(out)
 }
-
-
 ```
 
 [Function_gbm.R](./course_material/exercises/scripts/Function_gbm.R)
@@ -384,7 +460,8 @@ clock4 <- function(occ, bg.coords){
   pred.range <- max(preds) - min(preds)
   
   if(pred.range > 1.2 & family == "binomial") {
-    print(paste("range of response variable is ", round(pred.range, 2)), sep = "", quote = F)
+    print(paste("range of response variable is ", 
+                round(pred.range, 2)), sep = "", quote = F)
     print("check family specification", quote = F)
     return()
   }
@@ -410,20 +487,24 @@ clock4 <- function(occ, bg.coords){
   }
   
   calibration.result <- c(mod$coef, miller1, miller2, miller3)
-  names(calibration.result) <- c("intercept", "slope", "testa0b1", "testa0|b1", "testb1|a")
+  names(calibration.result) <- c("intercept", "slope", "testa0b1", "testa0|b1",
+                                 "testb1|a")
   return(calibration.result)
 }
 
 ## VI.
-gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL, 
-                        tree.complexity = 1, learning.rate = 0.01, bag.fraction = 0.75, 
-                        site.weights = rep(1, nrow(data)), var.monotone = rep(0, 
-                                                                              length(gbm.x)), 
-                        n.folds = 10, prev.stratify = TRUE, family = "bernoulli", 
-                        n.trees = 50, step.size = n.trees, max.trees = 10000, tolerance.method = "auto", 
-                        tolerance = 0.001, plot.main = TRUE, plot.folds = FALSE, 
-                        verbose = TRUE, silent = FALSE, keep.fold.models = FALSE, 
-                        keep.fold.vector = FALSE, keep.fold.fit = FALSE, ...) 
+gbm.step_v2 <- function(data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
+                        tree.complexity = 1, learning.rate = 0.01, 
+                        bag.fraction = 0.75, site.weights = rep(1, nrow(data)),
+                        var.monotone = rep(0, length(gbm.x)),
+                        n.folds = 10, prev.stratify = TRUE, 
+                        family = "bernoulli",  n.trees = 50, 
+                        step.size = n.trees, max.trees = 10000, 
+                        tolerance.method = "auto",  tolerance = 0.001, 
+                        plot.main = TRUE, plot.folds = FALSE,  
+                        verbose = TRUE, silent = FALSE, 
+                        keep.fold.models = FALSE, keep.fold.vector = FALSE, 
+                        keep.fold.fit = FALSE, ...) 
 {
   if (!requireNamespace("gbm")) {
     stop("you need to install the gbm package to run this function")
@@ -443,8 +524,7 @@ gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
   if (!silent) {
     cat("\n", "\n", "GBM STEP - version 2.9", "\n", "\n")
     cat("Performing cross-validation optimisation of a boosted regression tree model \n")
-    cat("for", sp.name, "and using a family of", family, 
-        "\n")
+    cat("for", sp.name, "and using a family of", family,  "\n")
     cat("Using", n.cases, "observations and", n.preds, "predictors \n")
   }
   if (is.null(fold.vector)) {
@@ -540,7 +620,9 @@ gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
       fitted.values <- exp(fitted.values)
     }
     pred.values[pred.mask] <- gbm::predict.gbm(model.list[[i]], 
-                                               x.data[pred.mask, , drop = FALSE], n.trees = n.trees)
+                                               x.data[pred.mask, , 
+                                                      drop = FALSE], 
+                                               n.trees = n.trees)
     if (!is.null(offset)) {
       pred.values[pred.mask] <- pred.values[pred.mask] + 
         offset[pred.mask]
@@ -601,7 +683,9 @@ gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
         fitted.values <- exp(fitted.values)
       }
       pred.values[pred.mask] <- gbm::predict.gbm(model.list[[i]], 
-                                                 x.data[pred.mask, , drop = FALSE], n.trees = n.fitted)
+                                                 x.data[pred.mask, , 
+                                                        drop = FALSE],
+                                                 n.trees = n.fitted)
       if (!is.null(offset)) {
         pred.values[pred.mask] <- pred.values[pred.mask] + 
           offset[pred.mask]
@@ -616,8 +700,8 @@ gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
       y_i <- y.subset
       u_i <- fitted.values
       weight.fitted <- site.weights[model.mask]
-      training.loss.matrix[i, j] <- calc.deviance(y_i, 
-                                                  u_i, weight.fitted, family = family)
+      training.loss.matrix[i, j] <- calc.deviance(y_i, u_i, weight.fitted, 
+                                                  family = family)
       u_i <- pred.values[pred.mask]
       y_i <- y.data[pred.mask]
       weight.preds <- site.weights[pred.mask]
@@ -701,7 +785,8 @@ gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
     pred.mask <- selector == i
     model.mask <- selector != i
     fits <- gbm::predict.gbm(model.list[[i]], x.data[model.mask, 
-                                                     , drop = FALSE], n.trees = target.trees)
+                                                     , drop = FALSE], 
+                             n.trees = target.trees)
     if (!is.null(offset)) {
       fits <- fits + offset[model.mask]
     }
@@ -712,7 +797,8 @@ gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
     }
     fitted.matrix[model.mask, i] <- fits
     fits <- gbm::predict.gbm(model.list[[i]], x.data[pred.mask, 
-                                                     , drop = FALSE], n.trees = target.trees)
+                                                     , drop = FALSE], 
+                             n.trees = target.trees)
     if (!is.null(offset)) 
       fits <- fits + offset[pred.mask]
     fold.fit[pred.mask] <- fits
@@ -733,7 +819,8 @@ gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
       cv.calibration.stats[i, ] <- .calibration(y_i, u_i, 
                                                 "binomial")
       threshold.stats[i] <- approx(ppoints(u_i), sort(u_i, 
-                                                      decreasing = T), prevalence)$y
+                                                      decreasing = T), 
+                                   prevalence)$y
       
     ################################
     ## ediciones de JA / 08/02/19 ##
@@ -785,7 +872,8 @@ gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
     cv.roc <- mean(cv.roc.stats, na.rm = TRUE)
     cv.roc.se <- sqrt(var(cv.roc.stats, use = "complete.obs"))/sqrt(n.folds)
     cv.threshold <- mean(threshold.stats, na.rm = T)
-    cv.threshold.se <- sqrt(var(threshold.stats, use = "complete.obs"))/sqrt(n.folds)
+    cv.threshold.se <- sqrt(var(threshold.stats, 
+                                use = "complete.obs"))/sqrt(n.folds)
   }
   cv.calibration <- 0
   cv.calibration.se <- 0
@@ -890,21 +978,30 @@ gbm.step_v2 <- function (data, gbm.x, gbm.y, offset = NULL, fold.vector = NULL,
     cat("  - refit with faster learning rate or increase maximum number of trees", 
         "\n")
   }
-  gbm.detail <- list(dataframe = data, gbm.x = gbm.x, predictor.names = names(x.data), 
-                     gbm.y = gbm.y, response.name = sp.name, offset = offset, 
-                     family = family, tree.complexity = tree.complexity, learning.rate = learning.rate, 
-                     bag.fraction = bag.fraction, cv.folds = n.folds, prev.stratification = prev.stratify, 
-                     max.fitted = n.fitted, n.trees = target.trees, best.trees = target.trees, 
-                     train.fraction = 1, tolerance.method = tolerance.method, 
-                     tolerance = tolerance, var.monotone = var.monotone, date = date(), 
+  gbm.detail <- list(dataframe = data, gbm.x = gbm.x, 
+                     predictor.names = names(x.data), gbm.y = gbm.y, 
+                     response.name = sp.name, offset = offset, family = family,
+                     tree.complexity = tree.complexity, 
+                     learning.rate = learning.rate, bag.fraction = bag.fraction, 
+                     cv.folds = n.folds, prev.stratification = prev.stratify, 
+                     max.fitted = n.fitted, n.trees = target.trees, 
+                     best.trees = target.trees,  train.fraction = 1, 
+                     tolerance.method = tolerance.method, tolerance = tolerance,
+                     var.monotone = var.monotone, date = date(),
                      elapsed.time.minutes = elapsed.time.minutes)
-  training.stats <- list(null = total.deviance, mean.null = mean.total.deviance, 
-                         resid = resid.deviance, mean.resid = mean.resid.deviance, 
-                         correlation = self.cor, discrimination = self.roc, calibration = self.calibration)
+  
+  training.stats <- list(null = total.deviance, 
+                         mean.null = mean.total.deviance, 
+                         resid = resid.deviance, 
+                         mean.resid = mean.resid.deviance, 
+                         correlation = self.cor, discrimination = self.roc, 
+                         calibration = self.calibration)
+  
   cv.stats <- list(deviance.mean = cv.dev, deviance.se = cv.dev.se, 
                    correlation.mean = cv.cor, correlation.se = cv.cor.se, 
                    discrimination.mean = cv.roc, discrimination.se = cv.roc.se, 
-                   calibration.mean = cv.calibration, calibration.se = cv.calibration.se)
+                   calibration.mean = cv.calibration, 
+                   calibration.se = cv.calibration.se)
   if (family == "bernoulli") {
     cv.stats$cv.threshold <- cv.threshold
     cv.stats$cv.threshold.se <- cv.threshold.se
@@ -991,7 +1088,9 @@ get.block <- function(occ, bg.coords){
   bggrp3 <- bg.coords[bg.coords[, 2] > horz & bg.coords[, 1]<=tvert,]
   bggrp4 <- bg.coords[bg.coords[, 2] >= horz & bg.coords[, 1]>tvert,]
   
-  rr <- bg.coords[bg.coords[, 2] > horz & bg.coords[, 1] <= bvert & bg.coords[, 1] >= tvert,]
+  rr <- bg.coords[bg.coords[, 2] > horz & 
+                    bg.coords[, 1] <= bvert & 
+                    bg.coords[, 1] >= tvert,]
   
   r <- data.frame()
   if (nrow(grp1) > 0) grp1$grp <- 1; r <- rbind(r, grp1)
@@ -1013,7 +1112,8 @@ get.block <- function(occ, bg.coords){
 
 ## III.
 
-# Función para calcular las nuevas coordenadas de una rotación de un número de puntos
+# Función para calcular las nuevas coordenadas de una rotación de un número de 
+#puntos
 rota <- function(matxy = MyMat, theta = pi/3, center = center){
   
   matxy <- as.matrix(matxy)
@@ -1024,7 +1124,9 @@ rota <- function(matxy = MyMat, theta = pi/3, center = center){
              c(sin(theta), cos(theta)))
   
   # la rotacion...
-  s <- matxy #- center    # desplazar puntos en el plano para que el centro de rotación esté en el origen
+  #- center    # desplazar puntos en el plano para que el centro de 
+  #rotación esté en el origen
+  s <- matxy 
   for(hh in 1:nrow(matxy)){
     s[hh, ] <- matxy[hh,] - center
   }
@@ -1032,10 +1134,14 @@ rota <- function(matxy = MyMat, theta = pi/3, center = center){
   so <- cbind(x = s[,"x"] * R[1,1] + s[,"y"] * R[1,2],
               y = s[,"x"] * R[2,1] + s[,"y"] * R[2,2])
   
-  #so = R %*% s           # aplicar la rotacion sobre el origen
-  #vo = so + center   # cambie nuevamente para que el origen regrese al centro de rotación deseado
+  # aplicar la rotacion sobre el origen
+  #so = R %*% s
+  # cambie nuevamente para que el origen regrese al centro de rotación deseado
+  #vo = so + center 
   
-  vo <- matxy #- center    # desplazar puntos en el plano para que el centro de rotación esté en el origen
+  #- center    # desplazar puntos en el plano para que el centro de rotación 
+  #esté en el origen
+  vo <- matxy 
   for(hh in 1:nrow(matxy)){
     vo[hh, ] <- so[hh,] + center
   }
@@ -1051,125 +1157,160 @@ rota <- function(matxy = MyMat, theta = pi/3, center = center){
 
 ```{r eval = FALSE}
 library(ncdf4)
-library(raster)
+library(terra)
 library(dismo)
 library(gbm)
 
 #### Abre datos de ocurrencia ####
 #---------------------------------
-occ.sterechinus <- read.csv("docs/course_material/exercises/data/occurrences_sterechinus.csv", header=T, sep=";")
+occ.sterechinus <- read.csv("docs/course_material/exercises/data/occurrences_sterechinus.csv", 
+                            header = T, sep = ";")
 # head(occ.sterechinus)
 
 #### Abre capas de descriptores ambientales y las agrupa/apila ####
 #-----------------------------------------------------------------------
 data_folder <- "docs/course_material/exercises/data"
-depth <- raster(file.path(data_folder, "environmental_layers/depth.nc"))
-sediments <- raster(file.path(data_folder, "environmental_layers/sediments.nc"))
-seafloor_temp_2005_2012_max <- raster(file.path(data_folder, "environmental_layers/seafloor_temp_2005_2012_max.nc"))
-POC_2005_2012_max <- raster(file.path(data_folder, "environmental_layers/POC_2005_2012_max.nc"))
-seafloor_current_speed <- raster(file.path(data_folder, "environmental_layers/seafloor_current_speed.nc"))
+depth <- rast(file.path(data_folder, "environmental_layers/depth.nc"))
+sediments <- rast(file.path(data_folder, "environmental_layers/sediments.nc"))
+seafloor_temp_2005_2012_max <- rast(file.path(data_folder,
+                                              "environmental_layers/seafloor_temp_2005_2012_max.nc"))
+POC_2005_2012_max <- rast(file.path(data_folder,
+                                    "environmental_layers/POC_2005_2012_max.nc"))
+seafloor_current_speed <- rast(file.path(data_folder,
+                                           "environmental_layers/seafloor_current_speed.nc"))
 
 
-predictors_stack <- stack(depth,sediments,seafloor_temp_2005_2012_max,POC_2005_2012_max,seafloor_current_speed)
+predictors_stack <- rast(depth, sediments, seafloor_temp_2005_2012_max, 
+                         POC_2005_2012_max, seafloor_current_speed)
 
+# Eche un vistazo a las propiedades de sus descriptores.  
+plot(predictors_stack)
+```
+  
+Eche un vistazo a la distribución de ocurrencias.  
+  
+```{r eval = FALSE}
+plot(depth)
+# longitud primero, luego latitud
+points(occ.sterechinus[,c(2,1)], pch = 20) 
+```
+  
+Abra la capa de esfuerzo de muestreo de KDE, en la que se muestrearán los  datos de fondo (mediante ponderación). El KDE (Kernel Density Estimation) es una herramienta estadística que ayuda a medir la probabilidad de encontrar una ocurrencia en cada píxel, según el conjunto de registros bentónicos muestreados en todo el Océano Austral (actualización del Atlas Biogeográfico del Océano Austral)
 
-## Eche un vistazo a las propiedades de sus descriptores.
-#..............................................
-#predictors_stack
-#plot(predictors_stack)
+```{r}
+# en esta capa, los continentes están definidos por píxeles que contienen 
+# valores NA permite que R reconozca más adelante las áreas donde deberían 
+# estar los datos de fondo no ser muestreado
+KDE <- rast(file.path(data_folder, "KDE.asc"))
+```
 
-# Eche un vistazo a la distribución de ocurrencias.
-#.................................................
-#plot(depth)
-#points(occ.sterechinus[,c(2,1)], pch=20) # longitud primero, luego latitud
-
-#--------------------------------------------------------------------------------------------------------------
-# Abra la capa de esfuerzo de muestreo de KDE, en la que se muestrearán los datos de fondo (mediante ponderación)
-# El KDE (Kernel Density Estimation) es una herramienta estadística que ayuda a medir la probabilidad de encontrar
-# una ocurrencia en cada píxel, según el conjunto de registros bentónicos muestreados en todo el Océano Austral
-# (actualización del Atlas Biogeográfico del Océano Austral)
-#--------------------------------------------------------------------------------------------------------------
-KDE <- raster(file.path(data_folder, "KDE.asc"))
-# en esta capa, los continentes están definidos por píxeles que contienen valores NA
-# permite que R reconozca más adelante las áreas donde deberían estar los datos de fondo
-# no ser muestreado
-#-----------------------------------------------------------------------------------------
-
-#### Configuracion
-#-------------
-cv.boot <- 2 # numero de replicas (# de veces que se replican modelos)
+## Configuracion  
+  
+````{r}
+# numero de replicas (# de veces que se replican modelos)
+cv.boot <- 2 
 source("docs/course_material/exercises/scripts/Function_gbm.R")
 
 #### Pila de datos vacíos y matrices para llenar
 #----------------------------------------------------------
 
-stack.pred<-subset(predictors_stack,1);values(stack.pred)<-NA
+stack.pred <- subset(predictors_stack, 1);
+values(stack.pred) <- NA
 #testvaluesp<-rep(NA,nrow(fichier_data)) ; testvaluesa <- testvaluesp
 
-model_stats <- matrix(NA, 6, cv.boot*4,dimnames = list(c("AUC", "COR", "TSS", "maxSSS", "valid_test_data","prop_test"), NULL))
+model_stats <- matrix(NA, 6, cv.boot*4,
+                      dimnames = list(c("AUC", "COR", "TSS", "maxSSS",
+                                        "valid_test_data","prop_test"), NULL))
 
 # Almacena la contribución
-contTr <- matrix(NA, dim(predictors_stack)[3], cv.boot, dimnames = list(names(predictors_stack), NULL))
-n.seed <- seq(1,60,1)[-c(4,5,17,28,32,41,45,46,48,53)] # controla y fija el muestreo aleatorio (para
-# comparar resultados con mayor precision) 
+contTr <- matrix(NA, dim(predictors_stack)[3], cv.boot, 
+                 dimnames = list(names(predictors_stack), NULL))
+
+# controla y fija el muestreo aleatorio (para comparar resultados con mayor 
+#precision) 
+n.seed <- seq(1,60,1)[-c(4,5,17,28,32,41,45,46,48,53)] 
 
 for (j in 1:cv.boot){
   #### crea la matriz de ocurrencia-ambiente 
   #------------------------------------------------
-  envi.presences <- unique(extract (predictors_stack,occ.sterechinus[,c(2,1)]))
-  presence.data <- occ.sterechinus[-which(duplicated(extract(predictors_stack,occ.sterechinus[,c(2,1)]))),c(2,1)]; colnames(presence.data)<- c("longitude","latitude")
- # la función 'única' permite eliminar los duplicados que puedan estar contenidos en el conjunto de datos (ocurrencias encontradas en un mismo píxel); 'duplicado' tiene como objetivo detectar cuáles de estas filas son similares
-   #head(envi.presencias)
-   # los datos de presencia se asociarán a ID=1
+  envi.presences <- unique(extract(predictors_stack, 
+                                   occ.sterechinus[, c(2, 1)]))
+  presence.data <- occ.sterechinus[-which(
+    duplicated(extract(predictors_stack, occ.sterechinus[, c(2,1)]))), c(2,1)];
+  colnames(presence.data) <- c("longitude", "latitude")
+  
+  #la función 'única' permite eliminar los duplicados que puedan estar 
+  #contenidos en el conjunto de datos (ocurrencias encontradas en un mismo 
+  #píxel); 'duplicado' tiene como objetivo detectar cuáles de estas filas son 
+  #similares
+  #head(envi.presencias)
+  # los datos de presencia se asociarán a ID=1
   
   set.seed(n.seed[j])
   # muestreo de datos de fondo: en el bucle, cambios en cada réplica
-  # 1000 datos de fondo se muestrean aleatoriamente en el entorno, de acuerdo con el esquema de ponderación de la capa KDE
-  background_data <- xyFromCell(KDE, sample(which(!is.na(values(KDE))), 200, prob=values(KDE)[!is.na(values(KDE))]))
+  # 1000 datos de fondo se muestrean aleatoriamente en el entorno, de acuerdo 
+  #con el esquema de ponderación de la capa KDE
+  background_data <- xyFromCell(KDE, 
+                                sample(which(!is.na(values(KDE))),
+                                       200, 
+                                       prob = values(KDE)[!is.na(values(KDE))]))
 
   colnames(background_data) <- colnames(presence.data)
- # extraer las condiciones ambientales donde se muestrean los datos de fondo
+  
+  # extraer las condiciones ambientales donde se muestrean los datos de fondo
   envi.background <- extract(predictors_stack,background_data)
   # los datos de fondo se asociarán a ID=0
 
-  # Inicializar la matriz que contiene presencia, datos de antecedentes y los valores ambientales asociados.
-  id<-0;sdmdata.unique<-0;  id<-c(rep(1,nrow(envi.presences)),rep(0,nrow(envi.background))) 
-  MATRIX_OCC_ENVI<-data.frame(cbind(id,rbind(envi.presences,envi.background)))
+  # Inicializar la matriz que contiene presencia, datos de antecedentes y los 
+  # valores ambientales asociados.
+  id <- 0;
+  sdmdata.unique <- 0;  
+  id <- c(rep(1, nrow(envi.presences)), rep(0, nrow(envi.background))) 
+  MATRIX_OCC_ENVI <- data.frame(cbind(id,
+                                      rbind(envi.presences, envi.background)))
   #head(MATRIX_OCC_ENVI)
 
-  # División del conjunto de datos de antecedentes de ocurrencia en pliegues de datos de prueba/entrenamiento (segregados espacialmente)
-  dat1 <- rbind(cbind(background_data, Isp=rep(0,nrow(background_data))), cbind(presence.data,Isp=rep(1,nrow(presence.data)))); colnames(dat1)<- c("longitude","latitude","Isp")
+  # División del conjunto de datos de antecedentes de ocurrencia en pliegues de 
+  # datos de prueba/entrenamiento (segregados espacialmente)
+  dat1 <- rbind(cbind(background_data, 
+                      Isp = rep(0, nrow(background_data))),
+                cbind(presence.data, 
+                      Isp = rep(1, nrow(presence.data)))); 
+  colnames(dat1) <- c("longitude", "latitude", "Isp")
   #tail(dat1)
-  idP <- which(dat1$Isp == 1) #  Identificación de datos de presencia para dividirlos
-  MyFold <- rep(NA, nrow(dat1)) # un cuadro vacío para almacenar el grupo de datos (1 a 4 después)
+  #  Identificación de datos de presencia para dividirlos
+  idP <- which(dat1$Isp == 1) 
+  # un cuadro vacío para almacenar el grupo de datos (1 a 4 después)
+  MyFold <- rep(NA, nrow(dat1)) 
   
   source("docs/course_material/exercises/scripts/clock4_crossValidation.R")
-  clock4F <- clock4(dat1[idP, c("longitude", "latitude")], dat1[-idP, c("longitude", "latitude")])
+  clock4F <- clock4(dat1[idP, c("longitude", "latitude")], 
+                    dat1[-idP, c("longitude", "latitude")])
   
   # Extrayendo "folds"
   MyFold[idP] <- clock4F$occ.grp
   MyFold[-idP] <- clock4F$bg.coords.grp
-  plot(dat1[,c("longitude", "latitude")], pch = 20, col = c("red", "blue","black","purple")[as.factor(MyFold)])
+  plot(dat1[, c("longitude", "latitude")], pch = 20, 
+       col = c("red", "blue", "black", "purple")[as.factor(MyFold)])
   
 
   #### inicia los modelos 
   #--------------------------
-  model.res<- gbm.step_v2 (data=MATRIX_OCC_ENVI, 
-                         gbm.x = 2:ncol(MATRIX_OCC_ENVI),
-                         gbm.y = 1,
-                         family = "bernoulli",
-                         n.folds=4,
-                         fold.vector = MyFold, 
-                         tree.complexity = 3,
-                         learning.rate = 0.015,
-                         bag.fraction =0.5)
+  model.res<- gbm.step_v2(data = MATRIX_OCC_ENVI, 
+                          gbm.x = 2:ncol(MATRIX_OCC_ENVI), gbm.y = 1, 
+                          family = "bernoulli", n.folds = 4,
+                          fold.vector = MyFold, tree.complexity = 3,
+                          learning.rate = 0.015, bag.fraction = 0.5)
 
   #------------------------------------------------------------
   #### Extrae datos y resultados de los modelos 
   #------------------------------------------------------------
   # Predicciones
-  p<-predict(predictors_stack,model.res,n.trees=model.res$gbm.call$best.trees,type="response", na.rm=F)
-  stack.pred<-stack(stack.pred,p) # apila todos los mapas replicados 
+  p <- predict(predictors_stack, model.res,
+               n.trees = model.res$gbm.call$best.trees,
+               type = "response", na.rm = F)
+  # apila todos los mapas replicados 
+  stack.pred <- rast(stack.pred, p) 
 
   ########
   ## CV ## (= en "folds" de validacion cruzada)
@@ -1186,47 +1327,63 @@ for (j in 1:cv.boot){
   model_stats["prop_test", j_cv] <- model.res$cv.length*100
   
   ## Obtener contribuciones 
-  RI <- summary(model.res, plotit = F) # extrae la contribucion
-  contTr[match(RI$var, rownames(contTr)), j] <- RI[,"rel.inf"]
+  # extrae la contribucion
+  RI <- summary(model.res, plotit = F) 
+  contTr[match(RI$var, rownames(contTr)), j] <- RI[, "rel.inf"]
 
 }
-
-
-#------------------------
-#### Mapas de predicciones
-#------------------------
-mean_stack <- raster::calc(stack.pred, mean, na.rm=T); mean_stack <- mask(mean_stack, depth)
-#sd_stack <- raster::calc(stack.pred,sd, na.rm=T); sd_stack <- mask(sd_stack, depth)
-
-# se pueden graficar los resultados 
-#continent <- read.csv("data/worldmap.csv") # add continents lines 
-#plot(mean_stack) ; points(continent, type="l")
-
-# este es un mapa aproximado, si quieres tener una mejor representación, puedes
-# exportar el documento ascii y abrirlo en otro software como Qgis u otro
-# writeRaster(mean_stack, "results/mean_raster.asc")
-# writeRaster(sd_stack, "results/sd_raster.asc")
-
-#----------------------------
-#### Estadísticas del modelo 
-#----------------------------
+```
+  
+### Mapas de predicciones ------------------------
+```{r}
+mean_stack <- app(stack.pred, mean, na.rm = T); 
+mean_stack <- mask(mean_stack, depth)
+#sd_stack <- app(stack.pred,sd, na.rm=T); sd_stack <- mask(sd_stack, depth)
+```
+  
+Se pueden graficar los resultados  
+  
+```{r, eval = F}
+# add continents lines 
+continent <- read.csv("data/worldmap.csv") 
+plot(mean_stack)
+points(continent, type = "l")
+```
+  
+Este es un mapa aproximado, si quieres tener una mejor representación, puedes exportar el documento `ascii` y abrirlo en otro software como QGIS u otro `writeCDF(mean_stack, "results/mean_raster.asc")`.  
+  
+```{r, eval = F}  
+writeCDF(sd_stack, "results/sd_raster.asc")
+```
+  
+### Estadísticas del modelo ----------------------------
+  
+```{r}
 ecM <- apply(model_stats, 1, mean, na.rm=T)
 ecSD <- apply(model_stats, 1, sd, na.rm=T)
 ecTot <- paste(round(ecM, 3), round(ecSD, 3), sep = " ± ")
 names(ecTot) <- names(ecM)
 
-ResF <- data.frame(c(ecTot["AUC"],ecTot["COR"],ecTot["TSS"],ecTot["maxSSS"], ecTot["valid_test_data"], ecTot["prop_test"]))
-rownames(ResF) <- c("AUC","COR","TSS", "maxSSS",  "Correctly classified test data", "Test data (% of total dataset)") ; colnames(ResF) <- "Model average statistics"
+ResF <- data.frame(c(ecTot["AUC"], ecTot["COR"], ecTot["TSS"], ecTot["maxSSS"],
+                     ecTot["valid_test_data"], ecTot["prop_test"]))
+
+rownames(ResF) <- c("AUC", "COR", "TSS", "maxSSS",
+                    "Correctly classified test data",
+                    "Test data (% of total dataset)")
+
+colnames(ResF) <- "Model average statistics"
 
 # matriz de resultados brutos
 #model_stats
 # valores promedio
 #ResF
-
-# al igual que lo anterios, se puedene xportar los resultados
-#write.csv(model_stats,"results/model_stats.csv"))
-
-## Contribucion de predictores/parametros ambientales
+```
+  
+Al igual que los  anterios, se puedene xportar los resultados `write.csv(model_stats, "results/model_stats.csv"))`.  
+  
+### Contribucion de predictores/parametros ambientales ---------------
+  
+```{r}
 # datos brutos
 #contTr
 
@@ -1236,25 +1393,28 @@ CtSD <- apply(contTr, 1, sd)
 CtTot <- paste(round(CtM, 3), round(CtSD, 3), sep = " ± ")
 names(CtTot) <- names(CtM)
 
-CtTot <- data.frame(CtTot) ; colnames(CtTot) <- "Contribucion (%) de variables ambientales al modelo"
+CtTot <- data.frame(CtTot)
+colnames(CtTot) <- "Contribucion (%) de variables ambientales al modelo"
 #write.csv(CtTot, "results/avg_contribution.csv")
-
-
-####---------------------------------------------------------------------------
-####---------------------------------------------------------------------------
-### CALCULA LA EXTRAPOLACION   
-# Superficie de similitud ambiental multivariada / Multivariate Environmental Similarity Surface (Elith et al. 2010) 
-# envi.presences <- unique(extract (predictors_stack,occ.sterechinus[,c(2,1)]))
+```
+  
+### CALCULA LA EXTRAPOLACION --------------------------
+Superficie de similitud ambiental multivariada / Multivariate Environmental Similarity Surface (Elith et al. 2010) 
+  
+```{r, eval = F}   
+# envi.presences <- unique(extract(predictors_stack, 
+#                                  occ.sterechinus[,c(2,1)]))
 # x <- dismo::mess(predictors_stack, na.omit(envi.presences))
 # 
-# y <- x; values(y)<- values(x)>0  # referencia Elith et al. (2010): cuando los valores MESS son
-#negativos significa que hay extrapolacion (prediccion fuera de limites del modelo)
-# y <- reclassify(y,cbind(FALSE,0)) # area extrapolada
-# y <- reclassify(y,cbind(TRUE,1))  # no hubo extrapolacion, dentro de los limites de la calibracion
+# y <- x
+# referencia Elith et al. (2010): cuando los valores MESS son negativos 
+# significa que hay extrapolacion (prediccion fuera de limites del modelo)
+# values(y) <- values(x) > 0  
+
+# area extrapolada
+# y <- classify(y, cbind(FALSE, 0)) 
+# no hubo extrapolacion, dentro de los limites de la calibracion
+# y <- classify(y, cbind(TRUE, 1))  
 # 
 # plot(y)
-
-####---------------------------------------------------------------------------
-####---------------------------------------------------------------------------
-
 ```

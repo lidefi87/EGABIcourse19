@@ -27,11 +27,16 @@ Empecemos llamando a las librerías que necesitaremos
 
 ```{r sdmalg1, warning=FALSE}
 library(tidyverse)
-library(dismo)  ## Esta librería incluye el comando gbm.step
-library(randomForest)  ## Esta librería incluye randomForest
-library(rpart)   ## Esta librería incluye una serie de funciones útiles para los árboles de decisión
+## Esta librería incluye el comando gbm.step
+library(dismo)
+## Esta librería incluye randomForest
+library(randomForest)  
+## Esta librería incluye una serie de funciones útiles para los árboles de 
+#decisión
+library(rpart)   
 library(rpart.plot)
 library(gbm)
+library(GGally)
 ```
   
 ### Cargando y limpiando datos
@@ -40,13 +45,13 @@ Una vez llamadas las librerías relevantes, vamos a subir el set de datos de sup
   
 ```{r sdmalg2, echo = FALSE}
 ## Aqui leemos los datos de superheroes
-Supes <- readr::read_csv('docs/course_material/exercises/data/SuperheroDataset.csv')
+Supes <- read_csv('docs/course_material/exercises/data/SuperheroDataset.csv')
 ```
   
 Para este ejercicios vamos a utilizar las siguientes columnas: Name, Intelligence, Strength, Speed, Durability, Power, Combat, Gender, Race, Creator, Alignment, Total Power. Usamos `tidyverse` para extraer estas columnas.   
   
 ```{r sdmalg4}
-SuperData <- Supes %>%
+SuperData <- Supes |>
   dplyr::select(Name, Intelligence:Combat, Alignment:Race, Creator, TotalPower)
 ```
   
@@ -56,30 +61,39 @@ Si exploramos los datos podemos ver algunos elementos interesantes de este set d
 
 ```{r sdmalg5, warning=FALSE,message=FALSE}
 
-SuperData %>%
-  filter(!is.na(Intelligence))%>% 
-  ggplot(aes(x=Intelligence,y=Strength)) + geom_point() + geom_smooth(method=lm) + theme_bw()
+SuperData |>
+  filter(!is.na(Intelligence))|> 
+  ggplot(aes(x = Intelligence, y = Strength)) + 
+  geom_point() + 
+  geom_smooth(method = lm) +
+  theme_bw()
 
-## Mirando a la linea parece que existe un valor extremadamente bajo de inteligencia.
-##   Probablemete puntos atipicos. Veremos a quien le pertenecen estos valores, y que 
-##   podria ayudar a determinar si deberiamos incluirlos en nuestro analisis
+## Mirando a la linea parece que existe un valor extremadamente bajo de 
+# inteligencia. Probablemete puntos atipicos. Veremos a quien le pertenecen 
+# estos valores, y que podria ayudar a determinar si deberiamos incluirlos en 
+# nuestro analisis
 
-SuperData %>%
-  filter(!is.na(Combat))%>% 
-  ggplot(aes(x=Combat,y=Strength)) + geom_point() + geom_smooth(method=lm) + theme_bw()
+SuperData |>
+  filter(!is.na(Combat))|> 
+  ggplot(aes(x = Combat, y = Strength)) + 
+  geom_point() + 
+  geom_smooth(method = lm) + 
+  theme_bw()
 
-## Podemos tambien filtrar datos simplemente para explorar el set de datos usando condiciones
-## especificas, como por ejemplo:
-SuperData %>%
-  filter(!is.na(Combat),Gender=='Female')%>% 
-  ggplot(aes(x=Combat,y=Strength)) + geom_point() + geom_smooth(method=lm) + theme_bw()
+## Podemos tambien filtrar datos simplemente para explorar el set de datos 
+# usando condiciones especificas, como por ejemplo:
+SuperData |>
+  filter(!is.na(Combat), Gender == 'Female')|> 
+  ggplot(aes(x = Combat, y = Strength)) + 
+  geom_point() + 
+  geom_smooth(method = lm) + 
+  theme_bw()
 
+## Esta es una buena librería para visualizar datos rapidamente en lugar de 
+# crear gráficos unicos con codigo
 
-library(GGally)
-## Esta es una buena librería para visualizar datos rapidamente en lugar de crear gráficos
-## unicos con codigo
-
-quant_df <- SuperData %>% dplyr::select(Intelligence:Gender,TotalPower)
+quant_df <- SuperData |> 
+  dplyr::select(Intelligence:Gender, TotalPower)
 ggpairs(quant_df, progress = FALSE)
 
 ```
@@ -92,13 +106,16 @@ Si has explorado el set de datos quizás hayas notado lo siguiente:
 2)  Existen muchos creadores que solo fueron mencionados una vez, y quizás no sea apropriado incluirlos todos.  
   
 ```{r sdmalg6}
-length(unique(SuperData$Race)) ## Cantidad de categorias unicas en raza
-length(unique(SuperData$Creator))  ## Lo mismo pero para creador
+## Cantidad de categorias unicas en raza
+length(unique(SuperData$Race))
+## Lo mismo pero para creador
+length(unique(SuperData$Creator))  
 
 ## Explremos a Creator:
 unique(SuperData$Creator)
 
-SuperData %>% count(Creator)
+SuperData |> 
+  count(Creator)
 
 ```
 
@@ -107,39 +124,45 @@ Esta columna tiene muchas categorías y probablemente no sea apropriado incluir 
 ***Nota el uso de `%in%`***
 
 ```{r sdmalg7}
-FilteredSupes <- SuperData %>%
-  dplyr::filter(Creator %in% c('Marvel Comics','DC Comics','Dark Horse Comics','Image Comics')) %>%
+FilteredSupes <- SuperData |>
+  dplyr::filter(Creator %in% 
+                  c('Marvel Comics', 'DC Comics', 'Dark Horse Comics', 
+                    'Image Comics')) |>
   dplyr::filter(!is.na(Intelligence))
-## la ultima linea remueve NA del set de datos. Este paso no es estrictamente necesario con arboles 
-## de decision
+
+## la ultima linea remueve NA del set de datos. Este paso no es estrictamente 
+# necesario con arboles de decision
 
 FilteredSupes
 
 ## ¿Cuantas razas tenemos?
 length(unique(FilteredSupes$Race))
-
 ```
   
 Exploremos los datos otra vez.  
   
 ```{r sdmalg8, warning = FALSE, message = FALSE}
-quant_df <- FilteredSupes %>% dplyr::select(Intelligence:Gender,TotalPower)
+quant_df <- FilteredSupes |> 
+  dplyr::select(Intelligence:Gender, TotalPower)
 ggpairs(quant_df, progress = FALSE)
-
 ```
   
 No mucho ha cambiado porque no removimos muchas filas. Esto es bueno porque mantenemos la mayor parte de nuestros datos y esperemos que las conclusiones finales no sean muy diferentes. Pero el beneficio de remover esas pocas filas es que nos ayuda a simplificar el proceso de limpieza de nuestros datos para este ejercicio. Sin embargo, aún tenemos muchas categorías bajo `Race`.  
   
 ```{r sdmalg9}
-FilteredSupes %>% count(Race)
+FilteredSupes |> 
+  count(Race)
 ```
   
 Mirando en más detalle a `Race`, vemos varias categorías con una sola observación. Esto puedo ocasionar problemas cuando hagamos validación cruzada, así que es preferible removerlos.  
   
 ```{r sdmalg10}
-FilteredSupes <- FilteredSupes %>% add_count(Race) %>% filter(n > 1)
+FilteredSupes <- FilteredSupes |> 
+  add_count(Race) |> 
+  filter(n > 1)
 
-FilteredSupes %>% count(Race)
+FilteredSupes |>
+  count(Race)
 ```
 
 ### Codificación One-hot
@@ -147,9 +170,9 @@ FilteredSupes %>% count(Race)
 `Race` tiene muchas categoría y esto podrías ocasionar que se pierda la señal de las variables utilizadas como predictores por los árboles de decisión.  Para evitar problemas vamos a hacer uso de la codificación one-hot, la cual nos permitirá mantener el mayor número de categorías posibles. La codificación one-hot nos permite crear categorías utilizando variables binarias, y esto se puede hacer de manera sencilla con el `tidyverse`.  
   
 ```{r sdmalg11}
-OOEdata <- FilteredSupes %>% 
-        separate_rows(Race)%>% 
-        mutate(count = 1) %>% 
+OOEdata <- FilteredSupes |> 
+        separate_rows(Race)|> 
+        mutate(count = 1) |> 
         spread(Race, count, fill = 0, sep = "_")
 
 OOEdata
@@ -168,7 +191,7 @@ columns <- names(OOEdata)[12:length(names(OOEdata))]
 OOEdata <- OOEdata %<>% mutate_at(columns, funs(factor(.)))
 
 
-quant_df <- OOEdata %>%
+quant_df <- OOEdata |>
   dplyr::select(Intelligence:TotalPower, Race_Human, Race_Cyborg, Race_Mutant)
 
 ggpairs(quant_df, progress = FALSE)
@@ -186,26 +209,29 @@ Comencemos construyendo un solo árcbol. Puedes usar cualquier variable aquí.
 ##### Ejemplo de clasificación  
   
 ```{r sdmalg13}
-## Vamos a remover los personajes 'neutrales' de nuestro set de datos y vamos a intentar predicir
-## si los personajes son buenos o malos. Tambien vamos a seleccionar solo unas pocas columnas 
-## para simplificar nuestro trabajo.
+## Vamos a remover los personajes 'neutrales' de nuestro set de datos y vamos
+# a intentar predicir si los personajes son buenos o malos. Tambien vamos a 
+# seleccionar solo unas pocas columnas para simplificar nuestro trabajo.
 
-modeldat <- OOEdata %>% 
-  dplyr::filter(Alignment!='neutral') %>%
-  dplyr::select(Intelligence:TotalPower, Race_Animal, Race_Human, Race_Demon, Race_God,
-                Race_Asgardian, Race_Mutant, Race_Android)
+modeldat <- OOEdata |> 
+  dplyr::filter(Alignment!='neutral') |>
+  dplyr::select(Intelligence:TotalPower, Race_Animal, Race_Human, Race_Demon,
+                Race_God, Race_Asgardian, Race_Mutant, Race_Android)
 
-form <- as.formula(paste("Alignment ~ ",paste(names(modeldat),collapse='+')))
+form <- as.formula(paste("Alignment ~ ", 
+                         paste(names(modeldat), collapse = '+')))
+
 form <- update(form, . ~ . -Alignment) 
 
-## Revisa help(rpart.control) para obtener una lista de parametros que puedes cambiar en el
-## modelo. Luego intentar cambiar los parametros para que te des una idea del impacto que tienen
-## al crear un solo arbol
+## Revisa help(rpart.control) para obtener una lista de parametros que puedes 
+# cambiar en el modelo. Luego intentar cambiar los parametros para que te des 
+# una idea del impacto que tienen al crear un solo arbol
 
 ## Para correr un modelo de regresion, cambia "method" a 'anova'
-treemod <- rpart(form, method='class',data=modeldat,cp=0.001,maxdepth=6)
+treemod <- rpart(form, method = 'class', data = modeldat, cp = 0.001, 
+                 maxdepth = 6)
 
-rpart.plot(treemod,cex=0.7)
+rpart.plot(treemod, cex = 0.7)
 
 ```
   
@@ -221,16 +247,18 @@ Notas adicionales de `gbm.step`:
 ***`gbm.step` también necesita una categoría meta forma binaria (0/1)***
 
 ```{r sdmalg14}
-modeldf <- modeldat %>% 
-  mutate(Alignment_targ = case_when(Alignment == "good" ~ 0, Alignment == "bad" ~ 1 )) %>%
-  mutate(across(c("Alignment_targ", "Gender", "Creator"), factor)) %>% 
+modeldf <- modeldat |> 
+  mutate(Alignment_targ = case_when(Alignment == "good" ~ 0, 
+                                    Alignment == "bad" ~ 1 )) |>
+  mutate(across(c("Alignment_targ", "Gender", "Creator"), factor)) |> 
   as.data.frame()
 
 modeldf$Alignment_targ <- as.numeric(as.character(modeldf$Alignment_targ))
 
-gbmModel <- gbm.step(data = modeldf, gbm. = c(1:6,8:17), gbm.y = 18, family = "bernoulli",
-                     tree.complexity = 10, learning.rate = 0.001, bag.fraction = 0.8, max.trees = 8000)
-
+gbmModel <- gbm.step(data = modeldf, gbm. = c(1:6,8:17), gbm.y = 18, 
+                     family = "bernoulli", tree.complexity = 10, 
+                     learning.rate = 0.001, bag.fraction = 0.8, 
+                     max.trees = 8000)
 ```
   
 Para obtener un resumen de los resultados que muestren una clasificación de la importancia de las variables usa la línea de abajo:
@@ -244,7 +272,8 @@ Puedes también crear gráficos de dependencia parcial, y además puedes explora
 ```{r sdmalg16}
 gbm.plot(gbmModel, n.plots = 5, write.title = F)
 
-## el gbm.perspec produce un gráfico de inteligencia y velocidad  contra los valores ajustados (z)
+## el gbm.perspec produce un gráfico de inteligencia y velocidad contra los 
+# valores ajustados (z)
 gbm.perspec(gbmModel, 1, 3, z.range = c(0.15, 0.6), theta = 205)
 
 ```
@@ -256,21 +285,24 @@ De muchas maneras, un random forest es mucho más flexible que `gbm.step`. Por e
 Este modelo puede ser configurado de manera muy similar al modelo `CART` que vimos antes.   
   
 ```{r sdmalg17}
-modeldat <- OOEdata %>% 
-  dplyr::filter(Alignment!="neutral") %>%
-  dplyr::select(Intelligence:TotalPower, Race_Animal, Race_Human, Race_Demon, Race_God,
-                Race_Asgardian, Race_Mutant, Race_Android)
+modeldat <- OOEdata |> 
+  dplyr::filter(Alignment!="neutral") |>
+  dplyr::select(Intelligence:TotalPower, Race_Animal, Race_Human, Race_Demon, 
+                Race_God, Race_Asgardian, Race_Mutant, Race_Android)
 
 ## Asegurate que las categorias esten en formato factor
-modeldat <- modeldat %>% 
-  mutate(Alignment_targ = case_when(Alignment == 'good' ~ 0, Alignment == 'bad' ~ 1 )) %>%
-   mutate(across(c("Alignment_targ", "Gender", "Creator"), factor))
+modeldat <- modeldat |> 
+  mutate(Alignment_targ = case_when(Alignment == 'good' ~ 0,
+                                    Alignment == 'bad' ~ 1 )) |>
+  mutate(across(c("Alignment_targ", "Gender", "Creator"), factor))
 
-form <- as.formula(paste("Alignment_targ ~ ", paste(names(modeldat), collapse = '+')))
+form <- as.formula(paste("Alignment_targ ~ ", paste(names(modeldat), 
+                                                    collapse = '+')))
 form <- update(form, . ~ . -Alignment) 
 form <- update(form, . ~ . -Alignment_targ) 
 
-rf.model <- randomForest(data = data.frame(modeldat), form, mtry = 3, maxnodes = 10)
+rf.model <- randomForest(data = data.frame(modeldat), form, mtry = 3, 
+                         maxnodes = 10)
 importance(rf.model)
 partialPlot(rf.model, data.frame(modeldat), Intelligence)
 partialPlot(rf.model, data.frame(modeldat), Gender)
@@ -283,19 +315,21 @@ partialPlot(rf.model, data.frame(modeldat), Gender)
 Ahora vamos a utilizar `gbm.step` para resolver un problema de regresión. Si quieres usar random forest, también es posible y te alentamos a intentarlo. Puedes pedir ayuda a los instructores o si prefieres puedes usar Google, ya que hay muchos recursos disponibles en línea.  
   
 ```{r sdmalg18}
-modeldat <- OOEdata %>% 
-  dplyr::filter(Alignment != "neutral") %>%
-  dplyr::select(Intelligence:TotalPower, Race_Animal, Race_Human, Race_Demon, Race_God,
-                Race_Asgardian, Race_Mutant, Race_Android)
+modeldat <- OOEdata |> 
+  dplyr::filter(Alignment != "neutral") |>
+  dplyr::select(Intelligence:TotalPower, Race_Animal, Race_Human, Race_Demon, 
+                Race_God, Race_Asgardian, Race_Mutant, Race_Android)
 
-modeldf <- modeldat %>% 
-  mutate(across(c("Alignment", "Gender", "Creator"), factor)) %>% 
+modeldf <- modeldat |> 
+  mutate(across(c("Alignment", "Gender", "Creator"), factor)) |> 
   as.data.frame()
 
 ## usa names(modeldf) para encontrar los indices
 
-gbmModel <- gbm.step(data = modeldf, gbm.x = c(1,6:9,11:17), gbm.y = 10, family = "laplace",
-                     tree.complexity = 20, learning.rate = 0.001, bag.fraction = 0.5, max.trees = 8000)
+gbmModel <- gbm.step(data = modeldf, gbm.x = c(1,6:9,11:17), gbm.y = 10,
+                     family = "laplace", tree.complexity = 20,
+                     learning.rate = 0.001, bag.fraction = 0.5, 
+                     max.trees = 8000)
 
 summary(gbmModel)
 
@@ -303,7 +337,7 @@ gbm.plot(gbmModel, n.plots = 5, write.title = F)
 
 ## En este caso estamos interesados en el genero, asi que vamos a graficar esto.
 
-gbm.plot(gbmModel, variable.no = 4, plot.layout = c(1,1))
+gbm.plot(gbmModel, variable.no = 4, plot.layout = c(1, 1))
 ```
   
 Podemos ver que la fuerza de un personaje está sesgada de acuerdo al género, con más héroes que heroínas con mucho poder. Sin embargo, vale recalcar que el poder predictivo de nuestro modelo no es muy alto (basado en el resumen estadístico).    

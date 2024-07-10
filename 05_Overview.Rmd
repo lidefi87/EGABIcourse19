@@ -5,7 +5,7 @@ Ejemplo de flujo de análisis que demuestra brevemente algunas de las tareas que
 Asegurémonos de que tenemos los paquetes que necesitamos, sino los instalamos desde CRAN:  
   
 ```{r pkgs1, message = FALSE}
-pkgs <- c("dplyr", "ncdf4", "raster", "remotes", "robis", "worrms")
+pkgs <- c("dplyr", "ncdf4", "terra", "remotes", "robis", "worrms")
 pkgs <- setdiff(pkgs, installed.packages()[, 1])
 if (length(pkgs) > 0) install.packages(pkgs)
 ```
@@ -72,27 +72,34 @@ x <- occurrence(datasetid = "cb16377b-56a8-4d95-802d-4eec02466773")
 Creemos el gráfico de la distribución completa de las muestras de la familia *Euphasia* en negro y de *Euphausia crystallorophias* en verde:
 
 ```{r map1, message = FALSE}
-SOmap_auto(x$decimalLongitude, x$decimalLatitude, input_lines = FALSE, pcol = "black", pcex = 0.2)
-with(x %>% dplyr::filter(aphiaID == my_aphia_id), 
-     SOplot(decimalLongitude, decimalLatitude, pch = 19, cex = 0.2, col = "green"))
+SOmap_auto(x$decimalLongitude, x$decimalLatitude, input_lines = FALSE, 
+           pcol = "black", pcex = 0.2)
+with(x |>
+       dplyr::filter(aphiaID == my_aphia_id), 
+     SOplot(decimalLongitude, decimalLatitude, pch = 19, cex = 0.2, 
+            col = "green"))
 ```
   
 También podemos crear un mapa polar estereográfico:
   
 ```{r map2, message = FALSE}
-basemap <- SOmap(trim = ceiling(max(x$decimalLatitude))+1, bathy_legend = FALSE)
+basemap <- SOmap(trim = ceiling(max(x$decimalLatitude))+1, 
+                 bathy_legend = FALSE)
 plot(basemap)
-SOplot(x$decimalLongitude, x$decimalLatitude, pch = 19, cex = 0.2, col = "black")
-with(x %>% dplyr::filter(aphiaID == my_aphia_id), 
-     SOplot(decimalLongitude, decimalLatitude, pch = 19, cex = 0.2, col = "green"))
+SOplot(x$decimalLongitude, x$decimalLatitude, pch = 19, cex = 0.2, 
+       col = "black")
+with(x |>
+       dplyr::filter(aphiaID == my_aphia_id), 
+     SOplot(decimalLongitude, decimalLatitude, pch = 19, cex = 0.2, 
+            col = "green"))
 ```
   
 Vamos a ajustar un modelo de distribución de especies (presencia/ausencia), así que primero reorganizaremos nuestros datos de presencia/ausencia por sitio de muestreo:  
   
 ```{r dat1}
-xfit <- x %>% 
-  dplyr::rename(lon = "decimalLongitude", lat = "decimalLatitude") %>%
-  group_by(lon, lat) %>%
+xfit <- x |>
+  dplyr::rename(lon = "decimalLongitude", lat = "decimalLatitude") |>
+  group_by(lon, lat) |>
   dplyr::summarize(present = any(my_aphia_id %in% aphiaID))
 ```
 
@@ -106,14 +113,15 @@ my_data_directory <- tempdir()
 data_source <- sources_sdm("Southern Ocean marine environmental data")
 
 ## buscamos los datos
-status <- bb_get(data_source, local_file_root = my_data_directory, verbose = TRUE)
+status <- bb_get(data_source, local_file_root = my_data_directory, 
+                 verbose = TRUE)
 ```
 
 ```{r envdat2, message = FALSE}
 nc_files <- Filter(function(z) grepl("\\.nc$", z), status$files[[1]]$file)
 
 ## creamos un raster apilado con todas las capas
-env_stack <- stack(nc_files)
+env_stack <- rast(nc_files)
 
 ## veamos las primeras capas
 head(names(env_stack))
@@ -124,7 +132,7 @@ Seleccionemos solo las capas de `depth` (Profundidad) y `ice_cover_mean` (cobert
 ```{r envdat3}
 env_stack <- subset(env_stack, c("depth", "ice_cover_mean"))
 
-temp <- as.data.frame(raster::extract(env_stack, xfit[, c("lon", "lat")]))
+temp <- as.data.frame(terra::extract(env_stack, xfit[, c("lon", "lat")]))
 
 xfit <- bind_cols(xfit, temp)
 
@@ -136,7 +144,9 @@ head(xfit)
 Tenemos datos de presencia/ausencia, así que ajustaremos un modelo binomial simple. La probabilidad de presencia de *Euphausia crystallorophias* se ajusta como una función suave de la profundidad (smooth function; s()) y la cobertura media de hielo marino:
 
 ```{r mod1, message = FALSE}
-fit <- gam(present ~ s(depth) + s(ice_cover_mean), family = binomial, data = xfit)
+fit <- gam(present ~ s(depth) + s(ice_cover_mean), 
+           family = binomial,
+           data = xfit)
 
 summary(fit)
 ```
@@ -152,18 +162,29 @@ Esto sugiere que es más probable encontrar *Euphausia crystallorophias* en áre
 ## Predicciones basadas en el modelo
 
 ```{r pred1}
-xpred <- expand.grid(lon = seq(from = floor(min(xfit$lon)), to = ceiling(max(xfit$lon)), by = 0.25),
-                     lat = seq(from = floor(min(xfit$lat)), to = ceiling(max(xfit$lat)), by = 0.25))
+xpred <- expand.grid(lon = seq(from = floor(min(xfit$lon)), 
+                               to = ceiling(max(xfit$lon)), by = 0.25),
+                     lat = seq(from = floor(min(xfit$lat)), 
+                               to = ceiling(max(xfit$lat)), by = 0.25))
 
-xpred <- bind_cols(as.data.frame(xpred), as.data.frame(raster::extract(env_stack, xpred[, c("lon", "lat")])))
+xpred <- bind_cols(as.data.frame(xpred), 
+                   as.data.frame(terra::extract(env_stack, 
+                                                xpred[, c("lon", "lat")])))
 
 xpred$predicted <- predict(fit, newdata = xpred, type = "response")
 
 ## create raster
-pr <- rasterFromXYZ(xpred[, c("lon", "lat", "predicted")])
+pr <- rast(xpred[, c("lon", "lat", "predicted")], type = "xyz")
 projection(pr) <- "+proj=longlat +datum=WGS84"
 
-my_cmap <- if (getRversion() >= "3.6") hcl.colors(21, "Geyser") else c("#008585", "#359087", "#539B8A", "#6DA590", "#85AF97", "#9BBAA0", "#AEC4AA", "#BED0B0", "#D0DCB5", "#E5E7BC", "#FBF2C4", "#F3E3B2", "#EDD59F", "#E7C68C", "#E3B77A", "#DEA868", "#DA9857", "#D58847", "#D1773A", "#CC6530", "#C7522B")
+my_cmap <- if(getRversion() >= "3.6"){
+  hcl.colors(21, "Geyser")
+  }else{
+    c("#008585", "#359087", "#539B8A", "#6DA590", "#85AF97", "#9BBAA0",
+      "#AEC4AA", "#BED0B0", "#D0DCB5", "#E5E7BC", "#FBF2C4", "#F3E3B2",
+      "#EDD59F", "#E7C68C", "#E3B77A", "#DEA868", "#DA9857", "#D58847",
+      "#D1773A", "#CC6530", "#C7522B")
+  }
 ```
 
 Gráfica:
@@ -190,11 +211,13 @@ xn <- an_read(cache = "session", sp = TRUE)
 ## reduzcamos a un nombre por lugar
 xn <- an_preferred(xn, origin = "United Kingdom")
 
-## solicitemos sugerencias en nuestra región de estudio para añadir a nuestro mapa
+## solicitemos sugerencias en nuestra región de estudio para añadir a nuestro
+# mapa
 xns <- an_suggest(xn, map_scale = 20e6, map_extent = extent(pr))
 
-## transformemos a nuestra proyección, convirtimos datos a dataframe (marco de datos), mostramos las primeros 10 filas
-xns <- as_tibble(SOproj(xns, target = basemap$projection)) %>% 
+## transformemos a nuestra proyección, convirtimos datos a dataframe (marco de 
+# datos), mostramos las primeros 10 filas
+xns <- as_tibble(SOproj(xns, target = basemap$projection)) |>
   head(10)
 ```
 

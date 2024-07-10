@@ -1,0 +1,314 @@
+# Modelos de distribucion de especies con `SDMTune`
+Los modelos de distribucion de especie requieren de una serie de pasos para su correcta implementacion. En este documento se muestra un ejemplo de como realizar un modelo de distribucion de especies con la ayuda de `SDMTune`.  
+  
+## Llamando paquetes relevantes
+  
+```{r}
+#Manipulacion de datos
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(lubridate)
+library(tibble)
+library(purrr)
+#Taxonomia
+library(worrms)
+#Datos de ocurrencia desde OBIS
+library(robis)
+#Limpieza de datos de occurrencia
+library(CoordinateCleaner)
+#Datos ambientales
+library(blueant)
+#Modelos de distribucion de especie
+library(SDMtune)
+#Datos en grilla (rasters)
+library(terra)
+#Graficar datos (incluyendo mapas)
+library(ggplot2)
+library(rnaturalearth)
+library(tidyterra)
+```
+
+## Taxonomía y ocurrencia
+Revisamos la taxonomía de la especie de interés, *Euphausia superba* (Krill antártico) usando `worrms`, y obtenemos los registros de ocurrencia de la misma con `robis`.  
+  
+```{r occ, message = FALSE}
+#Revisar records de specie de interes en WoRMS
+especie_interes <- wm_records_names(name = "Euphausia superba") |> 
+  as.data.frame() |> 
+  #Seleccionar AphiaID
+  pull(AphiaID) |> 
+  #Usar AphiaID en busqueda de ocurrencias en OBIS
+  occurrence(taxonid = _)
+```
+
+## Limpieza de datos
+
+Vamos a limpiar los datos de ocurrencia, eliminando registros problemáticos, que incluyen coordenadas inválidas, duplicados o ubicaciones erróneas (por ejemplo, registros en áreas tropicales).   
+  
+```{r limp_occ, message = FALSE}
+#Limpiando datos de occurrencia
+especie_interes_limpios <- especie_interes |> 
+  #Removiendo ocurrencias de especimenes preservados
+  filter(basisOfRecord != "PreservedSpecimen") |> 
+  #Removemos ocurrencias sin fechas
+  drop_na(eventDate) |> 
+  #Removiendo ocurrencias con valores de "coordinate uncertainty" asociados a
+  #errores
+  filter(!coordinateUncertaintyInMeters %in% c(301, 3036, 999, 9999)) |> 
+  #Removiendo ocurrencias con poca precision
+  filter(coordinateUncertaintyInMeters <= 10000 | 
+           is.na(coordinateUncertaintyInMeters)) |> 
+  #Removiendo ocurrencias con coordenadas que tienen problemas
+  clean_coordinates(lon = "decimalLongitude", lat = "decimalLatitude") |> 
+  cd_ddmm(lon = "decimalLongitude", lat = "decimalLatitude", 
+          ds = "dataset_id") |> 
+  #Removiendo duplicados
+  cc_dupl(lon = "decimalLongitude", lat = "decimalLatitude",
+          additions = c("year", "month", "day"))
+
+#Revisando resultados
+summary(especie_interes_limpios)
+```
+  
+Ahora podemos remover las observaciones identificadas como problemáticas.  
+  
+```{r}
+especie_interes_limpios <- especie_interes_limpios |> 
+  #Removiendo filas con latitud y longitud iguales
+  filter(`.equ` != F) |> 
+  #Removiendo filas donde una coordenada tiene el valor exactamente cero
+  filter(`.zer` != F) |> 
+  #Manteniendo solo records en el mar
+  filter(`.sea` == F)
+
+#Finalmente transformamos la columna eventDate en formato fecha
+especie_interes_limpios <- especie_interes_limpios |> 
+  mutate(eventDate = as_date(eventDate)) |> 
+  #Las fechas incompletas no son reconocidas por as_date, por lo que las 
+  #eliminamos
+  drop_na(eventDate)
+
+#Revisemos nuevamente los resultados
+summary(especie_interes_limpios)
+```
+  
+Ahora no tenemos registros duplicados, ni registros con coordenadas problemáticas. Vamos a crear un gráfico de la distribución de las muestras limpias de *Euphausia superba*.  
+  
+```{r map1, message = FALSE}
+#Cargando un mapa de la Antartida
+antartida <- ne_countries(scale = "medium", returnclass = "sf", 
+                          continent = "Antarctica")
+
+ggplot()+
+  geom_sf(data = antartida, fill = "grey")+
+  geom_point(data = especie_interes_limpios, 
+             aes(x = decimalLongitude, y = decimalLatitude), 
+             color = "blue")
+```
+    
+## Datos ambientales
+Vamos a utilizar los datos ambientales que están disponibles a través de `blueant` para ajustar un modelo de distribución de especies.  
+  
+```{r var_amb, message = FALSE}
+#Creamos un directory temporal para guardar los datos ambientales
+mi_directorio <-  tempdir()
+
+#Buscamos marinos datos del Oceano del Sur
+fuente_datos <- sources("Southern Ocean marine environmental data")
+
+#Guardamos los resultados en nuestro directorio temporal
+resultados <- bb_get(fuente_datos, local_file_root = mi_directorio, 
+                     verbose = TRUE)
+
+#Podemos ver los resultados
+resultados$files
+```
+  
+Algunos archivos no son grillas, así que seleccionamos solo los archivos netCDF. Luego subiremos los archivos netCDF a un objeto `SpatRaster` para poder trabajar con ellos.  
+  
+Vamos a ajustar un modelo de distribución de especies (presencia/ausencia), así que primero reorganizaremos nuestros datos de presencia/ausencia por sitio de muestreo:  
+  
+```{r dat1}
+#Detectamos los archivos netCDF
+predictores <- str_detect(resultados$files[[1]]$file, ".nc$") |> 
+  which() |>
+  #Subimos como rasters cada archivo - Esto forma una lista
+  map(~rast(resultados$files[[1]]$file[.x])) |> 
+  #Transformamos la lista en un objeto SpatRaster
+  rast()
+
+#Podemos verificar los nombres de las variables
+names(predictores)
+```
+Tenemos 58 variables disponibles, pero siempre es buena idea revisar las variables antes de ajustar un modelo, y utilizar solamente variables que sean relevantes para la especie de interés. En este caso, vamos a seleccionar solo las variables de profundidad, clorofila, temperatura, y hielo.  
+    
+```{r envdat1, message = FALSE}
+predictores <- subset(predictores, c("depth", "chla_mean_alltime_2005_2012", 
+                                     "seafloor_temp_2005_2012_mean", 
+                                     "ice_cover_mean", "ice_thickness_mean", 
+                                     "slope"))
+#Verificamos nuestras variables
+predictores
+```
+  
+Podemos notar que los datos ambientales tienen información entre el 2005 y el 2012, por lo que filtraremos los datos de krill entre estos años.  
+   
+```{r envdat2, message = FALSE}
+especie_interes_limpios <- especie_interes_limpios |> 
+  filter(eventDate >= "2005-01-01" & eventDate <= "2012-12-31")
+
+#Podemos crear un mapa de distribucion de estos datos 
+ggplot()+
+  geom_sf(data = antartida, fill = "grey")+
+  geom_point(data = especie_interes_limpios, 
+             aes(x = decimalLongitude, y = decimalLatitude), 
+             color = "blue")
+```
+
+Hemos perdido datos en gran parte de la Antártida, pero nos concentraremos en explorar la distribución de *Euphausia superba* en las Península Antártica (entre longitudes $30^{\circ}$ y $80^{\circ}$ oeste) donde se encuentran la mayoría de nuestros datos.  
+  
+```{r envdat3}
+especie_interes_limpios <- especie_interes_limpios |> 
+  filter(decimalLongitude >= -80 & decimalLongitude <= -30)
+
+#Aplicamos el mismo rango a los datos ambientales
+predictores <- crop(predictores, ext(-80, -30, -75, -50))
+
+#Ahora pongamos todo junto en un mismo mapa
+ggplot()+
+  geom_spatraster(data = predictores$depth)+
+  geom_sf(data = antartida, fill = "grey")+
+  geom_point(data = especie_interes_limpios, 
+             aes(x = decimalLongitude, y = decimalLatitude), 
+             color = "red")+
+  lims(x = c(-80, -30))
+```
+  
+## Creando puntos de background
+
+Obtengamos todos los datos disponibles de la familia *Euphausiacea* de Antártica desde el conjunto de datos obtenidos en las expediciones "recursos marinos antárticos alemanes": [Antarctic Euphausiacea occurence data from "German Antarctic Marine Living Resources" (GAMLR) Expeditions](https://ipt.biodiversity.aq/resource?r=gamlr). Utilizaremos las ubicaciones de otras especies dentro de esta familia como puntos de background.    
+  
+```{r bg, message = FALSE}
+puntos_bg <- occurrence(datasetid = "cb16377b-56a8-4d95-802d-4eec02466773") |> 
+  #Removemos a las observaciones de Euphasia superba
+  filter(scientificName != "Euphausia superba") |> 
+  filter(decimalLongitude >= -80 & decimalLongitude <= -30) |> 
+  select(decimalLongitude, decimalLatitude) |> 
+  rename(x = decimalLongitude, y = decimalLatitude)
+
+puntos_bg
+```
+
+## Preparando ubicaciones de occurrencia y background
+  
+```{r}
+presencia <- especie_interes_limpios |> 
+  select(decimalLongitude, decimalLatitude) |> 
+  rename(x = decimalLongitude, y = decimalLatitude)
+
+#Unimos los datos de presencia y background con datos ambientales usando
+#el paquete sSDMtune
+datos_modelos <- prepareSWD(species = "Euphasia superba",
+                            p = presencia, a = puntos_bg,
+                            env = predictores)
+```
+  
+## Ajustando el modelo
+
+Vamos a dividir los datos entre entrenamiento y prueba antes de ajustar el modelo. En este caso usaremos Maxnet.  
+  
+```{r mod1, message = FALSE}
+#Nota que usamos "seed" para escoger exactamente los mismos datos cada vez que
+#corramos el modelo
+datos_dividos <- trainValTest(datos_modelos, test = 0.2, 
+                              only_presence = TRUE, seed = 25)
+datos_entrenar <- datos_dividos[[1]]
+datos_prueba <- datos_dividos[[2]]
+
+#Ahora entrenamos el modelo basico
+modelo_maxnet <- train(method = "Maxnet", data = datos_entrenar)
+
+#Podemos verificar que hiperparametros que podemos ajustar
+getTunableArgs(modelo_maxnet)
+```
+  
+Ahora podemos definir los hiperparámetros que queremos ajustar.  
+  
+```{r mod2, message = FALSE}
+hiper <- list(reg = seq(0.5, 3, 0.5), 
+              fc = c("lq", "lh", "lqp", "lqph", "lqpht"))
+
+#Ajustamos el modelo varias veces y encontramos el que tiene el mejor desempeño
+hiper_busqueda <- gridSearch(modelo_maxnet, hypers = hiper, metric = "auc", 
+                             test = datos_prueba)
+
+#Podemos ver los resultados
+hiper_busqueda@results |> 
+  rowid_to_column("id") |> 
+  #Ordenados por su desempeño 
+  arrange(test_AUC) |>
+  head()
+```
+
+Ahora podemos hacer mapas de predicciones con el mejor modelo que sería el que tiene el mejor desempeño (el número 28 en la lista de arriba).  
+  
+```{r}
+#Creamos un mapa de predicciones
+pred <- predict(hiper_busqueda@models[[28]],
+                data = predictores,
+                type = "cloglog")
+
+#Mapa de Sudamerica
+sudam <- ne_countries(scale = "medium", returnclass = "sf", 
+                         continent = "South America")
+
+#Creamos el mapa final de distribucion de *Euphausia superba*
+ggplot()+
+  geom_spatraster(data = pred)+
+  geom_sf(data = antartida, fill = "grey")+
+  geom_sf(data = sudam, fill = "grey")+
+  lims(x = c(-80, -30), y = c(-85, -50))+
+  geom_point(data = presencia, aes(x = x, y = y), color = "red", size = 1, 
+             alpha = 0.2)
+```
+  
+Al parecer *Euhasia superba* se encuentra en la Península Antártica y en la región de las Islas Malvinas, lo cual no se ve muy probable. Vamos a evaluar los modelos.  
+
+## Evaluación del modelo
+Con `SDMtune` podemos evaluar el desempeño del modelo de distribución de especies.  
+  
+```{r eval}
+auc(modelo_maxnet); auc(hiper_busqueda@models[[28]])
+```
+  
+En este caso el modelo de base tiene mejores resultados. Podemos también crear curvas de ROC.  
+  
+```{r eval2}
+plotROC(modelo_maxnet)
+```
+  
+```{r eval3}
+plotROC(hiper_busqueda@models[[28]])
+```
+  
+Crearemos un mapa con el mejor modelo para comparar resultados.  
+  
+```{r}
+#Creamos un mapa de predicciones
+pred_base <- predict(modelo_maxnet,
+                data = predictores,
+                type = "cloglog")
+
+#Creamos el mapa final de distribucion de *Euphausia superba*
+ggplot()+
+  geom_spatraster(data = pred_base)+
+  geom_sf(data = antartida, fill = "grey")+
+  geom_sf(data = sudam, fill = "grey")+
+  lims(x = c(-80, -30), y = c(-85, -50))+
+  geom_point(data = presencia, aes(x = x, y = y), color = "red", size = 1, 
+             alpha = 0.2)
+```
+  
+Estos resultados son más consistentes con la distribución de *Euphausia superba* en la Antártida.
+

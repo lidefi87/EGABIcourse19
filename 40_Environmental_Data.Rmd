@@ -45,11 +45,11 @@ srcs[1, ]
 Elegimos un directorio en el que descargar los datos. Normalmente, esto sería un directorio persistente en nuestra máquina para que los conjuntos de datos descargados en una sesión permanezcan disponibles para su uso en sesiones posteriores y no necesiten ser descargados nuevamente. Un directorio persistente podría ser algo como c:\data\ (en Windows), o podríamos usar el paquete `rappdirs` (la función `user_cache_dir`) para sugerir un directorio adecuado (multi-plataforma).
 
 ```{r ed0hidden, echo = FALSE, results = "asis", cache = FALSE}
-if (grepl("ben_ray", tempdir())) {
-  cat("Here we'll use the `c:/data/cache` directory:\n")
-  my_data_dir <-  "/data/cache"
+if(grepl("ben_ray", tempdir())) {
+  cat("Aqui usamos el directorio: `c:/data/cache`\n")
+  my_data_dir <- "/data/cache"
 } else {
-  cat("Here we'll use a temporary directory:\n")
+  cat("Aqui usamos el directorio temporal:\n")
   my_data_dir <-  tempdir()
 }
 ```
@@ -65,13 +65,13 @@ Seleccionamos la fuente de datos que deseamos:
 
 ```{r ed4}
 data_source <- sources("Southern Ocean marine environmental data")
-
 ```
 
 Debemos tener en cuenta que es una buena idea verificar el tamaño del conjunto de datos antes de descargarlo, ¡ya que algunos son bastante grandes! (Aunque si ejecutamoa la descarga de manera interactiva, nos preguntará antes de descargar un conjunto de datos grande).
 
 ```{r ed5}
-data_source$collection_size ## tamaño en GB
+## tamaño en GB
+data_source$collection_size
 ```
 
 Descargamos los datos:
@@ -105,18 +105,24 @@ Primero, descargamos datos diarios de hielo marino (solo desde 2013) y el conjun
 
 ```{r raadt1, eval = FALSE}
 src <- bind_rows(
-    sources("NSIDC SMMR-SSM/I Nasateam sea ice concentration", hemisphere = "south", time_resolutions = "day",
-            years = 2013),
-    sources("ETOPO2 bathymetry"))
-result <- bb_get(src, local_file_root = my_data_dir, clobber = 0, verbose = TRUE, confirm = NULL)
+  sources("NSIDC SMMR-SSM/I Nasateam sea ice concentration", 
+          hemisphere = "south", time_resolutions = "day", years = 2013),
+  sources("ETOPO2 bathymetry"))
+
+result <- bb_get(src, local_file_root = my_data_dir, clobber = 0, 
+                 verbose = TRUE, confirm = NULL)
 ```
 
 ```{r raadt2, echo = FALSE, message = FALSE}
 ## El código no se muestra en la salida: capture la salida y recórtela un poco.
 src <- bind_rows(
-    sources("NSIDC SMMR-SSM/I Nasateam sea ice concentration", hemisphere = "south", time_resolutions = "day", years = 2013),
-    sources("ETOPO2 bathymetry"))
-op <- capture.output(result <- bb_get(src, local_file_root = my_data_dir, clobber = 0, verbose = TRUE, confirm = NULL))
+  sources("NSIDC SMMR-SSM/I Nasateam sea ice concentration",
+          hemisphere = "south", time_resolutions = "day", years = 2013),
+  sources("ETOPO2 bathymetry"))
+
+op <- capture.output(result <- bb_get(src, local_file_root = my_data_dir,
+                                      clobber = 0, verbose = TRUE, 
+                                      confirm = NULL))
 op[4] <- ""
 op[5] <- " [... output truncated]"
 for (oo in op[1:5]) cat(oo, "\n")
@@ -134,7 +140,8 @@ Digamos que tenemos algunos puntos de interés en el Océano Austral, como una r
 
 ```{r get_track_data, message = FALSE, warning = FALSE, cache = FALSE}
 data("SOmap_data", package = "SOmap")
-ele <- SOmap_data$mirounga_leonina %>% dplyr::filter(id == "ct96-05-13")
+ele <- SOmap_data$mirounga_leonina |> 
+  dplyr::filter(id == "ct96-05-13")
 ```
 
 Definimos nuestra región espacial de interés y extraemos los datos batimétricos de esta región, utilizando los archivos ETOPO2 que acabamos de descargar:
@@ -154,7 +161,8 @@ lines(ele$lon, ele$lat)
 El verdadero poder de `raadtools` proviene de sus funciones de extracción. Podemos extraer los valores de profundidad a lo largo de nuestra ruta utilizando la función `raadtools::extract()`. Le pasamos la función lectora de datos a utilizar (`readtopo`), los datos a los que aplicarla `(ele[, c("lon", "lat")])` y cualquier otra opción para pasar a la función lectora (en este caso, especificando la fuente de datos topográficos `topo = "etopo2"`):
 
 ```{r raadt6}
-ele$depth <- raadtools::extract(readtopo, ele[, c("lon", "lat")], topo = "etopo2")
+ele$depth <- raadtools::extract(readtopo, ele[, c("lon", "lat")], 
+                                topo = "etopo2")
 ```
 
 Grafica el histograma de los valores de profundidad, mostrando que la mayoría de los puntos de la ruta se encuentran en aguas relativamente poco profundas:
@@ -169,7 +177,8 @@ Este tipo de extracción también funcionará con datos que varían con el tiemp
 ele$ice <- raadtools::extract(readice, ele[, c("lon", "lat", "date")])
 ```
 ```{r raadt9}
-## A los puntos fuera de la cuadrícula de hielo les faltarán valores de hielo, así que rellénelos con ceros.
+## A los puntos fuera de la cuadrícula de hielo les faltarán valores de hielo, 
+#así que rellénelos con ceros.
 ele$ice[is.na(ele$ice)] <- 0
 with(ele, plot(date, ice, type = "l"))
 ```

@@ -20,6 +20,7 @@ library(robis)
 library(blueant)
 library(mgcv)
 library(SOmap)
+library(terra)
 
 my_cmap <- if (getRversion() >= "3.6") {
   hcl.colors(21, "Geyser")
@@ -37,8 +38,9 @@ tax <- wm_records_names(name = my_species)
 my_aphia_id <- tax[[1]]$valid_AphiaID
 
 ## datos sobre presencia/ausencia 
-xfit <- x %>% dplyr::rename(lon = "decimalLongitude", lat = "decimalLatitude") %>%
-  group_by(lon, lat) %>%
+xfit <- x |> 
+  dplyr::rename(lon = "decimalLongitude", lat = "decimalLatitude") |>
+  group_by(lon, lat) |>
   dplyr::summarize(present = any(my_aphia_id %in% aphiaID))
 
 ## datos ambientales
@@ -47,17 +49,19 @@ my_data_directory <- tempdir()
 
 data_source <- sources_sdm("Southern Ocean marine environmental data")
 ## busca los datos
-status <- bb_get(data_source, local_file_root = my_data_directory, verbose = TRUE)
+status <- bb_get(data_source, local_file_root = my_data_directory,
+                 verbose = TRUE)
 
 nc_files <- Filter(function(z) grepl("\\.nc$", z), status$files[[1]]$file)
 
 ## crea un raster apilado con las capas relevantes
 env_stack <- subset(stack(nc_files), c("depth", "ice_cover_mean"))
 
-temp <- as.data.frame(raster::extract(env_stack, xfit[, c("lon", "lat")]))
+temp <- as.data.frame(extract(env_stack, xfit[, c("lon", "lat")]))
 xfit <- bind_cols(xfit, temp)
 
-fit <- gam(present ~ s(depth) + s(ice_cover_mean) + s(lon), family = binomial, data = xfit) 
+fit <- gam(present ~ s(depth) + s(ice_cover_mean) + s(lon), 
+           family = binomial, data = xfit) 
 
 ```
 
@@ -76,11 +80,14 @@ Hagamos un mapa del término parcial para ver cómo varía en el espacio.
 ```{r spatial_partial3}
 ## creamos una grilla vacia
 xpred <- expand.grid(
-            lon = seq(from = floor(min(xfit$lon)), to = ceiling(max(xfit$lon)), by = 0.25),
-            lat = seq(from = floor(min(xfit$lat)), to = ceiling(max(xfit$lat)), by = 0.25))
+            lon = seq(from = floor(min(xfit$lon)), 
+                      to = ceiling(max(xfit$lon)), by = 0.25),
+            lat = seq(from = floor(min(xfit$lat)), 
+                      to = ceiling(max(xfit$lat)), by = 0.25))
 ## incluimos datos ambientales en la grilla que acabamos de crear
 xpred <- bind_cols(as.data.frame(xpred),
-                   as.data.frame(raster::extract(env_stack, xpred[, c("lon", "lat")])))
+                   as.data.frame(extract(env_stack, 
+                                         xpred[, c("lon", "lat")])))
 
 ## termimnos de prediccion parcial
 sp_pred <- predict(fit, newdata = xpred, type = "terms")
@@ -93,8 +100,9 @@ Ahora podemos hacer un gráfico de la contribución de `lon` en el área que est
 ```{r spatial_partial4}
 xpred <- cbind(xpred, sp_pred)
 
-pr <- rasterFromXYZ(xpred[, c("lon", "lat", "s(lon)")])
-## el termino "s(lon)" introduce un spline de suavizado (smooth) a la variable entre parentesis
+pr <- rast(xpred[, c("lon", "lat", "s(lon)")], type = "xyz")
+## el termino "s(lon)" introduce un spline de suavizado (smooth) a la variable
+# entre parentesis
 
 ## grafica el resultado
 projection(pr) <- "+proj=longlat +datum=WGS84"

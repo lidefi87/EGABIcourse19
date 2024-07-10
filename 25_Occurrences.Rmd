@@ -117,11 +117,12 @@ El nombre (o acrónimo) utilizado por la institución que tiene la custodia del 
 Para especímenes físicos, la mejor práctica recomendada es utilizar un código e identificador de un registro de colecciones, como el Registro Global de Repositorios de Biodiversidad [(http://grbio.org/)](http://grbio.org/).
 
 ```{r echo = FALSE}
-showtbl(tribble(~"Institution code", ~"Institution name",
-"AAS",               "British Antarctic Survey",
-"BRM",               "Alfred-Wegener-Institut für Polar- und Meeresforschung",
-"MNA",               "The Museo Nazionale dell'Antartide (Italian National Antarctic Museum in Genoa)",
-"RBINS",             "Royal Belgian Institute of Natural Sciences"))
+showtbl(
+  tribble(~"Institution code", ~"Institution name",
+          "AAS", "British Antarctic Survey", "BRM", 
+          "Alfred-Wegener-Institut für Polar- und Meeresforschung", "MNA",
+          "The Museo Nazionale dell'Antartide (Italian National Antarctic Museum in Genoa)", 
+          "RBINS", "Royal Belgian Institute of Natural Sciences"))
 ```
 
 **[collectionCode](https://dwc.tdwg.org/terms/#dwc:collectionCode)**
@@ -140,9 +141,11 @@ Un identificador (código, número, clave, símbolo o número de catálogo) asig
 Un identificador dado a la ocurrencia en el momento en que se registró. A menudo sirve como un vínculo entre las notas de campo y un registro de ocurrencia, como el número de colector del espécimen.
 
 ```{r echo = FALSE}
-showtbl(tribble(~occurrenceID, ~institutionCode, ~collectionCode, ~catalogNumber,
-"http://arctos.database.museum/guid/MSB:Mamm:233627", "MSB", "Mamm", "233627",
-"PS89_FF_000023", "PS89", "FF", "000023")) %>% scroll_box(width = "100%")
+showtbl(
+  tribble(~occurrenceID, ~institutionCode, ~collectionCode, ~catalogNumber,
+          "http://arctos.database.museum/guid/MSB:Mamm:233627", "MSB", "Mamm",
+          "233627", "PS89_FF_000023", "PS89", "FF", "000023")) |> 
+  scroll_box(width = "100%")
 ```
 
 Es una buena práctica mantener la longitud de sus números de catálogo/registro igual en todo su conjunto de datos. 
@@ -184,11 +187,20 @@ El uso de **confer**, que significa "comparar" y se abrevia como *cf.* en un nom
 Los autores también pueden usar "spp." (**Species pluralis**) como una forma abreviada de decir que algo se aplica a muchas especies dentro de un género, pero no a todas.
 
 ```{r echo = FALSE}
-showtbl(tribble(~"", ~scientificName, ~scientificNameAuthorship, ~IdentificationQualifier, ~taxonrank,
-1, "[Electrona](http://www.marinespecies.org/aphia.php?p=taxdetails&id=125821)", "Goode & Bean, 1896", "aff. risso", "genus",
-2, "[Electrona antarctica](http://www.marinespecies.org/aphia.php?p=taxdetails&id=217697)", "Günther, 1878", "", "species",
-3, "[Electrona](http://www.marinespecies.org/aphia.php?p=taxdetails&id=125821)", "Goode & Bean, 1896", "sp.", "genus",
-4, "[Electrona](http://www.marinespecies.org/aphia.php?p=taxdetails&id=125821)", "Goode & Bean, 1896", "spp.", "genus"))
+showtbl(tribble(~"", ~scientificName, ~scientificNameAuthorship, 
+                ~IdentificationQualifier, ~taxonrank,
+                1, 
+                "[Electrona](http://www.marinespecies.org/aphia.php?p=taxdetails&id=125821)", 
+                "Goode & Bean, 1896", "aff. risso", "genus",
+                2, 
+                "[Electrona antarctica](http://www.marinespecies.org/aphia.php?p=taxdetails&id=217697)", 
+                "Günther, 1878", "", "species",
+                3, 
+                "[Electrona](http://www.marinespecies.org/aphia.php?p=taxdetails&id=125821)", 
+                "Goode & Bean, 1896", "sp.", "genus",
+                4, 
+                "[Electrona](http://www.marinespecies.org/aphia.php?p=taxdetails&id=125821)", 
+                "Goode & Bean, 1896", "spp.", "genus"))
 ```
 
 ¿Qué significan estos ejemplos?
@@ -263,16 +275,29 @@ Para explicarlo, consulte esta viñeta de XKCD o la tabla a continuación.
 
 
 ```{r echo = FALSE}
-showtbl(tribble(~"decimal places", ~"decimal degrees", ~DMS, ~"Object that can be unambiguously recognized at this scale", ~"N/S or E/W at equator", ~"E/W at 67N/S",
-0, "1.0", "1° 00' 0\"", "country or large region", "111.32 km", "43.496 km",
-1, "0.1", "0° 06' 0\"", "large city or district", "11.132 km", "4.3496 km",
-2, "0.01", "0° 00' 36\"", "town or village", "1.1132 km", "434.96 m",
-3, "0.001", "0° 00' 3.6\"", "neighborhood, street", "111.32 m", "43.496 m",
-4, "0.0001", "0° 00' 0.36\"", "individual street, land parcel", "11.132 m", "4.3496 m",
-5, "0.00001", "0° 00' 0.036\"", "individual trees, door entrance", "1.1132 m", "434.96 mm",
-6, "0.000001", "0° 00' 0.0036\"", "individual humans", "111.32 mm", "43.496 mm",
-7, "0.0000001", "0° 00' 0.00036\"", "practical limit of commercial surveying", "11.132 mm", "4.3496 mm",
-8, "0.00000001", "0° 00' 0.000036\"", "specialized surveying (e.g. tectonic plate mapping)", "1.1132 mm", "434.96 µm"))
+showtbl(tribble(~"decimal places", ~"decimal degrees", ~DMS, 
+                ~"Object that can be unambiguously recognized at this scale",
+                ~"N/S or E/W at equator", ~"E/W at 67N/S",
+                0, "1.0", "1° 00' 0\"", "country or large region", 
+                "111.32 km", "43.496 km",
+                1, "0.1", "0° 06' 0\"", "large city or district",
+                "11.132 km", "4.3496 km",
+                2, "0.01", "0° 00' 36\"", "town or village",
+                "1.1132 km", "434.96 m",
+                3, "0.001", "0° 00' 3.6\"", "neighborhood, street",
+                "111.32 m", "43.496 m",
+                4, "0.0001", "0° 00' 0.36\"", "individual street, land parcel", 
+                "11.132 m", "4.3496 m",
+                5, "0.00001", "0° 00' 0.036\"", 
+                "individual trees, door entrance", "1.1132 m", "434.96 mm",
+                6, "0.000001", "0° 00' 0.0036\"", "individual humans", 
+                "111.32 mm", "43.496 mm",
+                7, "0.0000001", "0° 00' 0.00036\"", 
+                "practical limit of commercial surveying", "11.132 mm", 
+                "4.3496 mm",
+                8, "0.00000001", "0° 00' 0.000036\"", 
+                "specialized surveying (e.g. tectonic plate mapping)",
+                "1.1132 mm", "434.96 µm"))
 ```
 
 ### Cuando
